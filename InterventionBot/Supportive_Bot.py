@@ -32,7 +32,7 @@ class BPG_SMART_BOT:
             add_on = 'user/' + self.redditor + '/'
             user_page = current_page + add_on
             self.driver.get(user_page)
-            time.sleep(2)
+            time.sleep(4)
         except Exception as e:
             print(e)
 
@@ -52,7 +52,7 @@ class BPG_SMART_BOT:
 
 
 def main():
-    redditor = 'Far-Examination4638'
+    redditor = ''
     message = 'Hey there, just testing the BOT capabilities.'
     bot = BPG_SMART_BOT('Testing_Capabilities', 'randompassword', redditor, message)
     bot.login()

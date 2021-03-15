@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def create_connection(db_file):
     conn = None
     try:
@@ -8,6 +9,7 @@ def create_connection(db_file):
         print(e)
 
     return conn
+
 
 def list_users(conn):
     cur = conn.cursor()
@@ -22,6 +24,7 @@ def list_users(conn):
     	for r in res:
     		print(r)
 
+
 def find_user(conn, username):
     cur = conn.cursor()
 
@@ -33,6 +36,7 @@ def find_user(conn, username):
 
     return res
 
+
 def update_user(conn, username, timestamp):
 	cur = conn.cursor()
 
@@ -42,6 +46,7 @@ def update_user(conn, username, timestamp):
 		cur.execute('INSERT INTO userUpdated VALUES (?, ?)', (username, timestamp))
 
 	conn.commit()
+
 
 def clean_db(conn):
 	cur = conn.cursor()

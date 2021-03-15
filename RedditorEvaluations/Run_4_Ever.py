@@ -21,7 +21,7 @@ def check_for_new_redditors(subreddit_of_U, path_to_redditors_from_U):
     latest_post = math.floor(time.time() - 21600)
 
     while True:
-        check_for_redditors = GetRedditorsFromUSub(subreddit_of_U, latest_post, path_to_redditors_from_U)
+        check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_redditors_from_U)
         data = check_for_redditors.fetch_posts(sort_type='created_utc', sort='asc', size=1000)
         if data is not None:
             check_for_redditors.extract_redditors_from_U_sub_live_mode(data)
@@ -31,7 +31,7 @@ def check_for_new_redditors(subreddit_of_U, path_to_redditors_from_U):
         time.sleep(300)
 
 
-def make_directory_for_the_day(university, parent_directory):
+def make_directory_for_the_week(university, parent_directory):
     """
     Function creates a directory within the parent directory. It will contain file of redditors from that specific time frame
     """
@@ -49,15 +49,15 @@ def check_for_redditor_posts_and_comments(university, path_to_redditors_from_U, 
             line.strip('\n')
             curr_redditors.append(line)
 
-    curr_day = int(date.today().strftime('%d'))
+    curr_week_according_to_days = int(date.today().strftime('%d'))
     check_after = math.floor(time.time() - 300)
-    directory_path = make_directory_for_the_day(university, parent_directory)
+    directory_path = make_directory_for_the_week(university, parent_directory)
 
     while True:
-        check_if_new_day = int(date.today().strftime('%d'))
-        if check_if_new_day == (curr_day + 1):
-            curr_day = check_if_new_day
-            directory_path = make_directory_for_the_day(university, parent_directory)
+        check_if_new_week = int(date.today().strftime('%d'))
+        if check_if_new_week == (curr_week_according_to_days + 7):
+            curr_week_according_to_days = check_if_new_week
+            directory_path = make_directory_for_the_week(university, parent_directory)
 
         for redditor in curr_redditors:
             redditor_file_path = directory_path + '/' + redditor + '.txt'

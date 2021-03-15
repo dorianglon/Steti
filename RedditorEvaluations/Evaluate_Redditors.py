@@ -8,6 +8,7 @@ from tqdm import tqdm
 import os
 import tensorflow as tf
 import tensorflow_hub as hub
+import tensorflow_text
 from wordcloud import WordCloud, STOPWORDS
 from RedditorEvaluations.make_graph import make_graph_of_subreddits
 from RedditorEvaluations.make_pdf import create_analytics_report_NN
@@ -135,9 +136,9 @@ def analyze_posts_and_comments(df, model, use, username, dest_dir):
 
 
 def main():
-    directory = '/Users/dorianglon/Desktop/Cornell_redditor_posts'
-    destination_directory = '/Users/dorianglon/Desktop/Cornell_redditor_reports'
-    model_path = 'TRAINED_SUICIDE_&_DEPRESSION_2'
+    directory = '/Users/dorianglon/Desktop/Dead_Redditors_data'
+    destination_directory = '/Users/dorianglon/Desktop/Dead_Redditors_reports'
+    model_path = '/Users/dorianglon/Desktop/BPG_limited/TRAINED_SUICIDE_&_DEPRESSION_NEW'
     use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
     model = load_model(model_path)
     for file in os.listdir(directory):

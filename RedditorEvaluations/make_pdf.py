@@ -69,7 +69,7 @@ def create_analytics_report_NN(username, depressed, word_cloud_file, subs_file, 
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=3)
     add_rectangle_NN(pdf)
-    write_logo_NN(pdf, 'cornell.png')
+    write_logo_NN(pdf, '/Users/dorianglon/Desktop/BPG_limited/cornell.png')
     create_title_NN(pdf, username)
 
     pdf.write(5, '\nPossible suicidal/depressed posts or comments have been spotted for ' + username + '\n'
