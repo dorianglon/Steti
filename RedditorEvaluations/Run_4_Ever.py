@@ -5,7 +5,7 @@ import os
 from datetime import date
 
 
-def check_for_new_redditors(subreddit_of_U, path_to_redditors_from_U):
+def check_for_new_redditors_university(subreddit_of_U, path_to_redditors_from_U):
     """
     Function checks for new redditors from a subreddit every 5 minutes
     """
@@ -24,7 +24,7 @@ def check_for_new_redditors(subreddit_of_U, path_to_redditors_from_U):
         check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_redditors_from_U)
         data = check_for_redditors.fetch_posts(sort_type='created_utc', sort='asc', size=1000)
         if data is not None:
-            check_for_redditors.extract_redditors_from_U_sub_live_mode(data)
+            check_for_redditors.extract_uni_redditors_live(data)
             post_to_check = data[-len(data)]
             date_of_post = post_to_check['created_utc']
             latest_post = date_of_post

@@ -48,7 +48,7 @@ file = 'kids_that_go_to_cornell.txt'
 subreddit_redditor_scraper = GetRedditorsFromUSub('Cornell', 1600000000, file)
 
 # then just run the extract_redditors_from_sub method. This will take a long time.
-subreddit_redditor_scraper.extract_redditors_from_U_sub_past_mode()
+subreddit_redditor_scraper.extract_uni_redditors()
 
 # if you run over multiple days you might want to make sure that no username appears twice. Just run this method.
 subreddit_redditor_scraper.eliminate_repeats()
