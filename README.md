@@ -56,3 +56,20 @@ subreddit_redditor_scraper.eliminate_repeats()
 
 We will mainly be using instances from those last two classes in our script that will be running 24/7
 The module RedditorEvaluation is what we need to work on. The file NN_on_redditors_file.py is a rough sketch of what we will have. It loads the model, and predicts users' mental health, and then creates a pdf if user is depressed. This script already assumes that we have scraped data on those users for the last n days.
+
+
+# DEV NOTES
+
+## json for latex for pdf structure:
+
+{
+name: str
+dateRange: str
+users: [
+        {
+                username: str   
+                severity: int
+                comment: str (top alarming comment)
+        }
+]
+}
