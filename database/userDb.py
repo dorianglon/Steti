@@ -19,11 +19,12 @@ def list_users(conn):
     res = cur.fetchall()
 
     if not res:
-        print('Database is empty')
+        return []
     else:
-        print('All users:')
+        redditors = []
         for r in res:
-            print(r)
+            redditors.append(r[0])
+        return redditors
 
 
 def find_user(conn, username):
@@ -56,18 +57,20 @@ def clean_db(conn):
 
 
 if __name__ == '__main__':
-    database = 'users.db'  # CREATE TABLE userUpdated (username TEXT PRIMARY KEY, updated INTEGER);
+    database = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'  # CREATE TABLE userUpdated (username TEXT PRIMARY
+    # KEY, updated INTEGER);
     connection = create_connection(database)
+    # clean_db(connection)
 
     with connection:
-        print(find_user(connection, 'dorian'))
+        # print(find_user(connection, 'dorian'))
         update_user(connection, 'dorian', 69)
 
-        print(find_user(connection, 'dorian'))
-        update_user(connection, 'dorian', 420)
+        # print(find_user(connection, 'dorian'))
+        # update_user(connection, 'dorian', 420)
 
-        print(find_user(connection, 'dorian'))
+        # print(find_user(connection, 'dorian'))
         update_user(connection, 'david', 666)
 
-        list_users(connection)
+        print(list_users(connection))
         # clean_db(connection)

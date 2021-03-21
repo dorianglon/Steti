@@ -3,64 +3,50 @@ import time
 import math
 import os
 from datetime import date
+from database.userDb import *
 
 
-def check_for_new_redditors_university(subreddit_of_U, path_to_redditors_from_U):
+def check_for_new_uni_redditors(subreddit_of_U, path_to_database, all_time_list, university=True, college=True):
     """
     Function checks for new redditors from a subreddit every 5 minutes
+    :param subreddit_of_U: subreddit for uni/college
+    :param path_to_database: path to this subreddit's redditor database
+    :param all_time_list:
+    :param university: boolean, true if university
+    :param college: boolean, true if college
     """
-    # get list of redditors from this school
-    curr_redditors = []
-    with open(path_to_redditors_from_U, 'r') as file:
-        lines = file.readlines()
-        for line in lines:
-            line.strip('\n')
-            curr_redditors.append(line)
 
     # initial condition, get posts on sub from the last 6 hours
     latest_post = math.floor(time.time() - 21600)
 
     while True:
-        check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_redditors_from_U)
+        check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_database, all_time_list)
         data = check_for_redditors.fetch_posts(sort_type='created_utc', sort='asc', size=1000)
         if data is not None:
-            check_for_redditors.extract_uni_redditors_live(data)
+            check_for_redditors.extract_uni_redditors_live(university, college, data)
+
+            # if the latest post was posted after our variable "latest_post" then replace value with newer date
             post_to_check = data[-len(data)]
             date_of_post = post_to_check['created_utc']
             latest_post = date_of_post
         time.sleep(300)
 
 
-def make_directory_for_the_week(university, parent_directory):
-    """
-    Function creates a directory within the parent directory. It will contain file of redditors from that specific time frame
-    """
-    today = str(date.today())
-    new_dir = parent_directory + '/' + university + '_' + today
-    os.mkdir(new_dir)
-    return new_dir
-
-
-def check_for_redditor_posts_and_comments(university, path_to_redditors_from_U, parent_directory):
-    curr_redditors = []
-    with open(path_to_redditors_from_U, 'r') as file:
-        lines = file.readlines()
-        for line in lines:
-            line.strip('\n')
-            curr_redditors.append(line)
-
-    curr_week_according_to_days = int(date.today().strftime('%d'))
-    check_after = math.floor(time.time() - 300)
-    directory_path = make_directory_for_the_week(university, parent_directory)
+def check_for_redditor_posts_and_comments(database_file):
 
     while True:
-        check_if_new_week = int(date.today().strftime('%d'))
-        if check_if_new_week == (curr_week_according_to_days + 7):
-            curr_week_according_to_days = check_if_new_week
-            directory_path = make_directory_for_the_week(university, parent_directory)
-
+        conn = create_connection(database_file)
+        curr_redditors = list_users(conn)
         for redditor in curr_redditors:
-            redditor_file_path = directory_path + '/' + redditor + '.txt'
-            redditor_data = ScrapeRedditorData(redditor, check_after, redditor_file_path)
-            redditor_data.extract_redditor_data(sort_type='created_utc', sort='asc', size=1000, posts=True,
-                                                comments=True)
+            last_checked = find_user(conn, redditor)[1]
+            if time.time() > last_checked:
+                file_to_save = 'temp_file.txt'
+                this_redditor = ScrapeRedditorData(redditor, last_checked, file_to_save)
+                new_data, finished_running = this_redditor.extract_redditor_data('created_utc', 'asc', 1000, True, False, False)
+                update_user(conn, redditor, finished_running)
+                if new_data:
+                    # then predict user state of mind
+                    pass
+                else:
+                    # then move onto the next
+                    pass

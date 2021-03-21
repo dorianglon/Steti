@@ -11,6 +11,7 @@ from database.userDb import *
 class ScrapeSubreddit:
     """
     CLASS USED TO DOWNLOAD POSTS AND OR COMMENTS FROM A SPECIFIC SUBREDDIT
+    UST USED FOR OBTAINING DATA TO TRAIN MODEL
     """
 
     def __init__(self, subreddit, subreddit_abbrev, search_after):
@@ -178,13 +179,14 @@ class ScrapeSubreddit:
 
 class GetRedditorsFromSub:
     """
-    CLASS USED TO COMPILE A DARABASE OF REDDITORS FROM A SPECIFIC UNIVERSITY/COLLEGE/CITY
+    CLASS USED TO COMPILE A DATABASE OF REDDITORS FROM A SPECIFIC UNIVERSITY/COLLEGE/CITY
     """
 
-    def __init__(self, subreddit, search_after, database_file):
+    def __init__(self, subreddit, search_after, database_file, all_time_list):
         self.subreddit = subreddit
         self.search_after = search_after
         self.database = database_file
+        self.all_time_list = all_time_list
         self.pushshift_url = 'http://api.pushshift.io/reddit'
 
     def fetch_posts(self, sort_type, sort, size):
@@ -236,22 +238,21 @@ class GetRedditorsFromSub:
             data = response['data']
             return data
 
-    def extract_uni_redditors_live(self, university, college, post_objects, all_time_list):
+    def extract_uni_redditors_live(self, university, college, post_objects):
         """
         Function check for new redditors for a university in a batch of new posts from university's subreddit.
         This is for live use.
         :param university: boolean value to denote that this is a university subreddit
         :param college: boolean value to denote that this is a community college subreddit
         :param post_objects: latest posts from subreddit in question
-        :param all_time_list: path to file where all redditors that have every posted/commented on sub is stored
         """
 
         # get our list of already known redditors from the sub. This includes people who do not attend the school so
         # that we do not have to keep checking if the attend or not
         redditors = []
 
-        if os.path.isfile(all_time_list):
-            with open(all_time_list, 'r') as f:
+        if os.path.isfile(self.all_time_list):
+            with open(self.all_time_list, 'r') as f:
                 lines = f.readlines()
                 for line in lines:
                     new_line = line.replace('\n', '')
@@ -263,7 +264,7 @@ class GetRedditorsFromSub:
             # write post author to file
             if author not in redditors and author != '[deleted]' and 'bot' not in author.lower():
                 redditors.append(author)
-                with open(all_time_list, 'a+') as f:
+                with open(self.all_time_list, 'a+') as f:
                     line = author + '\n'
                     f.write(line)
                     f.close()
@@ -292,7 +293,7 @@ class GetRedditorsFromSub:
                 if comment_author not in redditors and comment_author != '[deleted]' and 'bot' \
                         not in comment_author.lower():
                     redditors.append(comment_author)
-                    with open(all_time_list, 'a+') as f:
+                    with open(self.all_time_list, 'a+') as f:
                         line = comment_author + '\n'
                         f.write(line)
                         f.close()
@@ -315,7 +316,7 @@ class GetRedditorsFromSub:
                     except Exception as e:
                         print('Error : ', e)
 
-    def extract_uni_redditors(self, university, college, all_time_list, sort_type='created_utc',
+    def extract_uni_redditors(self, university, college, sort_type='created_utc',
                               sort='asc', size=1000):
         """
         **
@@ -327,12 +328,11 @@ class GetRedditorsFromSub:
         :param sort_type: Default sorts by date
         :param sort: Default is asc
         :param size: maximum amount of posts requests returns. Default is 1000
-        :param all_time_list: path to file where all redditors that have every posted/commented on sub is stored
         """
         redditors = []
 
-        if os.path.isfile(all_time_list):
-            with open(all_time_list, 'r') as f:
+        if os.path.isfile(self.all_time_list):
+            with open(self.all_time_list, 'r') as f:
                 lines = f.readlines()
                 for line in lines:
                     new_line = line.replace('\n', '')
@@ -358,7 +358,7 @@ class GetRedditorsFromSub:
                         # write post author to file
                         if author not in redditors and author != '[deleted]' and 'bot' not in author.lower():
                             redditors.append(author)
-                            with open(all_time_list, 'a+') as f:
+                            with open(self.all_time_list, 'a+') as f:
                                 line = author + '\n'
                                 f.write(line)
                                 f.close()
@@ -401,7 +401,7 @@ class GetRedditorsFromSub:
                                         if comment_author not in redditors and comment_author != '[deleted]' and 'bot' \
                                                 not in comment_author.lower():
                                             redditors.append(comment_author)
-                                            with open(all_time_list, 'a+') as f:
+                                            with open(self.all_time_list, 'a+') as f:
                                                 line = comment_author + '\n'
                                                 f.write(line)
                                                 f.close()
@@ -430,7 +430,7 @@ class GetRedditorsFromSub:
                     if nothing_processed: return
                     self.search_after -= 1
 
-    def extract_gun_owner_redditors_from_city(self, all_time_list, sort_type='created_utc', sort='asc', size=1000):
+    def extract_gun_owner_redditors_from_city(self, sort_type='created_utc', sort='asc', size=1000):
         """
         **
         Function grabs redditors from a city's subreddit and compiles a list of those redditors that
@@ -446,8 +446,8 @@ class GetRedditorsFromSub:
         # then add them to list beforehand so that runtime decreases
         redditors = []
 
-        if os.path.isfile(all_time_list):
-            with open(all_time_list, 'r') as f:
+        if os.path.isfile(self.all_time_list):
+            with open(self.all_time_list, 'r') as f:
                 lines = f.readlines()
                 for line in lines:
                     new_line = line.replace('\n', '')
@@ -473,7 +473,7 @@ class GetRedditorsFromSub:
                         # write post author to file
                         if author not in redditors and author != '[deleted]' and 'bot' not in author.lower():
                             redditors.append(author)
-                            with open(all_time_list, 'a+') as f:
+                            with open(self.all_time_list, 'a+') as f:
                                 line = author + '\n'
                                 f.write(line)
                                 f.close()
@@ -508,7 +508,7 @@ class GetRedditorsFromSub:
                                         if comment_author not in redditors and comment_author != '[deleted]' and 'bot' \
                                                 not in comment_author.lower():
                                             redditors.append(comment_author)
-                                            with open(all_time_list, 'a+') as f:
+                                            with open(self.all_time_list, 'a+') as f:
                                                 line = comment_author + '\n'
                                                 f.write(line)
                                                 f.close()
@@ -532,14 +532,13 @@ class ScrapeRedditorData:
     CLASS USED TO SCRAPE A SPECIFIC REDDITOR'S POSTS, COMMENTS, OR BOTH. ALONG WITH SUBREDDIT ACTIVITY AND DATES
     """
 
-    def __init__(self, redditor, search_after, save_to_file):
+    def __init__(self, redditor, search_after):
         self.redditor = redditor
         self.search_after = search_after
         self.original_search_after = search_after
-        self.file_name = save_to_file
         self.pushshift_url = 'http://api.pushshift.io/reddit'
 
-    def fetch_objects(self, type, sort_type, sort, size):
+    def fetch_objects(self, type, sort_type='created_utc', sort='asc', size=1000):
         """
         Function gets posts or comments from subreddit of choice, orders them by id
         :param type: either reddit submissions or comments, (type=submission || type=comments)
@@ -576,39 +575,95 @@ class ScrapeRedditorData:
             sorted_data_by_id = sorted(data, key=lambda x: int(x['id'], 36))
             return sorted_data_by_id
 
-    def check_file_content(self):
-        """
-        **
-        Function checks if file with user data is empty. Deletes it if it is.
-        **
-        """
+    def get_posts_for_analysis(self, sort_type, sort, size):
 
-        # get the lines in file
-        check_len = open(self.file_name, 'r')
-        lines = check_len.readlines()
-        total = 0
-        for line in lines:
-            total += 1
+        posts = []
+        # specifically the start timestamp
+        max_id = 0
 
-        # if the only line in file is the column names, then delete the file
-        if total == 1:
-            os.remove(self.file_name)
+        while 1:
+            nothing_processed = True
+            objects_not_full = True
+            while objects_not_full:
+                objects = self.fetch_objects(type='submission', sort_type=sort_type, sort=sort, size=size)
+                if objects is not None:
+                    objects_not_full = False
+                    # loop the returned data, ordered by date
+                    for object in objects:
+                        id = int(object['id'], 36)
+                        if id > max_id:
+                            nothing_processed = False
+                            created_utc = object['created_utc']
+                            max_id = id
+                            if created_utc > self.search_after:
+                                self.search_after = created_utc
+                            try:
+                                if 'selftext' in object and 'is_self' in object and 'subreddit' in object and \
+                                        'created_utc' in object:
+                                    if object['is_self'] and len(object['selftext']) > 0:
+                                        text = object['selftext'].replace('\t', '')
+                                        new_text = text.replace('\n', '')
+                                        add_to_posts = [new_text, object['created_utc'], object['subreddit']]
+                                        posts.append(add_to_posts)
+                            except Exception as e:
+                                print(e)
+                    # exit if nothing happened
+                    if nothing_processed: return
+                    self.original_search_after -= 1
+            return posts
 
-    def write_posts(self, sort_type, sort, size, for_finding_redditors):
+    def get_comments_for_analysis(self, sort_type, sort, size):
+
+        comments = []
+        # specifically the start timestamp
+        max_id = 0
+
+        while 1:
+            nothing_processed = True
+            objects_not_full = True
+            while objects_not_full:
+                objects = self.fetch_objects(type='comment', sort_type=sort_type, sort=sort, size=size)
+                if objects is not None:
+                    objects_not_full = False
+                    # loop the returned data, ordered by date
+                    for object in objects:
+                        id = int(object['id'], 36)
+                        if id > max_id:
+                            nothing_processed = False
+                            created_utc = object['created_utc']
+                            max_id = id
+                            if created_utc > self.search_after:
+                                self.search_after = created_utc
+
+                            try:
+                                if 'body' in object and 'subreddit' in object and \
+                                        'created_utc' in object:
+                                    if len(object['body']) > 0:
+                                        text = object['body'].replace('\t', '')
+                                        new_text = text.replace('\n', '')
+                                        add_to_comments = [new_text, object['created_utc'], object['subreddit']]
+                                        comments.append(add_to_comments)
+                            except Exception as e:
+                                print(e)
+                    # exit if nothing happened
+                    if nothing_processed: return
+                    self.original_search_after -= 1
+            return comments
+
+    def get_posts_to_determine_if_user_goes_to_U(self, sort_type, sort, size, file_name):
         """
-        Function write the author's posts
+        Function scrapes redditor's posts only for checking if redditor goes to the university we are scraping
         :param sort: default is asc
         :param sort_type: default is by date
         :param size: how much per requests
-        :param for_finding_redditors: boolean value, if true then we get every post even if text was not found
+        :param file_name:
         because we are interested in the user's subreddit activity
         """
 
         # specifically the start timestamp
         max_id = 0
-
         # write the opening line to file; which are the column titles
-        with open(self.file_name, 'a+') as file:
+        with open(file_name, 'a+') as file:
             line_one = 'text\tsubreddit\tdate\n'
             file.write(line_one)
             file.close()
@@ -630,117 +685,74 @@ class ScrapeRedditorData:
                             if created_utc > self.search_after:
                                 self.search_after = created_utc
 
-                            # if we care only about the user's subreddit activity
-                            # will add posts without text
-                            if for_finding_redditors:
-                                try:
-                                    if 'selftext' not in object or 'is_self' not in object or 'stickied' not in object or \
-                                            'subreddit' not in object or 'created_utc' not in object:
+                            try:
+                                if 'selftext' not in object or 'is_self' not in object or 'stickied' not in object or \
+                                        'subreddit' not in object or 'created_utc' not in object:
+                                    text = 'no text for post found\t'
+                                    to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
+                                    # write to file
+                                    with open(file_name, 'a+') as file:
+                                        file.write(to_write)
+                                        file.write('\n')
+                                # check if the post is empty and that it is not a picture or video
+                                elif object['is_self'] and len(object['selftext']) != 0 and not object['stickied']:
+                                    if object['selftext'] == '[removed]' or object['selftext'] == '[deleted]':
                                         text = 'no text for post found\t'
                                         to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
                                         # write to file
-                                        with open(self.file_name, 'a+') as file:
+                                        with open(file_name, 'a+') as file:
                                             file.write(to_write)
                                             file.write('\n')
-                                    # check if the post is empty and that it is not a picture or video
-                                    elif object['is_self'] and len(object['selftext']) != 0 and not object['stickied']:
-                                        if object['selftext'] == '[removed]' or object['selftext'] == '[deleted]':
-                                            text = 'no text for post found\t'
-                                            to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
-                                            # write to file
-                                            with open(self.file_name, 'a+') as file:
-                                                file.write(to_write)
-                                                file.write('\n')
-                                        else:
-                                            if object['title'] == 0:
-                                                # take out all newline and tabs
-                                                text = object['selftext'].replace('\t', '')
-                                                new_text = text.replace('\n', '')
-                                                # concatenate post content, subreddit posted on, and date posted on
-                                                to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
-                                                    object['created_utc'])
-                                                clean_to_write = ftfy.fix_text(to_write)
-                                                # write to file
-                                                with open(self.file_name, 'a+') as file:
-                                                    file.write(clean_to_write)
-                                                    file.write('\n')
-                                                    file.close()
-                                            else:
-                                                title = object['title'].replace('\t', '') + ' '
-                                                body = object['selftext'].replace('\t', '')
-                                                new_text = title.replace('\n', '') + body.replace('\n', '')
-                                                to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
-                                                    object['created_utc'])
-                                                clean_to_write = ftfy.fix_text(to_write)
-                                                # write to file
-                                                with open(self.file_name, 'a+') as file:
-                                                    file.write(clean_to_write)
-                                                    file.write('\n')
-                                                    file.close()
                                     else:
-                                        try:
-                                            text = 'no text for post found\t'
-                                            to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
+                                        if object['title'] == 0:
+                                            # take out all newline and tabs
+                                            text = object['selftext'].replace('\t', '')
+                                            new_text = text.replace('\n', '')
+                                            # concatenate post content, subreddit posted on, and date posted on
+                                            to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
+                                                object['created_utc'])
+                                            clean_to_write = ftfy.fix_text(to_write)
                                             # write to file
-                                            with open(self.file_name, 'a+') as file:
-                                                file.write(to_write)
+                                            with open(file_name, 'a+') as file:
+                                                file.write(clean_to_write)
                                                 file.write('\n')
-                                        except Exception as e:
-                                            print('Error : ', e)
-                                except Exception as e:
-                                    print(e)
-
-                            # if for_finding_redditors is false then we are using this class to scrape text to analyze
-                            # therefore we only care about posts with text in them
-                            elif not for_finding_redditors:
-                                try:
-                                    if 'selftext' not in object or 'is_self' not in object or 'stickied' not in object or \
-                                            'subreddit' not in object or 'created_utc' not in object:
-                                        continue
-                                    elif object['is_self'] and len(object['selftext']) != 0 and not object['stickied']:
-                                        if object['selftext'] == '[removed]' or object['selftext'] == '[deleted]':
-                                            continue
+                                                file.close()
                                         else:
-                                            if object['title'] == 0:
-                                                # take out all newline and tabs
-                                                text = object['selftext'].replace('\t', '')
-                                                new_text = text.replace('\n', '')
-                                                # concatenate post content, subreddit posted on, and date posted on
-                                                to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
-                                                    object['created_utc'])
-                                                clean_to_write = ftfy.fix_text(to_write)
-                                                # write to file
-                                                with open(self.file_name, 'a+') as file:
-                                                    file.write(clean_to_write)
-                                                    file.write('\n')
-                                                    file.close()
-                                            else:
-                                                title = object['title'].replace('\t', '') + ' '
-                                                body = object['selftext'].replace('\t', '')
-                                                new_text = title.replace('\n', '') + body.replace('\n', '')
-                                                to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
-                                                    object['created_utc'])
-                                                clean_to_write = ftfy.fix_text(to_write)
-                                                # write to file
-                                                with open(self.file_name, 'a+') as file:
-                                                    file.write(clean_to_write)
-                                                    file.write('\n')
-                                                    file.close()
-                                except Exception as e:
-                                    print(e)
+                                            title = object['title'].replace('\t', '') + ' '
+                                            body = object['selftext'].replace('\t', '')
+                                            new_text = title.replace('\n', '') + body.replace('\n', '')
+                                            to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
+                                                object['created_utc'])
+                                            clean_to_write = ftfy.fix_text(to_write)
+                                            # write to file
+                                            with open(file_name, 'a+') as file:
+                                                file.write(clean_to_write)
+                                                file.write('\n')
+                                                file.close()
+                                else:
+                                    try:
+                                        text = 'no text for post found\t'
+                                        to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
+                                        # write to file
+                                        with open(file_name, 'a+') as file:
+                                            file.write(to_write)
+                                            file.write('\n')
+                                    except Exception as e:
+                                        print('Error : ', e)
+                            except Exception as e:
+                                print(e)
 
                     # exit if nothing happened
                     if nothing_processed: return
-                    self.search_after -= 1
+                    self.original_search_after -= 1
 
-    def write_comments(self, sort_type, sort, size, for_finding_redditors, both=False):
+    def get_comments_to_determine_if_user_goes_to_U(self, sort_type, sort, size, file_name, both=False):
         """
         Function write the author's comments
         :param sort:
         :param sort_type:
         :param size: how much per requests
-        :param for_finding_redditors: boolean value, if true then we get every comment even if text was not found
-        because we are interested in the user's subreddit activity
+        :param file_name:
         :param both: to check if title is already written if we wrote posts before
         """
 
@@ -748,7 +760,7 @@ class ScrapeRedditorData:
 
         if not both:
             # write the opening line to file; which are the column titles
-            with open(self.file_name, 'a+') as file:
+            with open(file_name, 'a+') as file:
                 line_one = 'text\tsubreddit\tdate\n'
                 file.write(line_one)
                 file.close()
@@ -768,87 +780,70 @@ class ScrapeRedditorData:
                             created_utc = comment['created_utc']
                             max_id = id
 
-                            # if we care only about the user's subreddit activity
-                            # will add posts without text
-                            if for_finding_redditors:
-                                try:
-                                    if created_utc > self.original_search_after:
-                                        self.original_search_after = created_utc
-                                    # check if the post is empty and that it is not a picture or video
-                                    if 'body' not in comment or 'subreddit' not in comment or 'created_utc' not in \
-                                            comment:
-                                        text = 'no text for comment found\t'
-                                        to_write = text + comment['subreddit'] + '\t' + str(comment['created_utc'])
-                                        # write to file
-                                        with open(self.file_name, 'a+') as file:
-                                            file.write(to_write)
-                                            file.write('\n')
-                                    else:
-                                        # take out all newline and tabs
-                                        text = comment['body'].replace('\t', '')
-                                        new_text = text.replace('\n', '')
-                                        # concatenate post content, subreddit posted on, and date posted on
-                                        to_write_comment = new_text + '\t' + comment['subreddit'] + '\t' + str(
-                                            comment['created_utc'])
-                                        # write to file
-                                        with open(self.file_name, 'a+') as file:
-                                            file.write(to_write_comment)
-                                            file.write('\n')
-                                except Exception as e:
-                                    print(e)
-
-                            # if for_finding_redditors is false then we are using this class to scrape text to analyze
-                            # therefore we only care about posts with text in them
-                            elif not for_finding_redditors:
-                                try:
-                                    if created_utc > self.original_search_after:
-                                        self.original_search_after = created_utc
-                                    if 'body' not in comment or 'subreddit' not in comment or 'created_utc' not in \
-                                            comment:
-                                        continue
-                                    # check if the post is empty and that it is not a picture or video
-                                    elif 'body' in comment:
-                                        # take out all newline and tabs
-                                        text = comment['body'].replace('\t', '')
-                                        new_text = text.replace('\n', '')
-                                        # concatenate post content, subreddit posted on, and date posted on
-                                        to_write_comment = new_text + '\t' + comment['subreddit'] + '\t' + str(
-                                            comment['created_utc'])
-                                        # write to file
-                                        with open(self.file_name, 'a+') as file:
-                                            file.write(to_write_comment)
-                                            file.write('\n')
-                                except Exception as e:
-                                    print(e)
+                            try:
+                                if created_utc > self.original_search_after:
+                                    self.original_search_after = created_utc
+                                # check if the post is empty and that it is not a picture or video
+                                if 'body' not in comment or 'subreddit' not in comment or 'created_utc' not in \
+                                        comment:
+                                    text = 'no text for comment found\t'
+                                    to_write = text + comment['subreddit'] + '\t' + str(comment['created_utc'])
+                                    # write to file
+                                    with open(file_name, 'a+') as file:
+                                        file.write(to_write)
+                                        file.write('\n')
+                                else:
+                                    # take out all newline and tabs
+                                    text = comment['body'].replace('\t', '')
+                                    new_text = text.replace('\n', '')
+                                    # concatenate post content, subreddit posted on, and date posted on
+                                    to_write_comment = new_text + '\t' + comment['subreddit'] + '\t' + str(
+                                        comment['created_utc'])
+                                    # write to file
+                                    with open(file_name, 'a+') as file:
+                                        file.write(to_write_comment)
+                                        file.write('\n')
+                            except Exception as e:
+                                print(e)
 
                     # exit if nothing happened
                     if nothing_processed: return
                     self.original_search_after -= 1
 
-    def extract_redditor_data(self, sort_type='created_utc', sort='asc', size=1000, posts=True, comments=True
-                              , for_finding_redditors=False):
+    def extract_redditor_data(self, file_name='', sort_type='created_utc', sort='asc', size=1000, for_analysis=True
+                              , posts=True, comments=True):
         """
         **
-        Function gets posts and comments(if requested) from a specific reddit user and stores the data into files
+        Function gets posts and comments(if requested) from a specific reddit user
         **
-        :param for_finding_redditors:
+        :param file_name:
         :param sort:
         :param sort_type:
         :param size: maximum amount of returned posts/comments per request. Default is 1000
+        :param for_analysis:
         :param posts: are we scraping posts? Default is True
         :param comments: are we scraping comments? Default is True
         """
+        if for_analysis:
+            if posts and comments:
+                posts = self.get_posts_for_analysis(sort_type, sort, size)
+                comments = self.get_comments_for_analysis(sort_type, sort, size)
+                return posts, comments
+            elif posts and not comments:
+                posts = self.get_posts_for_analysis(sort_type, sort, size)
+                return posts
+            elif comments and not posts:
+                comments = self.get_comments_for_analysis(sort_type, sort, size)
+                return comments
 
-        if posts and comments:
-            self.write_posts(sort_type, sort, size, for_finding_redditors)
-            self.write_comments(sort_type, sort, size, for_finding_redditors, both=True)
-            # self.check_file_content()
-        elif posts and not comments:
-            self.write_posts(sort_type, sort, size, for_finding_redditors)
-            self.check_file_content()
-        elif comments and not posts:
-            self.write_comments(sort_type, sort, size)
-            self.check_file_content()
+        else:
+            if posts and comments:
+                self.get_posts_to_determine_if_user_goes_to_U(sort_type, sort, size, file_name)
+                self.get_comments_to_determine_if_user_goes_to_U(sort_type, sort, size, file_name, both=True)
+            elif posts and not comments:
+                self.get_posts_to_determine_if_user_goes_to_U(sort_type, sort, size, file_name)
+            elif comments and not posts:
+                self.get_comments_to_determine_if_user_goes_to_U(sort_type, sort, size, file_name)
 
 
 def get_max_val_dict(dictionary):
@@ -884,8 +879,8 @@ def redditor_at_uni(redditor, subreddit_of_uni):
 
     # extract all of the redditor's comments and posts
     file_name = redditor + '.txt'
-    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix, file_name)
-    redditor_scraper.extract_redditor_data(posts=True, comments=True, for_finding_redditors=True)
+    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
+    redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
     author_df = pd.read_csv(file_name, delimiter='\t')
     os.remove(file_name)
     # creates a dataframe of the subreddits visited by redditor and the dates active
@@ -992,8 +987,8 @@ def redditor_at_cc(redditor, subreddit_of_cc):
 
     # extract all of the redditor's comments and posts
     file_name = redditor + '.txt'
-    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix, file_name)
-    redditor_scraper.extract_redditor_data(posts=True, comments=True, for_finding_redditors=True)
+    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
+    redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
     author_df = pd.read_csv(file_name, delimiter='\t')
     os.remove(file_name)
     # creates a dataframe of the subreddits visited by redditor and the dates active
@@ -1066,15 +1061,15 @@ def gun_owner_or_enthusiast(redditor):
     file_name = redditor + '.txt'
 
     # create ScrapeRedditorData instance to scrape this redditor's information
-    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix, file_name)
-    redditor_scraper.extract_redditor_data(posts=True, comments=True, for_finding_redditors=True)
+    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
+    redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
 
     # read in the resulting data from file into a dataframe and only keep the subreddit column
     author_df = pd.read_csv(file_name, delimiter='\t')
+    os.remove(file_name)
     subs_df = author_df[['subreddit']].copy()
 
     # delete the file with the redditor's data and delete the redditor's original dataframe to free up RAM
-    os.remove(file_name)
     del author_df
 
     # loop through the redditor's posts and comments to see if they have posted or commented on some of these subreddits
@@ -1089,9 +1084,9 @@ def gun_owner_or_enthusiast(redditor):
 def main():
     all_time_list = '/Users/dorianglon/Desktop/BPG_limited/test_list.txt'
     database = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'
-    Cornell = GetRedditorsFromSub('Cornell', 1615703975, database)
+    Cornell = GetRedditorsFromSub('Cornell', 1615703975, database, all_time_list)
     posts = Cornell.fetch_posts(sort_type='created_utc', sort='asc', size=1000)
-    Cornell.extract_uni_redditors_live(university=True, college=False, post_objects=posts, all_time_list=all_time_list)
+    Cornell.extract_uni_redditors_live(university=True, college=False, post_objects=posts)
 
 
 if __name__ == '__main__':
