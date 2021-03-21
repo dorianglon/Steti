@@ -1,6 +1,6 @@
 # Project_BPG
 
-Out of data will replace in upcoming days
+Out of date will replace in upcoming days
 
 
 # DEV NOTES
