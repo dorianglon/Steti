@@ -57,7 +57,7 @@ def split_dataframe(df, chunk_size=25000):
 
 def clean_posts(df):
     """
-    Function makes sures that string are in ascii
+    Function makes sures that string are in ascii encoding
     :param df: dataframe to operate on
     :return: cleaned dataframe
     """
