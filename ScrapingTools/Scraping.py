@@ -1,6 +1,5 @@
 import requests
 import json
-import ftfy
 from tqdm import tqdm
 import os
 import pandas as pd
@@ -182,10 +181,10 @@ class GetRedditorsFromSub:
     CLASS USED TO COMPILE A DATABASE OF REDDITORS FROM A SPECIFIC UNIVERSITY/COLLEGE/CITY
     """
 
-    def __init__(self, subreddit, search_after, database_file, all_time_list):
+    def __init__(self, subreddit, search_after, database, all_time_list):
         self.subreddit = subreddit
         self.search_after = search_after
-        self.database = database_file
+        self.database = database
         self.all_time_list = all_time_list
         self.pushshift_url = 'http://api.pushshift.io/reddit'
 
@@ -275,14 +274,16 @@ class GetRedditorsFromSub:
                         check = redditor_at_uni(redditor=author, subreddit_of_uni=self.subreddit)
                         if check:
                             conn = create_connection(self.database)
-                            update_user(conn, author, 0)
+                            with conn:
+                                update_user(conn, author, 0)
                     # check if this is a community college subreddit then check if the redditor from post
                     # goes to college. If they do then add them to list
                     elif college:
                         check = redditor_at_cc(redditor=author, subreddit_of_cc=self.subreddit)
                         if check:
                             conn = create_connection(self.database)
-                            update_user(conn, author, 0)
+                            with conn:
+                                update_user(conn, author, 0)
                 except Exception as e:
                     print('Error : ', e)
 
@@ -305,14 +306,16 @@ class GetRedditorsFromSub:
                                                     subreddit_of_uni=self.subreddit)
                             if check:
                                 conn = create_connection(self.database)
-                                update_user(conn, comment_author, 0)
+                                with conn:
+                                    update_user(conn, comment_author, 0)
                         # check if this is a community college subreddit then check if the redditor from comment
                         # goes to college. If they do then add them to list
                         elif college:
                             check = redditor_at_cc(redditor=comment_author, subreddit_of_cc=self.subreddit)
                             if check:
                                 conn = create_connection(self.database)
-                                update_user(conn, comment_author, 0)
+                                with conn:
+                                    update_user(conn, comment_author, 0)
                     except Exception as e:
                         print('Error : ', e)
 
@@ -369,14 +372,16 @@ class GetRedditorsFromSub:
                                     check = redditor_at_uni(redditor=author, subreddit_of_uni=self.subreddit)
                                     if check:
                                         conn = create_connection(self.database)
-                                        update_user(conn, author, 0)
+                                        with conn:
+                                            update_user(conn, author, 0)
                                 elif college:
                                     # check if this is a community college subreddit then check if the redditor from
                                     # post goes to college. If they do then add them to list
                                     check = redditor_at_cc(redditor=author, subreddit_of_cc=self.subreddit)
                                     if check:
                                         conn = create_connection(self.database)
-                                        update_user(conn, author, 0)
+                                        with conn:
+                                            update_user(conn, author, 0)
                             except Exception as e:
                                 print('Error : ', e)
                         id = int(object['id'], 36)
@@ -413,7 +418,8 @@ class GetRedditorsFromSub:
                                                                             subreddit_of_uni=self.subreddit)
                                                     if check:
                                                         conn = create_connection(self.database)
-                                                        update_user(conn, comment_author, 0)
+                                                        with conn:
+                                                            update_user(conn, comment_author, 0)
                                                 # check if this is a community college subreddit then check if the
                                                 # redditor from comment goes to college. If they do then add them to
                                                 # list
@@ -422,7 +428,8 @@ class GetRedditorsFromSub:
                                                                            subreddit_of_cc=self.subreddit)
                                                     if check:
                                                         conn = create_connection(self.database)
-                                                        update_user(conn, comment_author, 0)
+                                                        with conn:
+                                                            update_user(conn, comment_author, 0)
                                             except Exception as e:
                                                 print('Error : ', e)
 
@@ -483,7 +490,8 @@ class GetRedditorsFromSub:
                                 check = gun_owner_or_enthusiast(redditor=author)
                                 if check:
                                     conn = create_connection(self.database)
-                                    update_user(conn, author, 0)
+                                    with conn:
+                                        update_user(conn, author, 0)
                             except Exception as e:
                                 print('Error : ', e)
                         id = int(object['id'], 36)
@@ -518,7 +526,8 @@ class GetRedditorsFromSub:
                                                 check = gun_owner_or_enthusiast(redditor=author)
                                                 if check:
                                                     conn = create_connection(self.database)
-                                                    update_user(conn, comment_author, 0)
+                                                    with conn:
+                                                        update_user(conn, comment_author, 0)
                                             except Exception as e:
                                                 print('Error : ', e)
 
@@ -711,7 +720,8 @@ class ScrapeRedditorData:
                                             # concatenate post content, subreddit posted on, and date posted on
                                             to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
                                                 object['created_utc'])
-                                            clean_to_write = ftfy.fix_text(to_write)
+                                            to_write = to_write.encode("ascii", "ignore")
+                                            clean_to_write = to_write.decode()
                                             # write to file
                                             with open(file_name, 'a+') as file:
                                                 file.write(clean_to_write)
@@ -723,7 +733,8 @@ class ScrapeRedditorData:
                                             new_text = title.replace('\n', '') + body.replace('\n', '')
                                             to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
                                                 object['created_utc'])
-                                            clean_to_write = ftfy.fix_text(to_write)
+                                            to_write = to_write.encode("ascii", "ignore")
+                                            clean_to_write = to_write.decode()
                                             # write to file
                                             with open(file_name, 'a+') as file:
                                                 file.write(clean_to_write)

@@ -60,17 +60,16 @@ if __name__ == '__main__':
     database = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'  # CREATE TABLE userUpdated (username TEXT PRIMARY
     # KEY, updated INTEGER);
     connection = create_connection(database)
-    # clean_db(connection)
 
     with connection:
         # print(find_user(connection, 'dorian'))
-        update_user(connection, 'dorian', 69)
+        # update_user(connection, 'dorian', 69)
 
         # print(find_user(connection, 'dorian'))
         # update_user(connection, 'dorian', 420)
 
         # print(find_user(connection, 'dorian'))
-        update_user(connection, 'david', 666)
+        # update_user(connection, 'david', 666)
 
         print(list_users(connection))
         # clean_db(connection)
