@@ -9,21 +9,18 @@ import tensorflow_hub as hub
 import tensorflow_text
 import numpy as np
 import json
+from tqdm import tqdm
+import ftfy
 
 
-def check_for_new_uni_redditors(subreddit_of_U, path_to_database, all_time_list, subreddit_creation_timestamp,
-                                university=True, college=True):
-    """
-    Function checks for new redditors from a subreddit every 5 minutes
-    :param subreddit_of_U: subreddit for uni/college
-    :param path_to_database: path to this subreddit's redditor database
-    :param all_time_list:
-    :param subreddit_creation_timestamp:
-    :param university: boolean, true if university
-    :param college: boolean, true if college
-    """
+def look_for_new_redditors(subreddit_of_U, path_to_database, all_time_list, subreddit_creation_timestamp,
+                           university=True, college=True):
 
-    check_for_redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_database, all_time_list)
+    if not os.path.isfile(path_to_database):
+        conn = create_connection(path_to_database)
+        create_db(conn)
+        redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_database, all_time_list)
+        redditors.extract_uni_redditors(university, college)
 
     # initial condition, get posts on sub from the last 6 hours
     latest_post = math.floor(time.time() - 21600)
@@ -31,7 +28,7 @@ def check_for_new_uni_redditors(subreddit_of_U, path_to_database, all_time_list,
     while True:
         check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_database, all_time_list)
         data = check_for_redditors.fetch_posts(sort_type='created_utc', sort='asc', size=1000)
-        if data is not None:
+        if data:
             check_for_redditors.extract_uni_redditors_live(university, college, data)
 
             # if the latest post was posted after our variable "latest_post" then replace value with newer date
@@ -53,11 +50,13 @@ def make_sure_text_is_in_correct_encoding(list_of_text_objects):
     """
     Function makes sure text we analyze is in ascii encoding, if not it cleans it
     """
+
     index = 0
     while index < len(list_of_text_objects):
         text = list_of_text_objects[index][0].encode("ascii", "ignore")
         decoded_text = text.decode()
         list_of_text_objects[index][0] = decoded_text
+        index += 1
     return list_of_text_objects
 
 
@@ -127,18 +126,20 @@ def analyze_redditor_posts_and_comments(database_file, institution):
     """
 
     # get current month as a string and current day of the month as an int
-    month = datetime.now().strftime('%B')
+    month = datetime.datetime.now().strftime('%B')
     day = datetime.datetime.today().day
 
     # define directory where we store the json files
     directory = '/Users/dorianglon/Desktop/BPG_limited/Universities-Colleges_jsons/'
     # define current directory for the json of this institution for this day
     current_json = directory + institution + month + str(day) + '.json'
+    use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
+    model = load_model('/Users/dorianglon/Desktop/BPG_limited/TRAINED_SUICIDE_&_DEPRESSION_NEW')
 
     # loop forever
     while True:
         # check if the month and day is still the same, if not then change month & day & json file
-        check_month = datetime.now().strftime('%B')
+        check_month = datetime.datetime.now().strftime('%B')
         check_day = datetime.datetime.today().day
         if check_month != month:
             month = check_month
@@ -151,12 +152,17 @@ def analyze_redditor_posts_and_comments(database_file, institution):
         # get list of redditors from this institution from database
         conn = create_connection(database_file)
         with conn:
-            curr_redditors = list_users(conn)
+            curr_redditors = []
+            while not curr_redditors:
+                try:
+                    curr_redditors = list_users(conn)
+                except Exception as e:
+                    time.sleep(1)
 
         # loop through every redditor in the list of redditors
-        for redditor in curr_redditors:
+        for redditor in tqdm(curr_redditors):
             last_checked = find_user(conn, redditor)[1]
-            if time.time() > last_checked:
+            if math.floor(time.time()) > last_checked:
 
                 # instantiate redditor scraper object and scrape this redditor's posts and or comments
                 this_redditor = ScrapeRedditorData(redditor, last_checked)
@@ -164,13 +170,17 @@ def analyze_redditor_posts_and_comments(database_file, institution):
                 # update the last time we checked this redditor in the database
                 finished_running = math.floor(time.time())
                 with conn:
-                    update_user(conn, redditor, finished_running)
+                    updated = False
+                    while not updated:
+                        try:
+                            update_user(conn, redditor, finished_running)
+                            updated = True
+                        except Exception as e:
+                            time.sleep(1)
 
                 # if list of posts from this redditor is not empty then proceed with analyzing them
-                if posts:
+                if posts is not None:
                     posts = make_sure_text_is_in_correct_encoding(posts)
-                    use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
-                    model = load_model('/Users/dorianglon/Desktop/BPG_limited/TRAINED_SUICIDE_&_DEPRESSION_NEW')
 
                     # encode the posts
                     post_embeddings = []
@@ -190,7 +200,8 @@ def analyze_redditor_posts_and_comments(database_file, institution):
                             # only flag the posts that are negative scores of 0.9 and higher
                             if score > .9:
                                 # list contains the post, date posted, subreddit, and score respectively
-                                neg_posts.append([posts[index][0], posts[index][1], posts[index][2], score])
+                                neg_posts.append([posts[index][0], posts[index][1], posts[index][2],
+                                                  str(math.floor(score * 100))])
                         index += 1
 
                     # if the redditor had negative post proceed with json functions

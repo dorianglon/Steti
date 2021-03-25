@@ -56,20 +56,15 @@ def clean_db(conn):
     cur.execute('DELETE FROM userUpdated')
 
 
+def create_db(conn):
+    conn.execute('CREATE TABLE userUpdated (username TEXT PRIMARY KEY, updated INTEGER);')
+
+
 if __name__ == '__main__':
-    database = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'  # CREATE TABLE userUpdated (username TEXT PRIMARY
-    # KEY, updated INTEGER);
-    connection = create_connection(database)
+    database = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'
+    conn = create_connection(database)
 
-    with connection:
-        # print(find_user(connection, 'dorian'))
-        # update_user(connection, 'dorian', 69)
-
-        # print(find_user(connection, 'dorian'))
-        # update_user(connection, 'dorian', 420)
-
-        # print(find_user(connection, 'dorian'))
-        # update_user(connection, 'david', 666)
-
-        print(list_users(connection))
-        # clean_db(connection)
+    with conn:
+        users = list_users(conn)
+        for user in users:
+            update_user(conn, user, 1615929052)
