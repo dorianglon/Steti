@@ -4,43 +4,90 @@ import math
 import os
 import datetime
 from database.userDb import *
+from database.postidDB import *
 import tensorflow as tf
 import tensorflow_hub as hub
 import tensorflow_text
 import numpy as np
 import json
 from tqdm import tqdm
-import ftfy
+import praw
+from multiprocessing import Process
 
 
-def look_for_new_redditors(subreddit_of_U, path_to_database, all_time_list, subreddit_creation_timestamp,
-                           university=True, college=True):
+def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_database, all_time_list,
+                            subreddit_creation_timestamp, university=True, college=True):
+    """
+    Function works with Scraping classes to build and maintain an up to date database of redditors from the university/
+    college we are monitoring
+    :param subreddit_of_U: subreddit for university/college
+    :param path_to_user_database: path to database with users
+    :param path_to_post_database: path to database with post ids from the subreddit
+    :param all_time_list: path to text file which holds every redditor to ever post on the subreddit
+    :param subreddit_creation_timestamp: when the subreddit was created
+    :param university: (True if this is a university) vice versa
+    :param college: (True if this is a college) vice versa
+    """
 
-    if not os.path.isfile(path_to_database):
-        conn = create_connection(path_to_database)
-        create_db(conn)
-        redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_database, all_time_list)
+    # check if database of users for this school already exists, if not build up database from scratch
+    if not os.path.isfile(path_to_user_database):
+        conn = create_connection(path_to_user_database)
+        with conn:
+            create_db(conn)
+        redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_user_database
+                                        , all_time_list)
         redditors.extract_uni_redditors(university, college)
 
     # initial condition, get posts on sub from the last 6 hours
     latest_post = math.floor(time.time() - 21600)
 
-    while True:
-        check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_database, all_time_list)
-        data = check_for_redditors.fetch_posts(sort_type='created_utc', sort='asc', size=1000)
-        if data:
-            check_for_redditors.extract_uni_redditors_live(university, college, data)
+    # create praw instance when working with new posts and comments
+    reddit = praw.Reddit(
+        client_id="CyopPyd9gNngNQ",
+        client_secret="n6YcNlHES_ywV9cPzWOHKy8iZIQFxg",
+        user_agent="BPGhelperv1",
+        username="alcapelle",
+        password="39108vxzci",
+    )
 
-            # if the latest post was posted after our variable "latest_post" then replace value with newer date
-            post_to_check = data[-len(data)]
-            date_of_post = post_to_check['created_utc']
-            latest_post = date_of_post
-        time.sleep(300)
+    # check if database with post ids exists, if not create it
+    if not os.path.isfile(path_to_post_database):
+        conn2 = create_connection_post(path_to_post_database)
+        with conn2:
+            create_post_db(conn2)
+
+    # loop forever, checks for new posts in the institution's subreddit and checks for new comments in old posts
+    # adds new authors from institution to database as it finds them
+    while True:
+        check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_user_database, all_time_list)
+
+        try:
+            post_id_conn = create_connection_post(path_to_post_database)
+            with post_id_conn:
+                post_ids = list_post_ids(post_id_conn)
+                if len(post_ids) >= 200:
+                    first_200 = post_ids[:200]
+                    check_for_redditors.extract_redditors_from_post_ids(reddit, first_200, post_id_conn, university,
+                                                                        college)
+                elif len(post_ids) < 200 and len(post_ids) != 0:
+                    check_for_redditors.extract_redditors_from_post_ids(reddit, post_ids, post_id_conn, university,
+                                                                        college)
+        except Exception as e:
+            pass
+
+        try:
+            latest_post = check_for_redditors.extract_uni_redditors_live_(reddit, path_to_post_database, university,
+                                                                          college)
+        except Exception as e:
+            pass
+
+        time.sleep(420)
 
 
 def load_model(model_path):
     """
     Function loads our model
+    :param model_path: path to model
     """
     from tensorflow import keras
     return keras.models.load_model(model_path)
@@ -49,6 +96,7 @@ def load_model(model_path):
 def make_sure_text_is_in_correct_encoding(list_of_text_objects):
     """
     Function makes sure text we analyze is in ascii encoding, if not it cleans it
+    :param list_of_text_objects: list of posts to check
     """
 
     index = 0
@@ -63,6 +111,10 @@ def make_sure_text_is_in_correct_encoding(list_of_text_objects):
 def write_base_json(file_name, institution, month, day):
     """
     Function makes new json file for a new day of analysis
+    :param file_name: json file path
+    :param institution: school we are monitoring
+    :param month: current month
+    :param day: current day
     """
 
     initial_dic = {
@@ -81,6 +133,9 @@ def update_json(file_name, redditor, neg_posts):
     """
     Function adds new negative posts to the daily json for a specific redditor. If redditor is already in json it just updates
     the negative posts. If redditor is not present then it adds him to json.
+    :param file_name: json file path
+    :param redditor: redditor we are updating json for
+    :param neg_posts: list of negative posts from this redditor
     """
 
     with open(file_name, 'r') as f:
@@ -120,9 +175,11 @@ def update_json(file_name, redditor, neg_posts):
             f.close()
 
 
-def analyze_redditor_posts_and_comments(database_file, institution):
+def analyze_redditor_posts_and_comments(user_database_file, institution):
     """
     Function runs forever analyzing the contents from redditors of a certain institution
+    :param user_database_file: database with redditors from this school
+    :param institution: the school we are monitoring
     """
 
     # get current month as a string and current day of the month as an int
@@ -135,6 +192,14 @@ def analyze_redditor_posts_and_comments(database_file, institution):
     current_json = directory + institution + month + str(day) + '.json'
     use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
     model = load_model('/Users/dorianglon/Desktop/BPG_limited/TRAINED_SUICIDE_&_DEPRESSION_NEW')
+
+    reddit = praw.Reddit(
+        client_id="CyopPyd9gNngNQ",
+        client_secret="n6YcNlHES_ywV9cPzWOHKy8iZIQFxg",
+        user_agent="BPGhelperv1",
+        username="alcapelle",
+        password="39108vxzci",
+    )
 
     # loop forever
     while True:
@@ -150,7 +215,7 @@ def analyze_redditor_posts_and_comments(database_file, institution):
             current_json = directory + month + str(day) + '.json'
 
         # get list of redditors from this institution from database
-        conn = create_connection(database_file)
+        conn = create_connection(user_database_file)
         with conn:
             curr_redditors = []
             while not curr_redditors:
@@ -165,8 +230,8 @@ def analyze_redditor_posts_and_comments(database_file, institution):
             if math.floor(time.time()) > last_checked:
 
                 # instantiate redditor scraper object and scrape this redditor's posts and or comments
-                this_redditor = ScrapeRedditorData(redditor, last_checked)
-                posts = this_redditor.extract_redditor_data(for_analysis=True, posts=True, comments=False)
+                this_redditor = LiveRedditorAnalysisPraw(reddit, redditor, last_checked)
+                posts = this_redditor.extract_redditor_data_praw(posts=True, comments=False)
                 # update the last time we checked this redditor in the database
                 finished_running = math.floor(time.time())
                 with conn:
@@ -185,7 +250,7 @@ def analyze_redditor_posts_and_comments(database_file, institution):
                     # encode the posts
                     post_embeddings = []
                     for post in posts:
-                        emb = use(post[0])
+                        emb = use(post[1])
                         post_emb = tf.reshape(emb, [-1]).numpy()
                         post_embeddings.append(post_emb)
                     post_embeddings = np.array(post_embeddings)
@@ -200,7 +265,7 @@ def analyze_redditor_posts_and_comments(database_file, institution):
                             # only flag the posts that are negative scores of 0.9 and higher
                             if score > .9:
                                 # list contains the post, date posted, subreddit, and score respectively
-                                neg_posts.append([posts[index][0], posts[index][1], posts[index][2],
+                                neg_posts.append([posts[index][0], posts[index][1], posts[index][2], posts[index][3],
                                                   str(math.floor(score * 100))])
                         index += 1
 
@@ -211,3 +276,20 @@ def analyze_redditor_posts_and_comments(database_file, institution):
                         else:
                             write_base_json(current_json, institution, month, day)
                             update_json(current_json, redditor, neg_posts)
+
+
+def monitor_school(school, university=True, college=True):
+    """
+    Function encapsulates all previous functions and classes and monitors a school's subreddit
+    """
+
+    all_time_list = '/Users/dorianglon/Desktop/BPG_limited/Cornellians_full_list.txt'
+    user_database = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'
+    post_id_database = '/Users/dorianglon/Desktop/BPG_limited/Cornel_post_ids.db'
+    start = 1615942589
+
+    p1 = Process(target=build_redditor_database(school, user_database, post_id_database, all_time_list, start
+                                                , university, college))
+    p1.start()
+    p2 = Process(target=analyze_redditor_posts_and_comments(user_database, school))
+    p2.start()
