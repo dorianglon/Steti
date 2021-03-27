@@ -46,8 +46,8 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
         client_id="CyopPyd9gNngNQ",
         client_secret="n6YcNlHES_ywV9cPzWOHKy8iZIQFxg",
         user_agent="BPGhelperv1",
-        username="alcapelle",
-        password="39108vxzci",
+        username="",
+        password="",
     )
 
     # check if database with post ids exists, if not create it
