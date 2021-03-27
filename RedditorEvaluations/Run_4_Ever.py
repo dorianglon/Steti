@@ -13,6 +13,7 @@ import json
 from tqdm import tqdm
 import praw
 from multiprocessing import Process
+from reportGeneration.pdf_generator import *
 
 
 def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_database, all_time_list,
@@ -43,11 +44,11 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
 
     # create praw instance when working with new posts and comments
     reddit = praw.Reddit(
-        client_id="CyopPyd9gNngNQ",
-        client_secret="n6YcNlHES_ywV9cPzWOHKy8iZIQFxg",
+        client_id="PYhBZnomUNnE9w",
+        client_secret="qC3PhLNu3Uarls1MnyanVxa3cWDlTA",
         user_agent="BPGhelperv1",
-        username="",
-        password="",
+        username="BPGlimited",
+        password="bpgpassword",
     )
 
     # check if database with post ids exists, if not create it
@@ -175,6 +176,14 @@ def update_json(file_name, redditor, neg_posts):
             f.close()
 
 
+def load_current_json(path):
+    """
+    Function loads data from json
+    """
+    with open(path, 'r') as f:
+        return json.load(f)
+
+
 def analyze_redditor_posts_and_comments(user_database_file, institution):
     """
     Function runs forever analyzing the contents from redditors of a certain institution
@@ -194,23 +203,32 @@ def analyze_redditor_posts_and_comments(user_database_file, institution):
     model = load_model('/Users/dorianglon/Desktop/BPG_limited/TRAINED_SUICIDE_&_DEPRESSION_NEW')
 
     reddit = praw.Reddit(
-        client_id="CyopPyd9gNngNQ",
-        client_secret="n6YcNlHES_ywV9cPzWOHKy8iZIQFxg",
+        client_id="PYhBZnomUNnE9w",
+        client_secret="qC3PhLNu3Uarls1MnyanVxa3cWDlTA",
         user_agent="BPGhelperv1",
-        username="alcapelle",
-        password="39108vxzci",
+        username="BPGlimited",
+        password="bpgpassword",
     )
 
     # loop forever
     while True:
-        # check if the month and day is still the same, if not then change month & day & json file
+        # check if the month and day is still the same, if not, create the daily pdf for the day
+        # then change month & day & json file
         check_month = datetime.datetime.now().strftime('%B')
         check_day = datetime.datetime.today().day
         if check_month != month:
+            curr_data = load_current_json(current_json)
+            out_file = directory + institution + month + str(day) + '.pdf'
+            report = CreateDailyPDF(curr_data, institution, out_file)
+            report.make_pdf()
             month = check_month
             day = check_day
             current_json = directory + month + str(day) + '.json'
         if check_month == month and check_day > day:
+            curr_data = load_current_json(current_json)
+            out_file = directory + institution + month + str(day) + '.pdf'
+            report = CreateDailyPDF(curr_data, institution, out_file)
+            report.make_pdf()
             day = check_day
             current_json = directory + month + str(day) + '.json'
 
