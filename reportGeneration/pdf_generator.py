@@ -11,10 +11,11 @@ class CreateDailyPDF:
     CLASS GENERATES THE DAILY PDFS FOR THE SCHOOL
     """
 
-    def __init__(self, data, institution, filename):
+    def __init__(self, data, institution, filename, main_directory):
         self.data = data
         self.institution = institution
         self.filename = filename
+        self.main_directory = main_directory
 
     def make_pdf(self):
         """
@@ -25,7 +26,7 @@ class CreateDailyPDF:
                                 rightMargin=72, leftMargin=72,
                                 topMargin=72, bottomMargin=18)
         Story = []
-        logo = self.institution + '_logo.png'
+        logo = self.main_directory + self.institution + '_logo.png'
         title_date = 'Report for ' + str(self.data['month']) + ' ' + str(self.data['day'])
         users = self.data['users']
 

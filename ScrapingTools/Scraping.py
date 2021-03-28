@@ -6,7 +6,6 @@ import pandas as pd
 import time
 from database.userDb import *
 from database.postidDB import *
-import praw
 import math
 
 
@@ -269,7 +268,7 @@ class GetRedditorsFromSub:
                             if comment.author is not None:
                                 comment_author = comment.author.name
                                 if comment_author not in redditors and comment_author != '[deleted]' \
-                                        and 'bot' not in comment_author.lower():
+                                        and 'bot' not in comment_author.lower() and comment_author != 'AutoModerator':
                                     redditors.append(comment_author)
                                     with open(self.all_time_list, 'a+') as f:
                                         line = comment_author + '\n'
@@ -296,9 +295,9 @@ class GetRedditorsFromSub:
                                                 with conn:
                                                     check = math.floor(time.time()) - 604800
                                                     update_user(conn, comment_author, check)
-                                    except Exception as e:
-                                        print('Error : ', e)
-                    except Exception as e:
+                                    except Exception:
+                                        pass
+                    except Exception:
                         pass
 
     def extract_uni_redditors_live_(self, reddit, post_id_db_file, university, college):
@@ -325,7 +324,8 @@ class GetRedditorsFromSub:
                 latest_post = submission.created_utc
                 if submission.author is not None:
                     author = submission.author.name
-                    if author not in redditors and author != '[deleted]' and 'bot' not in author.lower():
+                    if author not in redditors and author != '[deleted]' and 'bot' not in author.lower() \
+                            and author != 'AutoModerator':
                         redditors.append(author)
                         with open(self.all_time_list, 'a+') as f:
                             line = author + '\n'
@@ -350,8 +350,8 @@ class GetRedditorsFromSub:
                                     with conn:
                                         check = math.floor(time.time()) - 604800
                                         update_user(conn, author, check)
-                        except Exception as e:
-                            print('Error : ', e)
+                        except Exception:
+                            pass
                     try:
                         submission.comments.replace_more(limit=None)
                         comments = submission.comments.list()
@@ -362,7 +362,7 @@ class GetRedditorsFromSub:
                             if comment.author is not None:
                                 comment_author = comment.author.name
                                 if comment_author not in redditors and comment_author != '[deleted]' \
-                                        and 'bot' not in comment_author.lower():
+                                        and 'bot' not in comment_author.lower() and comment_author != 'AutoModerator':
                                     redditors.append(comment_author)
                                     with open(self.all_time_list, 'a+') as f:
                                         line = comment_author + '\n'
@@ -389,9 +389,9 @@ class GetRedditorsFromSub:
                                                 with conn:
                                                     check = math.floor(time.time()) - 604800
                                                     update_user(conn, comment_author, check)
-                                    except Exception as e:
-                                        print('Error : ', e)
-                    except Exception as e:
+                                    except Exception:
+                                        pass
+                    except Exception:
                         pass
             else:
                 break
@@ -436,7 +436,8 @@ class GetRedditorsFromSub:
                     for object in objects:
                         author = object['author']
                         # write post author to file
-                        if author not in redditors and author != '[deleted]' and 'bot' not in author.lower():
+                        if author not in redditors and author != '[deleted]' and 'bot' not in author.lower()\
+                                and author != 'AutoModerator':
                             redditors.append(author)
                             with open(self.all_time_list, 'a+') as f:
                                 line = author + '\n'
@@ -459,8 +460,8 @@ class GetRedditorsFromSub:
                                         conn = create_connection(self.user_database)
                                         with conn:
                                             update_user(conn, author, 0)
-                            except Exception as e:
-                                print('Error : ', e)
+                            except Exception:
+                                pass
                         id = int(object['id'], 36)
                         if id > max_id:
                             nothing_processed = False
@@ -478,10 +479,10 @@ class GetRedditorsFromSub:
                                     comments_not_full = False
 
                                     # loop through comments
-                                    for comment in tqdm(comments):
+                                    for comment in comments:
                                         comment_author = comment['author']
                                         if comment_author not in redditors and comment_author != '[deleted]' and 'bot' \
-                                                not in comment_author.lower():
+                                                not in comment_author.lower() and comment_author != 'AutoModerator':
                                             redditors.append(comment_author)
                                             with open(self.all_time_list, 'a+') as f:
                                                 line = comment_author + '\n'
@@ -507,8 +508,8 @@ class GetRedditorsFromSub:
                                                         conn = create_connection(self.user_database)
                                                         with conn:
                                                             update_user(conn, comment_author, 0)
-                                            except Exception as e:
-                                                print('Error : ', e)
+                                            except Exception:
+                                                pass
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -540,7 +541,7 @@ class LiveRedditorAnalysisPraw:
                                             , submission.created_utc, submission.subreddit.display_name])
                 else:
                     break
-        except Exception as e:
+        except Exception:
             pass
         return submissions
 
@@ -558,7 +559,7 @@ class LiveRedditorAnalysisPraw:
                         comments.append([comment.body, comment.created_utc, comment.subreddit.display_name])
                 else:
                     break
-        except Exception as e:
+        except Exception:
             pass
         return comments
 
@@ -712,10 +713,10 @@ class ScrapeRedditorData:
                                         with open(file_name, 'a+') as file:
                                             file.write(to_write)
                                             file.write('\n')
-                                    except Exception as e:
-                                        print('Error : ', e)
-                            except Exception as e:
-                                print(e)
+                                    except Exception:
+                                        pass
+                            except Exception:
+                                pass
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -778,8 +779,8 @@ class ScrapeRedditorData:
                                     with open(file_name, 'a+') as file:
                                         file.write(to_write_comment)
                                         file.write('\n')
-                            except Exception as e:
-                                print(e)
+                            except Exception:
+                                pass
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -993,3 +994,17 @@ def redditor_at_cc(redditor, subreddit_of_cc):
 
     elif first_post_on_sub > Sept_23_2019:
         return True
+
+
+def get_subreddit_creation_date(subreddit):
+    """
+    Function returns timestamp when subreddit was created
+    """
+
+    url = 'https://www.reddit.com/r/' + subreddit + '/about.json'
+    while True:
+        r = requests.get(url)
+        if r.status_code == 200:
+            data = json.loads(r.text)
+            return int(data['data']['created_utc'])
+        time.sleep(5)

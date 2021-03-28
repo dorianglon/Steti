@@ -16,8 +16,28 @@ from multiprocessing import Process
 from reportGeneration.pdf_generator import *
 
 
+def build_initial_database(subreddit_of_U, path_to_user_database, all_time_list, subreddit_creation_timestamp,
+                           university=True, college=True):
+    """
+    Function builds the founding database of redditors for a specific school
+    :param subreddit_of_U: subreddit of university we are monitoring
+    :param path_to_user_database: path to redditor database for this school
+    :param all_time_list: path to list with all posters and commenters on the school's subreddit
+    :param subreddit_creation_timestamp: when the subreddit was created
+    :param university: (True if this is a university) vice versa
+    :param college: (True if this is a college) vice versa
+    """
+
+    conn = create_connection(path_to_user_database)
+    with conn:
+        create_db(conn)
+    redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_user_database
+                                    , all_time_list)
+    redditors.extract_uni_redditors(university, college)
+
+
 def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_database, all_time_list,
-                            subreddit_creation_timestamp, university=True, college=True):
+                            university=True, college=True):
     """
     Function works with Scraping classes to build and maintain an up to date database of redditors from the university/
     college we are monitoring
@@ -25,19 +45,9 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
     :param path_to_user_database: path to database with users
     :param path_to_post_database: path to database with post ids from the subreddit
     :param all_time_list: path to text file which holds every redditor to ever post on the subreddit
-    :param subreddit_creation_timestamp: when the subreddit was created
     :param university: (True if this is a university) vice versa
     :param college: (True if this is a college) vice versa
     """
-
-    # check if database of users for this school already exists, if not build up database from scratch
-    if not os.path.isfile(path_to_user_database):
-        conn = create_connection(path_to_user_database)
-        with conn:
-            create_db(conn)
-        redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_user_database
-                                        , all_time_list)
-        redditors.extract_uni_redditors(university, college)
 
     # initial condition, get posts on sub from the last 6 hours
     latest_post = math.floor(time.time() - 21600)
@@ -47,7 +57,7 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
         client_id="PYhBZnomUNnE9w",
         client_secret="qC3PhLNu3Uarls1MnyanVxa3cWDlTA",
         user_agent="BPGhelperv1",
-        username="BPGlimited",
+        username="bpglimitedd",
         password="bpgpassword",
     )
 
@@ -73,13 +83,13 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
                 elif len(post_ids) < 200 and len(post_ids) != 0:
                     check_for_redditors.extract_redditors_from_post_ids(reddit, post_ids, post_id_conn, university,
                                                                         college)
-        except Exception as e:
+        except Exception:
             pass
 
         try:
             latest_post = check_for_redditors.extract_uni_redditors_live_(reddit, path_to_post_database, university,
                                                                           college)
-        except Exception as e:
+        except Exception:
             pass
 
         time.sleep(420)
@@ -184,29 +194,39 @@ def load_current_json(path):
         return json.load(f)
 
 
-def analyze_redditor_posts_and_comments(user_database_file, institution):
+def analyze_redditor_posts_and_comments(user_database_file, institution, main_directory):
     """
     Function runs forever analyzing the contents from redditors of a certain institution
     :param user_database_file: database with redditors from this school
     :param institution: the school we are monitoring
+    :param main_directory: directory with all BPG files
     """
 
     # get current month as a string and current day of the month as an int
     month = datetime.datetime.now().strftime('%B')
     day = datetime.datetime.today().day
 
-    # define directory where we store the json files
-    directory = '/Users/dorianglon/Desktop/BPG_limited/Universities-Colleges_jsons/'
+    # define and make directory where we store the json files for this school
+    jsons_directory = main_directory + institution + '_jsons/'
+    os.mkdir(jsons_directory)
+
+    # define and make directory for output pdfs for this school
+    pdfs_directory = main_directory + institution + '_pdfs/'
+    os.mkdir(pdfs_directory)
+
     # define current directory for the json of this institution for this day
-    current_json = directory + institution + month + str(day) + '.json'
+    current_json = jsons_directory + institution + month + str(day) + '.json'
+
     use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
-    model = load_model('/Users/dorianglon/Desktop/BPG_limited/TRAINED_SUICIDE_&_DEPRESSION_NEW')
+
+    model_path = main_directory + 'TRAINED_SUICIDE_&_DEPRESSION_NEW'
+    model = load_model(model_path)
 
     reddit = praw.Reddit(
         client_id="PYhBZnomUNnE9w",
         client_secret="qC3PhLNu3Uarls1MnyanVxa3cWDlTA",
         user_agent="BPGhelperv1",
-        username="BPGlimited",
+        username="bpglimitedd",
         password="bpgpassword",
     )
 
@@ -218,19 +238,19 @@ def analyze_redditor_posts_and_comments(user_database_file, institution):
         check_day = datetime.datetime.today().day
         if check_month != month:
             curr_data = load_current_json(current_json)
-            out_file = directory + institution + month + str(day) + '.pdf'
-            report = CreateDailyPDF(curr_data, institution, out_file)
+            out_file = pdfs_directory + institution + month + str(day) + '.pdf'
+            report = CreateDailyPDF(curr_data, institution, out_file, main_directory)
             report.make_pdf()
             month = check_month
             day = check_day
-            current_json = directory + month + str(day) + '.json'
+            current_json = jsons_directory + month + str(day) + '.json'
         if check_month == month and check_day > day:
             curr_data = load_current_json(current_json)
-            out_file = directory + institution + month + str(day) + '.pdf'
-            report = CreateDailyPDF(curr_data, institution, out_file)
+            out_file = jsons_directory + institution + month + str(day) + '.pdf'
+            report = CreateDailyPDF(curr_data, institution, out_file, main_directory)
             report.make_pdf()
             day = check_day
-            current_json = directory + month + str(day) + '.json'
+            current_json = jsons_directory + month + str(day) + '.json'
 
         # get list of redditors from this institution from database
         conn = create_connection(user_database_file)
@@ -239,7 +259,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution):
             while not curr_redditors:
                 try:
                     curr_redditors = list_users(conn)
-                except Exception as e:
+                except Exception:
                     time.sleep(1)
 
         # loop through every redditor in the list of redditors
@@ -258,7 +278,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution):
                         try:
                             update_user(conn, redditor, finished_running)
                             updated = True
-                        except Exception as e:
+                        except Exception:
                             time.sleep(1)
 
                 # if list of posts from this redditor is not empty then proceed with analyzing them
@@ -301,10 +321,13 @@ def monitor_school(school, university=True, college=True):
     Function encapsulates all previous functions and classes and monitors a school's subreddit
     """
 
-    all_time_list = '/Users/dorianglon/Desktop/BPG_limited/Cornellians_full_list.txt'
-    user_database = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'
-    post_id_database = '/Users/dorianglon/Desktop/BPG_limited/Cornel_post_ids.db'
-    start = 1615942589
+    main_directory = '/Users/dorianglon/Desktop/BPG_limited/'
+    all_time_list = main_directory + school + '_all_time_redditors.txt'
+    user_database = main_directory + school + '_users.db'
+    post_id_database = main_directory + school + '_post_ids.db'
+    start = get_subreddit_creation_date(school)
+
+    build_initial_database(school, user_database, all_time_list, start, university, college)
 
     p1 = Process(target=build_redditor_database(school, user_database, post_id_database, all_time_list, start
                                                 , university, college))
