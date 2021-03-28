@@ -49,8 +49,6 @@ class ScrapeSubreddit:
                 'after': self.original_search_after
             }
 
-        print(params)
-
         # perform an API request
         r = requests.get(self.pushshift_url + '/' + type + '/search/', params=params, timeout=30)
 
@@ -207,7 +205,6 @@ class GetRedditorsFromSub:
             'subreddit': self.subreddit,
             'after': self.search_after
         }
-        print(params)
 
         # perform an API request
         r = requests.get(self.pushshift_url + '/submission/search/', params=params, timeout=30)
