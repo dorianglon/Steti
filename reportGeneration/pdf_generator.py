@@ -66,18 +66,23 @@ class CreateDailyPDF:
                 Story.append(Spacer(1, 6))
                 Story.append(Paragraph(ptext, styles['Normal']))
 
-                readable_date = datetime.utcfromtimestamp(post[2]).strftime('%Y-%m-%d %H:%M')
+                text = 'Post id : ' + str(post[2])
+                ptext = '<font size="12">%s</font>' % text
+                Story.append(Spacer(1, 6))
+                Story.append(Paragraph(ptext, styles['Normal']))
+
+                readable_date = datetime.utcfromtimestamp(post[3]).strftime('%Y-%m-%d %H:%M')
                 date = 'Date posted : ' + readable_date
                 ptext = '<font size="12">%s</font>' % date
                 Story.append(Spacer(1, 6))
                 Story.append(Paragraph(ptext, styles['Normal']))
 
-                subreddit = 'Subreddit posted on : ' + post[3]
+                subreddit = 'Subreddit posted on : ' + post[4]
                 ptext = '<font size="12">%s</font>' % subreddit
                 Story.append(Spacer(1, 6))
                 Story.append(Paragraph(ptext, styles['Normal']))
 
-                severity = 'Probability of depression : ' + str(post[4])
+                severity = 'Probability of depression : ' + str(post[5])
                 ptext = '<font size="12">%s</font>' % severity
                 Story.append(Spacer(1, 6))
                 Story.append(Paragraph(ptext, styles['Normal']))
