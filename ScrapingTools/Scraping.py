@@ -232,15 +232,23 @@ class GetRedditorsFromSub:
             data = response['data']
             return data
 
-    def extract_redditors_from_post_ids(self, reddit, post_ids, post_conn, university, college):
+    def extract_redditors_from_post_ids(self, reddit, post_ids, post_conn, bots_file, university, college):
         """
         Function extracts new authors from new comments in a post if present.
         :param reddit: praw instance to work with
         :param post_ids: list of post ids
         :param post_conn: connection to database with post ids
+        :param bots_file: reddit bots
         :param university: (True if university)
         :param college: (True if college)
         """
+
+        bots = []
+        with open(bots_file, 'r') as f1:
+            bots_ = f1.readlines()
+            for bot in bots_:
+                new_bot = bot.replace('\n', '')
+                bots.append(new_bot)
 
         redditors = []
         if os.path.isfile(self.all_time_list):
@@ -265,7 +273,7 @@ class GetRedditorsFromSub:
                             if comment.author is not None:
                                 comment_author = comment.author.name
                                 if comment_author not in redditors and comment_author != '[deleted]' \
-                                        and 'bot' not in comment_author.lower() and comment_author != 'AutoModerator':
+                                        and 'bot' not in comment_author.lower() and comment_author not in bots:
                                     redditors.append(comment_author)
                                     with open(self.all_time_list, 'a+') as f:
                                         line = comment_author + '\n'
@@ -297,14 +305,22 @@ class GetRedditorsFromSub:
                     except Exception:
                         pass
 
-    def extract_uni_redditors_live_(self, reddit, post_id_db_file, university, college):
+    def extract_uni_redditors_live_(self, reddit, post_id_db_file, bots_file, university, college):
         """
         Function looks for new posts in the school's subreddit and adds new authors to database
         :param reddit: praw instance that we are using
         :param post_id_db_file: path to post_id database
+        :param bots_file: reddit bots
         :param university: (True if university)
         :param college: (True if college)
         """
+
+        bots = []
+        with open(bots_file, 'r') as f1:
+            bots_ = f1.readlines()
+            for bot in bots_:
+                new_bot = bot.replace('\n', '')
+                bots.append(new_bot)
 
         redditors = []
         if os.path.isfile(self.all_time_list):
@@ -322,7 +338,7 @@ class GetRedditorsFromSub:
                 if submission.author is not None:
                     author = submission.author.name
                     if author not in redditors and author != '[deleted]' and 'bot' not in author.lower() \
-                            and author != 'AutoModerator':
+                            and author not in bots:
                         redditors.append(author)
                         with open(self.all_time_list, 'a+') as f:
                             line = author + '\n'
@@ -359,7 +375,7 @@ class GetRedditorsFromSub:
                             if comment.author is not None:
                                 comment_author = comment.author.name
                                 if comment_author not in redditors and comment_author != '[deleted]' \
-                                        and 'bot' not in comment_author.lower() and comment_author != 'AutoModerator':
+                                        and 'bot' not in comment_author.lower() and comment_author not in bots:
                                     redditors.append(comment_author)
                                     with open(self.all_time_list, 'a+') as f:
                                         line = comment_author + '\n'
@@ -394,17 +410,25 @@ class GetRedditorsFromSub:
                 break
         return latest_post
 
-    def extract_uni_redditors(self, university, college, sort_type='created_utc',
+    def extract_uni_redditors(self, university, college, bots_file, sort_type='created_utc',
                               sort='asc', size=100):
         """
         Function grabs redditors from University subreddit that it believes attend that University. This function
         is not for live use, it is to compile a list before live use.
         :param university: boolean value to denote if we are dealing with a university sub
         :param college: boolean value to denote if we are dealing with a community college sub
+        :param bots_file: file containing reddit bots
         :param sort_type: Default sorts by date
         :param sort: Default is asc
         :param size: maximum amount of posts requests returns. Default is 100
         """
+
+        bots = []
+        with open(bots_file, 'r') as f1:
+            bots_ = f1.readlines()
+            for bot in bots_:
+                new_bot = bot.replace('\n', '')
+                bots.append(new_bot)
 
         redditors = []
 
@@ -434,7 +458,7 @@ class GetRedditorsFromSub:
                         author = object['author']
                         # write post author to file
                         if author not in redditors and author != '[deleted]' and 'bot' not in author.lower()\
-                                and author != 'AutoModerator':
+                                and author not in bots:
                             redditors.append(author)
                             with open(self.all_time_list, 'a+') as f:
                                 line = author + '\n'
@@ -479,7 +503,7 @@ class GetRedditorsFromSub:
                                     for comment in comments:
                                         comment_author = comment['author']
                                         if comment_author not in redditors and comment_author != '[deleted]' and 'bot' \
-                                                not in comment_author.lower() and comment_author != 'AutoModerator':
+                                                not in comment_author.lower() and comment_author not in bots:
                                             redditors.append(comment_author)
                                             with open(self.all_time_list, 'a+') as f:
                                                 line = comment_author + '\n'
@@ -511,6 +535,7 @@ class GetRedditorsFromSub:
                     # exit if nothing happened
                     if nothing_processed: return
                     self.search_after -= 1
+            return self.search_after
 
 
 class LiveRedditorAnalysisPraw:
@@ -534,7 +559,7 @@ class LiveRedditorAnalysisPraw:
             for submission in redditor.submissions.new(limit=None):
                 if submission.created_utc > self.last_checked:
                     if not submission.stickied and len(submission.selftext) > 0:
-                        submissions.append([submission.title, submission.selftext
+                        submissions.append([submission.title, submission.selftext, submission.id
                                             , submission.created_utc, submission.subreddit.display_name])
                 else:
                     break
@@ -937,7 +962,7 @@ def redditor_at_cc(redditor, subreddit_of_cc):
     # extract all of the redditor's comments and posts
     file_name = redditor + '.txt'
     redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
-    redditor_scraper.extract_redditor_data(file_name=file_name, for_analysis=False, posts=True, comments=True)
+    redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
     author_df = pd.read_csv(file_name, delimiter='\t')
     os.remove(file_name)
     # creates a dataframe of the subreddits visited by redditor and the dates active
