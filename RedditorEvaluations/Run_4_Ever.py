@@ -16,14 +16,16 @@ from multiprocessing import Process
 from reportGeneration.pdf_generator import *
 
 
-def build_initial_database(subreddit_of_U, path_to_user_database, all_time_list, subreddit_creation_timestamp,
-                           university=True, college=True):
+def build_initial_database(subreddit_of_U, last_checked_f, path_to_user_database, all_time_list,
+                           subreddit_creation_timestamp, bots_file, university=True, college=True):
     """
     Function builds the founding database of redditors for a specific school
     :param subreddit_of_U: subreddit of university we are monitoring
+    :param last_checked_f: file containing last time we checked
     :param path_to_user_database: path to redditor database for this school
     :param all_time_list: path to list with all posters and commenters on the school's subreddit
     :param subreddit_creation_timestamp: when the subreddit was created
+    :param bots_file: file containing known bots on reddit
     :param university: (True if this is a university) vice versa
     :param college: (True if this is a college) vice versa
     """
@@ -33,11 +35,15 @@ def build_initial_database(subreddit_of_U, path_to_user_database, all_time_list,
         create_db(conn)
     redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_user_database
                                     , all_time_list)
-    redditors.extract_uni_redditors(university, college)
+    last_checked = redditors.extract_uni_redditors(university, college, bots_file)
+    if os.path.isfile(last_checked_f):
+        os.remove(last_checked_f)
+    with open(last_checked_f, 'a+') as f1:
+        f1.write(last_checked)
 
 
 def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_database, all_time_list,
-                            university=True, college=True):
+                            bots_file, university=True, college=True):
     """
     Function works with Scraping classes to build and maintain an up to date database of redditors from the university/
     college we are monitoring
@@ -45,6 +51,7 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
     :param path_to_user_database: path to database with users
     :param path_to_post_database: path to database with post ids from the subreddit
     :param all_time_list: path to text file which holds every redditor to ever post on the subreddit
+    :param bots_file: file of reddit bots
     :param university: (True if this is a university) vice versa
     :param college: (True if this is a college) vice versa
     """
@@ -78,17 +85,17 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
                 post_ids = list_post_ids(post_id_conn)
                 if len(post_ids) >= 200:
                     first_200 = post_ids[:200]
-                    check_for_redditors.extract_redditors_from_post_ids(reddit, first_200, post_id_conn, university,
-                                                                        college)
+                    check_for_redditors.extract_redditors_from_post_ids(reddit, first_200, post_id_conn, bots_file,
+                                                                        university, college)
                 elif len(post_ids) < 200 and len(post_ids) != 0:
-                    check_for_redditors.extract_redditors_from_post_ids(reddit, post_ids, post_id_conn, university,
-                                                                        college)
+                    check_for_redditors.extract_redditors_from_post_ids(reddit, post_ids, post_id_conn, bots_file,
+                                                                        university, college)
         except Exception:
             pass
 
         try:
-            latest_post = check_for_redditors.extract_uni_redditors_live_(reddit, path_to_post_database, university,
-                                                                          college)
+            latest_post = check_for_redditors.extract_uni_redditors_live_(reddit, path_to_post_database, bots_file,
+                                                                          university, college)
         except Exception:
             pass
 
@@ -304,7 +311,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, main_di
                             if score > .9:
                                 # list contains the post, date posted, subreddit, and score respectively
                                 neg_posts.append([posts[index][0], posts[index][1], posts[index][2], posts[index][3],
-                                                  str(math.floor(score * 100))])
+                                                  post[index][4], str(math.floor(score * 100))])
                         index += 1
 
                     # if the redditor had negative post proceed with json functions
@@ -325,11 +332,20 @@ def monitor_school(school, university=True, college=True):
     all_time_list = main_directory + school + '_all_time_redditors.txt'
     user_database = main_directory + school + '_users.db'
     post_id_database = main_directory + school + '_post_ids.db'
-    start = get_subreddit_creation_date(school)
+    last_checked_path = main_directory + school + '_last_checked.txt'
+    bots_file = main_directory + 'bots.txt'
 
-    build_initial_database(school, user_database, all_time_list, start, university, college)
+    if not os.path.isfile(user_database):
+        start = get_subreddit_creation_date(school)
+        build_initial_database(school, last_checked_path, user_database, all_time_list, start, bots_file, university
+                               , college)
+    else:
+        with open(last_checked_path) as f1:
+            last_checked = f1.readlines()
+            build_initial_database(school, last_checked_path, user_database, all_time_list, last_checked, bots_file
+                                   , university, college)
 
-    p1 = Process(target=build_redditor_database(school, user_database, post_id_database, all_time_list, start
+    p1 = Process(target=build_redditor_database(school, user_database, post_id_database, all_time_list, bots_file
                                                 , university, college))
     p1.start()
     p2 = Process(target=analyze_redditor_posts_and_comments(user_database, school))
