@@ -273,7 +273,7 @@ class GetRedditorsFromSub:
                             if comment.author is not None:
                                 comment_author = comment.author.name
                                 if comment_author not in redditors and comment_author != '[deleted]' \
-                                        and 'bot' not in comment_author.lower() and comment_author not in bots:
+                                        and comment_author not in bots:
                                     redditors.append(comment_author)
                                     with open(self.all_time_list, 'a+') as f:
                                         line = comment_author + '\n'
@@ -337,8 +337,7 @@ class GetRedditorsFromSub:
                 latest_post = submission.created_utc
                 if submission.author is not None:
                     author = submission.author.name
-                    if author not in redditors and author != '[deleted]' and 'bot' not in author.lower() \
-                            and author not in bots:
+                    if author not in redditors and author != '[deleted]' and author not in bots:
                         redditors.append(author)
                         with open(self.all_time_list, 'a+') as f:
                             line = author + '\n'
@@ -375,7 +374,7 @@ class GetRedditorsFromSub:
                             if comment.author is not None:
                                 comment_author = comment.author.name
                                 if comment_author not in redditors and comment_author != '[deleted]' \
-                                        and 'bot' not in comment_author.lower() and comment_author not in bots:
+                                        and comment_author not in bots:
                                     redditors.append(comment_author)
                                     with open(self.all_time_list, 'a+') as f:
                                         line = comment_author + '\n'
@@ -457,8 +456,7 @@ class GetRedditorsFromSub:
                     for object in objects:
                         author = object['author']
                         # write post author to file
-                        if author not in redditors and author != '[deleted]' and 'bot' not in author.lower()\
-                                and author not in bots:
+                        if author not in redditors and author != '[deleted]' and author not in bots:
                             redditors.append(author)
                             with open(self.all_time_list, 'a+') as f:
                                 line = author + '\n'
@@ -502,8 +500,8 @@ class GetRedditorsFromSub:
                                     # loop through comments
                                     for comment in comments:
                                         comment_author = comment['author']
-                                        if comment_author not in redditors and comment_author != '[deleted]' and 'bot' \
-                                                not in comment_author.lower() and comment_author not in bots:
+                                        if comment_author not in redditors and comment_author != '[deleted]' \
+                                                and comment_author not in bots:
                                             redditors.append(comment_author)
                                             with open(self.all_time_list, 'a+') as f:
                                                 line = comment_author + '\n'
