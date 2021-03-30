@@ -17,7 +17,7 @@ from reportGeneration.pdf_generator import *
 
 
 def build_initial_database(subreddit_of_U, last_checked_f, path_to_user_database, all_time_list,
-                           subreddit_creation_timestamp, bots_file, university=True, college=True):
+                           subreddit_creation_timestamp, bots_file, already_exists, university=True, college=True):
     """
     Function builds the founding database of redditors for a specific school
     :param subreddit_of_U: subreddit of university we are monitoring
@@ -26,20 +26,22 @@ def build_initial_database(subreddit_of_U, last_checked_f, path_to_user_database
     :param all_time_list: path to list with all posters and commenters on the school's subreddit
     :param subreddit_creation_timestamp: when the subreddit was created
     :param bots_file: file containing known bots on reddit
+    :param already_exists: does user database already exist?
     :param university: (True if this is a university) vice versa
     :param college: (True if this is a college) vice versa
     """
 
     conn = create_connection(path_to_user_database)
     with conn:
-        create_db(conn)
+        if not already_exists:
+            create_db(conn)
     redditors = GetRedditorsFromSub(subreddit_of_U, subreddit_creation_timestamp, path_to_user_database
                                     , all_time_list)
     last_checked = redditors.extract_uni_redditors(university, college, bots_file)
     if os.path.isfile(last_checked_f):
         os.remove(last_checked_f)
     with open(last_checked_f, 'a+') as f1:
-        f1.write(last_checked)
+        f1.write(str(last_checked))
 
 
 def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_database, all_time_list,
@@ -337,13 +339,13 @@ def monitor_school(school, university=True, college=True):
 
     if not os.path.isfile(user_database):
         start = get_subreddit_creation_date(school)
-        build_initial_database(school, last_checked_path, user_database, all_time_list, start, bots_file, university
-                               , college)
+        build_initial_database(school, last_checked_path, user_database, all_time_list, start, bots_file, False,
+                               university, college)
     else:
         with open(last_checked_path) as f1:
-            last_checked = f1.readlines()
+            last_checked = int(f1.readlines()[0])
             build_initial_database(school, last_checked_path, user_database, all_time_list, last_checked, bots_file
-                                   , university, college)
+                                   , True, university, college)
 
     p1 = Process(target=build_redditor_database(school, user_database, post_id_database, all_time_list, bots_file
                                                 , university, college))
