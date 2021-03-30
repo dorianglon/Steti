@@ -2,6 +2,9 @@ from selenium import webdriver
 
 
 def get_bots(driver, url, destination):
+    """
+    Function uses selenium to scrape bots' usernames from B0tRank
+    """
 
     not_bots = ['Rank', 'Bot Name', 'Score', 'Good Bot Votes', 'Bad Bot Votes', 'Comment Karma', 'Link Karma']
     page = 1

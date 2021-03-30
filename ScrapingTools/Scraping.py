@@ -181,19 +181,21 @@ class GetRedditorsFromSub:
     CLASS USED TO COMPILE A DATABASE OF REDDITORS, OR INTERACT WITH IT, FROM A SPECIFIC UNIVERSITY/COLLEGE/CITY
     """
 
-    def __init__(self, subreddit, search_after, user_database, all_time_list):
+    def __init__(self, subreddit, search_after, user_database, all_time_list, bots_file):
         self.subreddit = subreddit
         self.search_after = search_after
         self.user_database = user_database
         self.all_time_list = all_time_list
+        self.bots_file = bots_file
         self.pushshift_url = 'http://api.pushshift.io/reddit'
 
-    def fetch_posts(self, sort_type, sort, size):
+    def fetch_posts(self, sort_type, sort, size, last_checked_f):
         """
         Function grabs submissions from a subreddit
         :param sort_type: Default sorts by date
         :param sort: Default is asc
         :param size: maximum amount of posts requests returns. Default is 1000(max)
+        :param last_checked_f:
         :return: list of posts from subreddit
         """
 
@@ -205,6 +207,14 @@ class GetRedditorsFromSub:
             'subreddit': self.subreddit,
             'after': self.search_after
         }
+
+        print(params)
+
+        if os.path.isfile(last_checked_f):
+            os.remove(last_checked_f)
+
+        with open(last_checked_f, 'a+') as f1:
+            f1.write(str(self.search_after))
 
         # perform an API request
         r = requests.get(self.pushshift_url + '/submission/search/', params=params, timeout=30)
@@ -232,19 +242,18 @@ class GetRedditorsFromSub:
             data = response['data']
             return data
 
-    def extract_redditors_from_post_ids(self, reddit, post_ids, post_conn, bots_file, university, college):
+    def extract_redditors_from_post_ids(self, reddit, post_ids, post_conn, university, college):
         """
         Function extracts new authors from new comments in a post if present.
         :param reddit: praw instance to work with
         :param post_ids: list of post ids
         :param post_conn: connection to database with post ids
-        :param bots_file: reddit bots
         :param university: (True if university)
         :param college: (True if college)
         """
 
         bots = []
-        with open(bots_file, 'r') as f1:
+        with open(self.bots_file, 'r') as f1:
             bots_ = f1.readlines()
             for bot in bots_:
                 new_bot = bot.replace('\n', '')
@@ -305,18 +314,17 @@ class GetRedditorsFromSub:
                     except Exception:
                         pass
 
-    def extract_uni_redditors_live_(self, reddit, post_id_db_file, bots_file, university, college):
+    def extract_uni_redditors_live_(self, reddit, post_id_db_file, university, college):
         """
         Function looks for new posts in the school's subreddit and adds new authors to database
         :param reddit: praw instance that we are using
         :param post_id_db_file: path to post_id database
-        :param bots_file: reddit bots
         :param university: (True if university)
         :param college: (True if college)
         """
 
         bots = []
-        with open(bots_file, 'r') as f1:
+        with open(self.bots_file, 'r') as f1:
             bots_ = f1.readlines()
             for bot in bots_:
                 new_bot = bot.replace('\n', '')
@@ -409,21 +417,21 @@ class GetRedditorsFromSub:
                 break
         return latest_post
 
-    def extract_uni_redditors(self, university, college, bots_file, sort_type='created_utc',
+    def extract_uni_redditors(self, last_checked_f, university, college, sort_type='created_utc',
                               sort='asc', size=100):
         """
         Function grabs redditors from University subreddit that it believes attend that University. This function
         is not for live use, it is to compile a list before live use.
+        :param last_checked_f: path where we store timestamp of last time we scraped into past
         :param university: boolean value to denote if we are dealing with a university sub
         :param college: boolean value to denote if we are dealing with a community college sub
-        :param bots_file: file containing reddit bots
         :param sort_type: Default sorts by date
         :param sort: Default is asc
         :param size: maximum amount of posts requests returns. Default is 100
         """
 
         bots = []
-        with open(bots_file, 'r') as f1:
+        with open(self.bots_file, 'r') as f1:
             bots_ = f1.readlines()
             for bot in bots_:
                 new_bot = bot.replace('\n', '')
@@ -446,7 +454,7 @@ class GetRedditorsFromSub:
 
             # loop as long as request is returning nothing
             while objects_not_full:
-                objects = self.fetch_posts(sort_type=sort_type, sort=sort, size=size)
+                objects = self.fetch_posts(sort_type=sort_type, sort=sort, size=size, last_checked_f=last_checked_f)
 
                 # proceed if we have posts
                 if objects is not None:
@@ -498,7 +506,7 @@ class GetRedditorsFromSub:
                                     comments_not_full = False
 
                                     # loop through comments
-                                    for comment in comments:
+                                    for comment in tqdm(comments):
                                         comment_author = comment['author']
                                         if comment_author not in redditors and comment_author != '[deleted]' \
                                                 and comment_author not in bots:
@@ -533,7 +541,6 @@ class GetRedditorsFromSub:
                     # exit if nothing happened
                     if nothing_processed: return
                     self.search_after -= 1
-            return self.search_after
 
 
 class LiveRedditorAnalysisPraw:

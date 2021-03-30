@@ -73,3 +73,48 @@ def create_db(conn):
     """
 
     conn.execute('CREATE TABLE userUpdated (username TEXT PRIMARY KEY, updated INTEGER);')
+
+
+if __name__ == '__main__':
+    cornell_db_path = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'
+    cornell_path_all_time = '/Users/dorianglon/Desktop/BPG_limited/Cornell_all_time_redditors.txt'
+    deanza_db_path = '/Users/dorianglon/Desktop/BPG_limited/DeAnza_users.db'
+    deanza_path_all_time = '/Users/dorianglon/Desktop/BPG_limited/DeAnza_all_time_redditors.txt'
+    ucsc_db_path = '/Users/dorianglon/Desktop/BPG_limited/UCSC_users.db'
+    ucsc_all_time = '/Users/dorianglon/Desktop/BPG_limited/UCSC_all_time_redditors.txt'
+
+    cornell_conn = create_connection(cornell_db_path)
+    with cornell_conn:
+        out = 'Cornell active students : ' + str(len(list_users(cornell_conn)))
+        print(out)
+    with open(cornell_path_all_time, 'r') as f:
+        lines = f.readlines()
+        i = 0
+        for line in lines:
+            i += 1
+        out = 'Cornell all time : ' + str(i)
+        print(out)
+
+    de_anza_conn = create_connection(deanza_db_path)
+    with de_anza_conn:
+        out = '\nDe Anza active students : ' + str(len(list_users(de_anza_conn)))
+        print(out)
+    with open(deanza_path_all_time, 'r') as f:
+        lines = f.readlines()
+        i = 0
+        for line in lines:
+            i += 1
+        out = 'De Anza all time : ' + str(i)
+        print(out)
+
+    ucsc_conn = create_connection(ucsc_db_path)
+    with ucsc_conn:
+        out = '\nUCSC active students : ' + str(len(list_users(ucsc_conn)))
+        print(out)
+    with open(ucsc_all_time, 'r') as f:
+        lines = f.readlines()
+        i = 0
+        for line in lines:
+            i += 1
+        out = 'UCSC all time : ' + str(i)
+        print(out)

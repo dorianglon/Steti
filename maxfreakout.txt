@@ -1,0 +1,486 @@
+text	subreddit	date
+no text for post found	AskReddit	1293772181
+no text for post found	AskReddit	1294682186
+no text for post found	AskReddit	1296021137
+no text for post found	askscience	1300928085
+no text for post found	AskReddit	1300942217
+no text for post found	AskReddit	1301981817
+no text for post found	AskReddit	1307741477
+no text for post found	AskReddit	1307762172
+no text for post found	AskReddit	1310187776
+no text for post found	AskReddit	1310326965
+no text for post found	reddit.com	1312570674
+no text for post found	AskReddit	1312592374
+no text for post found	AskReddit	1313213301
+no text for post found	AskReddit	1313252935
+no text for post found	AskReddit	1313260489
+no text for post found	techsupport	1313264256
+no text for post found	AskReddit	1313447996
+no text for post found	todayilearned	1313461116
+no text for post found	AskReddit	1313644643
+no text for post found	AskReddit	1315078143
+no text for post found	askscience	1315628426
+no text for post found	UCSC	1316388893
+no text for post found	Minecraft	1317536763
+no text for post found	UCSC	1319819785
+no text for post found	learnprogramming	1320864216
+no text for post found	worldnews	1323243372
+no text for post found	AskReddit	1325547188
+no text for post found	UCSC	1326569742
+no text for post found	UCSC	1330627118
+no text for post found	musictheory	1332034232
+no text for post found	UCSC	1336243187
+no text for post found	AskReddit	1342478694
+no text for post found	musictheory	1342574797
+no text for post found	AskReddit	1343776954
+no text for post found	AskReddit	1343789077
+no text for post found	santacruz	1344704326
+no text for post found	TEFL	1345270202
+Why did George Lucas sell his life's work away to Disney? WTF?	AskReddit	1351664633
+no text for post found	UCSC	1356735092
+Which Guitar Looper Allows for *'Unlayering'* Back to the Origin Loop? Most, like the 2005 JamMan, only allow for an undo of the last layer. I want to be able to walk back and undo everything one layer at a time. Nobody talks about this in all the looper discussions I've researched? Thanks!	Guitar	1357438672
+Does the Ableton Live Looper allow 'unlayering' of tracks. I'm playing guitar in and want to walk back out undoing all the recored loops back to the original , starting loop. Is that possible with Ableton?	ableton	1357452976
+Could I make a Class(s) that would eliminate the need for 'System.out' of 'print/println' statements? Wouldn't that be possible, a new data type/ importable package?	javahelp	1358360300
+no text for post found	AskReddit	1358642649
+Why doesn't CMPE teach or even address Quantum Computing? (call out to 'slugstructor') Last quarter Professor Guthaus claimed quantum computers were only up to 7 qbits which is way off the mark (I didn't want to interrupt his lecture and correct without facts in hand). Is it departmental territory stuff, like Physics gets the quantum stuff, or is it lack of forward thinking vision. It seems like most of 'us' BSOE types will be dealing with quantum in the next 20- years no problem? What gives? http://www.technologyreview.com/view/426586/worlds-largest-quantum-computation-uses-84-qubits/	UCSC	1359308259
+Question about game/turn pacing:Why does it take 300 years to build a libray? Civ V So I'm holding my own on Prince level now, but I'm thinking I need to increase the length of game setting. it seems 1200ad on goes really quick, too fast, I can't get buildings built. It doesn't seem realistic "oh it's 1920 and I just built the granary started five centuries ago"	civ	1365016214
+Applying to Grad School: How many (max) schools should I send apps to, and how much of a stress would a high number put on my recommendation writers? I'm considering about 9 different programs. I assume my three professors don't need to write an individual letter for each one, although they might have to send them personally or at least email them. See my concern is overtaxing my letter writers?	AskAcademia	1367083161
+no text for post found	AskReddit	1374864317
+What's the difference/similiarty between Decolonization and Post-Colonialism? thanks!	AskSocialScience	1375489068
+Citadel built two hexes from City/State, is affording NO protection for my units? Units I put in the Citadel are still taking damage from the city and units within, just as they we're out in the open. What gives?	civ	1380224221
+no text for post found	AskReddit	1383410824
+How can I find out what my 'class ranking' is? not on unofficial transcript, applying for a scholarship 	UCSC	1385251947
+no text for post found	AskReddit	1389308672
+Google won't index my page, whereas Bing has it on their first page. verified with both engines Sorry if this is the wrong subreddit. Google has verified my site, fetched and approved a site map XML but even if I enter the full .com address, nothing. What gives?	SEO	1392602583
+Using a meta tag plugin, but code not appearing in header editing. Is this correct? So I'm using "Add Meta Tags" plugin for my keywords and header bio but when I check in the html editor nothing appears. Does the plugin put the code in on its own when called? Just worried because my ranking index is 0	Wordpress	1392835182
+What's the best Forum Discussion/Bulletin Board WP plugin? Need a Forum page, Bubea disabled my regular comments and was very obtrusive, another was micro-tiny font--any idea? Thanks!	Wordpress	1392918665
+Am I right that academia involves more ass-licking than hard-core porn? maybe I'm real slow for just realizing this. I mean really, it's kinda weird!	AskAcademia	1393042697
+What is the best app or way to record Iphone calls? I need to do an interview	iphone	1393544441
+I'm using the SlimStat WP plugin but HostGator is providing drastically different numbers? Hostgator is reporting drastically more hits, pageviews etc of all types and IP sources than the scant view SlimStat reports. I'm tending to believe SlimStat as they have no need to inflate my  . . .stats?	Wordpress	1393645096
+no text for post found	AskReddit	1395020135
+What's up with the 'tar' on beaches? I'm heading your way for Fall and my research is indicating there's a problem with oil, 'tar-balls' on your beaches? Is this all beaches, are there certain beaches to avoid? How do you deal with it? 	UCSantaBarbara	1395856035
+no text for post found	AskReddit	1395977986
+What is the scope of Ethnobotany? Would not Forestry be Ethnobotany? This sub looks a little quiet, but I need some answers for my research proposal, thanks!	Ethnobotany	1396369885
+no text for post found	AskReddit	1396831272
+What's up with Port Hueneme? Is it doable? Appears closer and cheaper than Lompoc? Any experiences with the long distance commute, any other  non Isle Vista recommendations for two bedroom condos?	UCSantaBarbara	1397866583
+no text for post found	AskHistorians	1398302161
+no text for post found	AskReddit	1398665259
+no text for post found	AskReddit	1398877498
+Guitarists: What scale or mode does Jerry use for Victim or the Crime? Got the chords I think. Is it Altered, Diminished, Half-Whole--something like that? Thanks!	grateful_dead	1405726178
+I've recorded 24 bit on my Zoom field recorder and want to remain 24 bit upon final mixdown, but Garageband won't allow. Any software options, like freeware options? Or do I have to buy Logic. I refuse to go lossy, Bandcamp and Soundcloud allow for 24 so why can't I stay 24 bit. I do hear a *big* difference between 24 and 16.	recording	1411151847
+What my cheapest option for securing Microsoft Office on my PC Laptop? just that lame four year subscription through the bookstore for 79? I just only really need Word.	UCSantaBarbara	1414888104
+[Repost] "Fare Thee Well"-WTF? Isn't it Fare *You* Fucking Well, there is no "Fare Thee Well" in *Brokedown Palace*	gratefuldead	1421518028
+I'm having trouble with Sequencing (re melodic 'elaboration')? The idea of taking a phrase or motif and starting on another scale degree and emulating that phrase? But then you either leave the tonic scale or you stay within in it, but (and this is my big point of confusion) if you stay diatonic won't your phrase be forced to change intervallic relationships and therefore become unrecognizable?	musictheory	1422548417
+[SERIOUS] Can Somebody Please Post a Link to the Archive that Demonstrates the GD Actually Singing the Words, "Fare Thee Well" It's not *Brokedown Palace* and I've gone back and listened to a few of those just to double check that it is indeed "Fare You Well" for that tune, so the best bet is right before the jam in *Cassidy*, although the official lyric there is "faring thee well now"? So I dunno what's going on here?	gratefuldead	1423021252
+How are the terms "core" and "periphery" not simply coded substitutes for the old, discredited "civilized" and "primitive"? Seems too simplified and they impose the same Western-Centric BS hierarchy?	AskAnthropology	1423848552
+PrePaid IPhone 5s and below have disappeared from Virgin Mobile and other carriers? What gives? As of Christmas , you could get a 4s or either of the 5 series iPhones at Virgin, now not offered, not offered anywhere else? Any tips, ideas for a prepaid IPhone option? [Edit] Thanks for the responses. Maybe I should rephrase my situation into a question: ***What is the best way to enact a prepaid iPhone deal, where to get the phone, who should be the carrier that allows an unlocked phone?***	NoContract	1424078485
+[Serious] Why was zero fucks given about the Dead '09 tour and this Chicago deal is like the biggest thing ever post Jerry? What's the difference, other than younger fans who couldn't attend 6 or 11 years ago, what makes this event worthy of the hysteria?	gratefuldead	1425097273
+no text for post found	UCSantaBarbara	1426790550
+"Current information suggests that the slick will be hitting Goleta's beaches later today." https://www.facebook.com/CityofGoleta	UCSantaBarbara	1432254870
+no text for post found	UCSantaBarbara	1433875047
+"Tailgate"? This is not a fucking football a game. Somebody over 20 help me out here. There is no 'Tailgating' at a GD show, or am I in an alternate universe? Also there are no 'Bootlegs' while we are at it. No 'Tailgating', not many pickups really. Bootlegs, nope, the Dead gave permission for thier shows to be recorded, no bootlegs. OK? Carry on!	gratefuldead	1435426935
+Is Baudrillard's 'Sign Value' really unique from Marx's 'Use Value'? Seems Marx set up a pretty wide scope for what could be considered 'Use Value' and I'm not sure if Sign Value (essentially Value based on symbolic reasons, specifically Prestige) doesn't just fall under 'Use Value'?     https://en.wikipedia.org/wiki/Sign_value	CriticalTheory	1436485030
+no text for post found	UCSantaBarbara	1440690751
+MacBook Pro OS 10.10.5 - I want to delete, disable iTunes? app-cleaner? I can't disable iTunes from responding to unwanted bluetooth signals, so I use VLC anyway, How do I say goodbye to iTunes?	applehelp	1444445684
+Ipod Classic - Transfer Voice Memos to Flash Drive Directly - Ideas? Syncing not an option, something wrong, plus want out of IOS/OS and on Flash/USB StickIExplorer did like 7 files and now wants money - need open source solution	applehelp	1446522272
+no text for post found	listentoconcerts	1473633813
+Looking for Old &amp; In The Way 5/18/73? This allegedly has John Hartford on fiddle? This date is not in the JGB DropBox?http://jerrygarcia.com/show/1973-05-18-homers-warehouse-palo-alto-ca/	jgb	1491880881
+no text for post found	woahdude	1502403051
+Looking for a Looper System that allows erasing of *ALL* overdubs, not just the most recent? I want to be able to walk back all the way to the original loop - so far I am lucky if a pedal even has erase. I guess this is getting into multiple loops, but it seems like a simple request? And if I  have to have separate loops, am I not better off stringing together a few $60 used Dittos than getting a giant Boss or Boomerang? Thanks!	LoopArtists	1509566958
+!)How do you satisfy the "Large Ensemble" requirements?- are you gonna get stuck in choir?2) I play guitar and read music but don't/have not played classical; yet I want a music degree-can I be a rank beginner or how much pre-study would I need before I could even audition?	IAmA	1283883229
+ Is he renting the place from someone-else or is he the landlord- did he leave you with all the rent?Did he take anything with him?Go ahead and file a report- cover yer ass	AskReddit	1284055110
+my pants	AskReddit	1284139206
+I can't seem to find the videos for this MIT course--any ideas?	learnprogramming	1284146128
+Do you use Konnokal? What are the differences between Carnatic and North Indian Classical?	IAmA	1284150886
+Being a normal person	AskReddit	1284342642
+Astrology that's cool, is Mesmerizing one of the hard sciences as well?--I think I've got the knack for that one!	AskReddit	1284343283
+there's still a shit pile of dwarves- balin at moria was just an expedition- 	AskReddit	1284396622
+racism	AskReddit	1284421199
+you might wanna look for Neil's newest release as it is him electric and solo ala Deadmanhttp://www.billboard.com/news/neil-young-goes-electric-for-le-noise-1004114394.story?tag=hpfeed#/news/neil-young-goes-electric-for-le-noise-1004114394.story?tag=hpfeed	listentothis	1284488900
+so no hyperactivity- then aren't you officially Adult ADD not ADHD? and good for you for getting yourself squared-away!	IAmA	1284697181
+so how much do you make per month USD? do you think you could have done as well working independent? how much do you think your two year degree helps? what if someone wants to learn some music you are not at all familiar with?	IAmA	1284697537
+the way I understand it For Blood Right of Return(jure sanguinis), it's as far back as paternal or maternal grandfather being Italian- in my case maternal grandfather-but in my case I have to prove my maternal greatgrandfather was not naturalized in the US before my mom's dad was born(which we believe to be the case)- then birth certs(certified) for everyone-including both maternal great grandparents- then submit to the consulate in full Italian, then wait up to two years for decision- So I'm looking at a national records search for greatgrandfather's naturalization papers, then a trip to who knows where for greatgrandparent's birth certs) . . .I 'd gladly give someone a grand to take care of this	AskReddit	1284952384
+porting over my commentthe way I understand it For Blood Right of Return(jure sanguinis), it's as far back as paternal or maternal grandfather being Italian- in my case maternal grandfather-but in my case I have to prove my maternal greatgrandfather was not naturalized in the US before my mom's dad was born(which we believe to be the case)- then birth certs(certified) for everyone-including both maternal great grandparents- then submit to the consulate in full Italian, then wait up to two years for decision- So I'm looking at a national records search for greatgrandfather's naturalization papers, then a trip to who knows where for greatgrandparent's birth certs) . . .I 'd gladly give someone a grand to take care of this	IWantOut	1284953679
+reporting for duty:my great-uncle=navigator, still alive in San Francisco	pics	1284955832
+yes, that's where all mine are	AskReddit	1285231261
+" When I went to college I had to have room-mates and eat pizza"- The Horror!	AskReddit	1285266806
+the housing sales tax is flat for everybody, seems pretty reasonable	AskReddit	1285267072
+flattery will get you everything, but really why are so mad at your brother-in-law?	AskReddit	1285267253
+I'm still just seeing it as being issues between you and your bro, not you and society. Maybe you see your brother enjoying his life more than you are enjoying yours? "knocking up a few different women"- I dunno, anyway you are taxed too much, I believe in a flat tax- my buddy's in Sweden- flat tax 25% on every deal, income, sales etc. .,-but that's way better than your 40%- also look at military spending if you really wanna get pissed about where your tax monies go	AskReddit	1285268432
+Yes, the old "show towel" OCD situation--My sister-in-law and her boyfriend broke-up over him using the precious "show towel"- psycho!	AskReddit	1285348567
+"just stick it out" ?, "what is expected from you"? WTF?- bunch of horseshit!- you're a human being, take some bereavement time which you deserve and should be allowed	AskReddit	1285348936
+see J.R.R. Tolkein	AskReddit	1285440274
+"Go pill" Jackassery, now they're off to strafe climbers on Half-Dome	videos	1285465303
+I have 15 Comment Karmas, am I a Digg Power-User yet?	reddit.com	1285538098
+Some novels-- cloud atlas vineland sometimes a great notion a fool's progress stone junction desolation angels	AskReddit	1285548636
+yes lawyer now- who has the will?, who is the executor?- the step mom will fuck you over, other people will come out of nowhere to make claims and try to fuck you over, how can you have the house when she's still in it? I don't think it works that way-- someone has to be one the deed? it will get real ugly- good luck!	AskReddit	1285696067
+ the hazardous waste section of the dump should take it	AskReddit	1285696235
+The Amish 'believe' in science, they just don't want to be enslaved by it.	atheism	1285731613
+laptop, netbooks are silly	AskReddit	1285743948
+Lederhosen please	AskReddit	1285799348
+Why is the U.S. university music system so locked onto Western Art music ( classical )? It's as if Med schools still taught leeching and Physics departments never taught passed Newton. O.K. some schools do Jazz ( not mine ) but even that's begrudgingly. Uni's in Europe and elsewhere offer Hindustani Performance B.A.'s (London) and Rock/ Pop or traditional folk ( see the Royal Academy of Music Stockholm which is way into their indigenous Northern European music ). There is a huge wealth of traditional folk in the US that could be a track at Uni but is ignored due to the dominance of the classical system that is ingrained from grade-school up.ok rant aside I want a music comp BA - I read music, write my own instrumentals, understand theory ( have taken Theory-I, and am in music history ), I understand my piano requirements, but I never was in school band, and I don't play a classical instrument ( just guitar(non-classical/non-jazz) and dobro) so I can't figure how to satisfy ensemble requirements? any ideas ? thanks	IAmA	1285811978
+What is their agenda, I checked wikipedia and it said something about gay-bashing but what do random soldiers have to do with anything?	IAmA	1285866874
+Looks like the Kid's calling it quits for the Digg	technology	1285867192
+You don't!	politics	1285876835
+Don't forget that rich kids are then tracked (via the system called Gate-keeping) into Honors programs, where they receive even more learning opportunities as well as inflated GPA's (beyond 4.0) that further widens the gap between rich and poor kids come time for college.	AskReddit	1285881409
+how did that happen?	self	1285891069
+It's not like you're signing up for the Military, but I think they want you to do phone sales or something like that the whole "customer satisfaction"- how is that determined? by cold calling customers and trying to sell them services?	AskReddit	1285909681
+because you paid it off	AskReddit	1285910195
+lutsup, your argument here is Straw Man	AskReddit	1285910938
+the question is worth of 6 years of PHD thesis work	AskReddit	1285910993
+Dude you're so grumpy and that's why you get downvotedYou're arguing that a sheriff should really be called a tax collector but that would be ridiculous so therefore a Doctor of Philosophy should not be called a Doctor of Philosophy because then a sheriff would have to be called a tax collector and the world would fall into chaos- there's a fallacy- you've distorted the OP's position to include the meaning of sheriff--that's not part of the argument--Straw Man fallacy	AskReddit	1285912544
+sigh . . .OP- PhD is still a shortened version of "Doctor of Philosophy"YOU- Yes, BUT "if that were to decide such things" read as- if that were true, THEN a sheriff would be a (not called-sorry) tax collectorSINCE sheriffs are NOT tax collectors ( here's were you imply called or the historical use of the word sheriff ) anymore NEITHER ARE PhD's Doctors of PhilosophyStraw Man	AskReddit	1285915111
+the coke head speaks the truth	AskReddit	1285965860
+Log out when you leave Facekrook or you will be tracked	AskReddit	1285978841
+wouldn't wanna rush into things!	reddit.com	1285990841
+in 1995	AskReddit	1285990937
+Because the Democratic party isn't  "liberal", let alone progressive	AskReddit	1286039582
+I thought Italy had military obligations until age 44?	IAmA	1286040016
+not answered the door, saved both of yours' time	AskReddit	1286060960
+Cedar is a much better boy's name	AskReddit	1286072520
+My Mom gave me a bill for being her son after I inherited a lil' bit of money from my grandfather	AskReddit	1286072652
+#1) Realtors are crooks- they are not working for you 2) haggle down ( your realtor will object ) we are still in the middle of the biggest housing bust in US history, no hurry 3) Understand your mortgage like these other posters say	AskReddit	1286073014
+He's drunk? He did blowup at a radio interviewer when called out on this very issue	AskReddit	1286073451
+fruits, nuts, dried fish	AskReddit	1286081773
+well that clears everything up!	math	1286121309
+neither both are plausible 	AskReddit	1286121674
+um, no	AskReddit	1286121743
+ability to get along with other people, something original to say or contribute	AskReddit	1286170234
+are you stopping with the A.A or going on? Programming and Systems is set up for being an Admin. I think that's only one year of Calculus on the quarter system? I'm gonna hafta say from what you're describing you wanna do, go with CS	AskReddit	1286171095
+I don't really agree with the premise	AskReddit	1286203660
+Lutsup's most used reply="I never said that!"	science	1286582944
+but I can still camp in the parking lot, right?	Economics	1286647196
+that's mislabeled and really boring	videos	1286648015
+in how many different streets?	IAmA	1286649623
+FYI--never follow anything with a "cheeky wink"	AskReddit	1286661579
+logged into Reddit	AskReddit	1286661642
+Who's saying "we" haven't?	AskReddit	1286744398
+"If yer gonna shoot drugs, wear a condom!"	reddit.com	1286760607
+hey, as long as she's a 'good cook' everything will work out fine	AskReddit	1286777858
+books? that's absurd-- this is a criminal assault and apparently, stalking/ imprisonment-- please call the police and file a full report	self	1286816025
+I'm not really clear on what or who are 'butthurt hippies' and how this demographic has entered into the debate. I shy away from Emergen-C because of the Aspartic-acid (Aspartame).	AskReddit	1286819443
+'One of the best teams'- why aren't you guys Number#1? Second place is the first Loser!	IAmA	1286819728
+the Galaxy!	pics	1286848775
+a graying, receding hairline	AskReddit	1286947356
+soy	AskReddit	1286947447
+I dunno, how much slo-mo Kung-Fu does lil' Leo do in Inception?	AskReddit	1286992042
+Sorry for your loss, remember DOG is GOD backwards!	AskReddit	1286992180
+Who says 'we' haven't already?	scifi	1287006367
+Well it depends on your definition of 'alien life' we have this http://www.telegraph.co.uk/science/space/7805069/Titan-Nasa-scientists-discover-evidence-that-alien-life-exists-on-Saturns-moon.htmlbut I don't think you would 'spin on a dime' even if presented with the proverbial 'green little alien', it's like the people in Plato's Cave Allegory--"don't make me question my reality cuz I've got that sewn up tight, thanks!"	scifi	1287014612
+um, New York?http://www.nydailynews.com/ny_local/2010/10/13/2010-10-13_mystery_shiny_objects_floating_over_manhattan_spark_ufo_frenzy.html	WTF	1287022697
+Easter Sissy	AskReddit	1287028767
+This is a great thread. This represents the best and worst about computing--best in that there are so many solutions to one problem--worst in that why can't we just type ( or speak ) in a command line and tell the computer to simply "convert this text to desktop image" being as its 2010 and all	AskReddit	1287073769
+well he should be fired because of his hair	WTF	1287083715
+you can smoke 30w motor oil: the question is-- do you want to?	trees	1287172512
+I refuse to tuck in my shirt	AskReddit	1287506840
+collusion	reddit.com	1287602281
+well I hope she turned whatever that is off during the screening	reddit.com	1287624330
+If yer gonna shoot drugs, wear a condom	AskReddit	1287636019
+Wow Mozilla! Now he can pay for a whole week of college!	reddit.com	1287851446
+Who, Mo Rocca?http://www.nova.edu/life101/pastguests/mo_rocca.html	pics	1288204547
+They're transitioning from the finished product facade of the main hall/entrance into the depths of the factory proper--where ugly stuff is gonna happen--isn't there some back/foreshadowing in the freak out montage as well?	AskReddit	1288287337
+Andy Inatko?http://ihnatko.com/about/	pics	1288288524
+"Lanterned Jawed Freak"	reddit.com	1288310164
+That they were my friends.	AskReddit	1288329162
+Which vessel number?	reddit.com	1288383283
+pretty close to elections, isn't it?	reddit.com	1288406344
+just need to smooth out the herky-jerk motion and we have a winner	pics	1288417631
+or should we say Mega-Closet?	reddit.com	1288445515
+because reddit is primarily in the camp of college is specific job training-- ie.. sciences--B.S degrees have the seemingly highest guarantee of a specific job right out of the gates (comp sci, engineering etc.)--or so it appears on the surface, then someone (shall we say a Rogue ) like you comes along and suggests "no wait, B.A.'s are just as good, just as versatile and maybe better than the B.S."-- you're bucking the trend and down-voted	AskReddit	1288498815
+If yer gonna shoot drugs, wear a condom.	reddit.com	1288579296
+Dude, I gotta hook me up some Butane!	reddit.com	1288635926
+Trailer Park Engineering 	WTF	1288730063
+"If yer gonna shoot drugs, wear a condom!"	AskReddit	1288912652
+Is the OP British? regarding "took up"-- "took it up"	AskReddit	1289169912
+I don't do Ads	videos	1289241705
+call the irs and set up a payment plan	AskReddit	1289472634
+a pulse	AskReddit	1289472683
+Did you get antibiotics as well? also try throwing in some ibuprofen in the mix as jellicle suggested.	AskReddit	1289512308
+"If yer gonna shoot drugs, wear a condom."	AskReddit	1289953519
+Unemployed, then get on medicaide through your county or look for low-income medical clinics in your area and pay on a sliding scale.	AskReddit	1289954175
+If yer gonna shoot drugs, wear a condom!	AskReddit	1290143480
+If yer gonna shoot drugs, wear a condom!	AskReddit	1290143528
+Please elaborate more on your Fatso And Shorty Pops escapade.	AskReddit	1290210849
+As a Busker, and I've discussed this video with others, Joshua Bell was in a really bad spot for busking. The people were flying through the terminal where he was playing, the bulk of the crowds were coming in from side doors and had like two seconds to notice him. He needed to re-situate himself so there could an approach time during which people could hear and consider his playing-Busking 101- He needed to move!	reddit.com	1290275021
+upvoted for "space romp"	AskReddit	1290374340
+http://www.amazon.com/Aereo-Plain-John-Hartford/dp/B0000002O7%3FSubscriptionId%3D19BAZMZQFZJ6G2QYGCG2%26tag%3Dsquid963792-20%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3DB0000002O7	listentothis	1290410932
+You'd think we'd have a more orderly way of deploying aircraft other than "scrambling"	news	1290535702
+Engineers?- The Oompaloompas of Science.	worldnews	1290662290
+go back to bed	reddit.com	1290786906
+Oh, I thought that was just my parents.	AskReddit	1290793769
+After many tries calling in at the end of the show, I passed the old phone in quiz during the Regis Reign, and then got kicked ( hung up on ) for not entering my phone number correctly- "uh 1 then area code? NO! uh no area code? NO!" --I still don't know what they wanted. I think they dropped that format and went to choosing contestants on personality traits--ie perky	IAmA	1290877650
+What are  the "drill holes" he wants to fill drilled for?	videos	1290965253
+"Out of stock"	scifi	1290982853
+"If yer gonna shoot drugs, wear a condom!"	AskReddit	1291003899
+When I realized this is at least the third time I've come across this question on Reddit in as many months	AskReddit	1291004020
+I really enjoyed the cool Off-Grid country house they moved into. But what's up with mom?--best guess in Nervous Breakdown.	trees	1291134670
+Fake or not--the TSA needs to be prepared to pay if they're gonna play!	Libertarian	1291134860
+I thought he already did?	AskReddit	1291264879
+Can you break that down again?--math is not one of my strengths	todayilearned	1291423375
+Most colleges have built-in protections for curriculum changes, you should be exempt and just have the follow the requirements that were in place when you declared your major. See a counselor asap, and don't stop there if there's any trouble. Navigating a bureaucracy is one of the main skills needed to finish college.	self	1291427534
+"Son, if yer gonna shoot drugs, wear a condom."	AskReddit	1291578137
+"If yer gonna shoot drugs, wear a condom!"	AskReddit	1291595496
+but will still only get 20 mpg	todayilearned	1291598806
+You have to stand up to bullies, if you push back it's not fun anymore for them. This jackass get tripping me in P.E., and generally was after me. So one day in the hall I saw him coming and stood in front of him to block his way. He was shocked and stymied, gave me a couple of departing punches to the gut and I never had to deal with him again.	AskReddit	1291776836
+Can we define a "page"- I've been assuming that's 300 words?	IAmA	1291830977
+are there really rooms with fireplaces ala *The Day After Tomorrow?*http://en.wikipedia.org/wiki/The_Day_After_Tomorrow	IAmA	1291941612
+If yer gonna shoot drugs, wear a condom.	AskReddit	1292028712
+what does this have to do with the Metrodome?-I'm confused.	pics	1292169523
+Ask them this--Don't computers only produce digital music--even if ported to vinyl?	reddit.com	1292212542
+upvote for the Foxfire mention!	AskReddit	1292357684
+If yer gonna shoot drugs, wear a condom.	self	1292377511
+The TV can see me.	AskReddit	1292468366
+The Mob's on Reddit?	AskReddit	1293156296
+I'm not an expert at all but what you describe might be ADD?	AskReddit	1293163289
+Keep in mind he's an engineer, an Oompa-Loompa of science, not a doctor. You get stressed because you can't focus?	AskReddit	1293213287
+In the future, email your saves to yourself, then you're covered if the house burns down etc .	AskReddit	1293304171
+Yes, Engineers are the lowly workmen, the Oompa-Loompas of Science.	AskReddit	1293394068
+How was security? A full body scan, grope n' check, metal detector, dogs?	IAmA	1293593625
+What is your pay?	IAmA	1293593692
+I think you just missed this thread from a few days ago.http://www.reddit.com/r/AskReddit/comments/ernj0/is_my_philosophy_major_going_to_be_useless/	AskReddit	1293670566
+My buddy did and got back rent for 2 1/2 years- 20+ grand-- go for it!	AskReddit	1293847326
+In your shadow sir, I am officially a Deadbeat dad.	reddit.com	1293910091
+So your post law school experience seems pretty positive--are you agreeing with the NYT article or offering a different perspective? Your post is somewhat confusing--not enuff data!	AskReddit	1294616664
+You did good, made yourself known, that you are something more than a deer--a fellow freaky predator. And good for always carrying a knife.	self	1295375500
+that'd be neat if pages would load on the new mcspace	AskReddit	1295376314
+Got to the FAFSA page and start filling it out-- you can not get Federal subsidized student loans without filing a FAFSA, also maybe you do qualify for Pell Grants. Since you are not forthcoming ( you're holding back ) on your financial situation/age etc . . . -- just go to FAFSA and get 'er done, and don't listen to your parents	AskReddit	1296157301
+When they ask questions, give them detailed answers--don't treat them like they can't understand, they will or will at least store the data away for future reference, recognition, association and ultimate understanding.	AskReddit	1297450688
+If a tree falls in the forest . . .	self	1298059340
+could you please define your grad school program and subsequent employment?-thanks	AskReddit	1298137716
+I don't agree that it's a "dick move" to walk away from one of the biggest criminal conspiracies in history. The OP and her sister are victims, victims of the crooked lenders, realtors etc .  . . She should walk  and her sister needs to understand.	AskReddit	1298318821
+I'm unclear, did the OP graduate from "grad school" if so in what/with what?	AskReddit	1298427164
+$3.55-3.75	self	1298697335
+The OP's story has nothing to do with a "wild party".	AskReddit	1298773331
+I'mNotHavingSexRightNow	AskReddit	1299357550
+What's "the OC"?	AskReddit	1299357713
+are we assuming the bottomless pit is subject to Earth's gravitational forces?	AskReddit	1299434295
+I didn't know those two had a son, good for them!	pics	1299628596
+you can fire your realtor	AskReddit	1299638834
+"I'm Just A Bill" is my favorite	politics	1299688857
+Why do you think games haven't evolved since Quake?	IAmA	1300240543
+Have you applied for-TANF -Temporary Aide For Needy Families at the county?-you can get an emergency grant of 2K for your home payment in addition to monthly stipend and food stamps--take advantage of the system you paid taxes into	IAmA	1300469949
+snakes	AskReddit	1300650428
+thanks	AskReddit	1300942550
+yeah, I'm not experiencing the big promised speed increase	AskReddit	1300942583
+if wishes were dreams . . .	AskReddit	1300943064
+Is that a Toyota Dolphin?	politics	1301010443
+Yes --All David Mitchells are must reads--there's rumors of a cloud Atlas movie	AskReddit	1301458474
+Can't have the farm, if you don't want to hire a cropduster	AskReddit	1301516037
+It's very kind of him to not kick her to the "curve".	funny	1301623925
+special	AskReddit	1301624011
+"Try Amazon"!--how 'bout try all the cool independent bookstores you jackasses drove outta business?!	reddit.com	1301776288
+cuz we're too busy with suburban sprawl	AskReddit	1301850049
+May I eat it with my fingers?	AskReddit	1301884921
+Congrats! fuck your family and bullshit friends--you're moving on 	self	1301959939
+Yes, but how is "very limited government" defined?--How limited--like my question about building codes, and what about road maintenance, parks, food regulations--how are positive liberties preserved when negative liberty is the focus?	AskReddit	1302025322
+Very good observation--America is wrong--all wrong. The question is how are you going to work around that?	depression	1302056627
+I support the idea of a flat tax--no tax cuts, or breaks, everyone pays the same percentage-- for some reason both progressives and conservatives hate this idea?	AskReddit	1302372422
+Elyse and Steven Keaton	AskReddit	1302372481
+the towel does your rinsing	AskReddit	1302485938
+Why couldn't Vader "sense" that Leia was his daughter?	AskReddit	1302567726
+It's not like Reddit is riddled with ads--turn off your adblock and support your free community ya bum	pics	1302668828
+It "was" a tragedy--WTF are you talking about?!--we still have contaminated drinking water supplies as well as the entire food chain here in California--there are plenty other options to nuclearbefore you down vote please examine the datahttp://www.nuc.berkeley.edu/UCBAirSampling	AskReddit	1302807059
+Strong word maybe, but still the proper word	AskReddit	1302811418
+Good job writing all this down, maybe you could follow up on this exploration of the past with some visits to a counselor--it's all a healthy exercise	self	1302823626
+whatever, but we are missing the main problem here, that the OP implies that the "incident" in Japan is over or "was" as he states -are their numbers in the "non-zero quantity" as well?	AskReddit	1302827587
+but the entire purpose of the post is to downplay and belittle the significance of the event to argue that there is somehow no valid argument against nuclear power, which, to me, is bizarre and not based in reason	AskReddit	1302832690
+that's one reason why you should use digital metronomes	reddit.com	1302854153
+There should be a local animal rescue organization that you can contact--they should be well prepared to deal with your bird.	AskReddit	1303095155
+you've got over four months to wait	AskReddit	1303346603
+if you're gonna shoot drugs, wear a condom!	AskReddit	1304126320
+histogram?	pics	1304178117
+Nuclear power is not good for the planet and I was shocked a defense of it was voted to the front page.	AskReddit	1304302530
+Thanks for the response Ragnrok--I'm not pretending to be any kind of expert, but here are a few of my concerns and maybe you can dispel themhere we have radiation showing up in women's breast milk in Japanhttp://www.monstersandcritics.com/news/asiapacific/news/article_1636134.php/Radioactivity-detected-in-breast-milk-in-Japanand here we have radiation in west coast milk--alleged low levels but the EPA admits to increasing its monitoring schedulehttp://www.mercurynews.com/health/ci_17741873?nclick_check=1an alleged French independent commission is advising on eating leafy greens and water consumption in Europehttp://enenews.com/french-radiation-commission-warns-europe-health-risk-fukushima-fallout-longer-negligible-west-coast-8-10-times-contaminationand of course we have the local disaster zone in Japan itself, Chernobyl, and the Yankee nuke power plant in Vermont that leaks beyond save levels into the water supplyhttp://www.masslive.com/news/index.ssf/2010/02/radioactive_tritium_leaking_fr.htmlwhat's wrong with reducing our power consumption and looking to other solutions?	AskReddit	1304319119
+and meanwhile the majority of Reddit inexplicably continues to champion nuclear energy	worldnews	1304387148
+you seen to be doing a whole lot better than any of my "nuclear energy is wrong" comments!	reddit.com	1304388675
+can't they still call him up anytime they want anyway?	pics	1305327103
+Why don't you guys ever tune, let alone restring, the guitars you have on display? It should be somebody's job twice a day to go through the inventory with a tuner--better for the customer, better for the guitar.	IAmA	1306094534
+ok I get it, because everyone on Reddit is 20 or under	videos	1306541351
+ok I get it, because the majority of Reddit is in their twenties or younger	AskReddit	1306541587
+ok I get it, because the majority of reddit are in their twenties or younger	AskReddit	1306541686
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306541738
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306541876
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306541906
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306541944
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306542014
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306542084
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306542135
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306542167
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306542239
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306542269
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306542339
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306542373
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306553107
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306553139
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306553229
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306553269
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306553291
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306553509
+ok I get it, because the majority of Reddit are in their twenties or younger	trees	1306553597
+ok I get it, because the majority of Reddit are in their twenties or younger	IAmA	1306558894
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306563577
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306563904
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306563967
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306564445
+ok I get it, because the majority of Reddit are in their twenties or younger	pics	1306565009
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306604228
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306604305
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306604324
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306604350
+ok I get it, because the majority of Reddit are in their twenties or younger	reddit.com	1306604446
+ok I get it, because the majority of Reddit are in their twenties or younger	pics	1306604908
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306618006
+ok I get it, because the majority of Reddit are in their twenties or younger	gaming	1306640300
+ok I get it, because the majority of Reddit are in their twenties or younger	pics	1306640369
+ok I get it, because the majority of Reddit are in their twenties or younger	gaming	1306640411
+the guys a smacker, I can't stand it when he eats	pics	1306688419
+ok I get it, because the majority of Reddit are in their twenties or younger	AskReddit	1306694327
+yeah and getting it in the face is better than getting it up the ass!--WTF Reddit?	todayilearned	1306872949
+Basic human rights are not relative to national/cultural norms--access to health care is a basic human right	AskReddit	1306995814
+What's a good retort to the old " Thank a vet you're not speaking German" line?	IAmA	1307149789
+tucking in shirts	AskReddit	1307304035
+Well I think your on the right track OP--this an emerging field called Food Justice/Food Sovereignty. It's the belief that everybody has the right to high quality healthy foods--this is accomplished through urban gardening like community gardens and the like. And what if in suburbia instead of ornamental front lawns sprayed with poison people grew their own healthy food? What if we didn't import and ship foods across continents and oceans? What if organic food was cheaper than McDonalds?	AskReddit	1307429761
+I think it can be argued that most ornamental trees are watered, fertilized and pruned. I know of plenty of abandoned orchards that are still producing tasty fruit without any care or irrigation. So I think your nay-saying might be a little shortsighted.	AskReddit	1307429951
+lost me on this one	gaming	1307644156
+can't you block her email's? or you don't wanna . . .	reddit.com	1307983367
+why no page numbering?	IAmA	1308025734
+If Ron Paul becomes President, can I then drive on the right side of the road?	politics	1308073442
+forgive me if I'm a lil' slow on the draw--but in the context of this question we're assuming "partying" means drinking alcohol, right?	AskReddit	1308339624
+are there bears in the Highlands?	IAmA	1308939794
+great, now not only has the median age of Reddit dropped below twenty, it's full of teenage racists-- come back Kevin Rose, we're sorry!	funny	1308969740
+Why is Sir Mix A Lot's "I Like Big Butts" linked as the next most closely "related" video to this one ?	videos	1309123415
+really? "black guy"? wtf reddit?	videos	1309288173
+I dunno, a 17 year response time is nothing to shout about	gaming	1309905211
+you're assuming everybody lives with access to mass transit--which is not the case in the U.S., nor is all housing within walking or biking distance of jobs/shopping/urban centerswhich is all a case of poor/corrupt planning and needs to change	AskReddit	1309905892
+unarmed	AskReddit	1309906013
+wait, but aren't Libertarians against laws and regulations? Wouldn't, in their free market, we would just have to choose not to fly using airlines and airports that employ the TSA, or walk or start our own airline?--confused!	politics	1309914120
+several logic /factual flaws;  There are several reasons to be vegan--health (a no cholesterol diet), environmental concerns(earth cannot support everyone eating meat at the level we do in the U.S,, meat production is a waste of energy, subsidized meats like tyson chicken are fed themselves as feed (ala the Matrix) and have huge , hidden transportation costs getting these corporate meats to market and the ensuing pollutioneating local, organic is the best way to go and should dissuade any concerns for workers rights brought up in the comedy piece. Even local sustainable meat options are becoming more availableSo the whole" vegans don't want to use the labor of bees" argument is kind of bullshit	pics	1310053641
+these are just "the people you know", not the entire population of vegans--people are weird and do things for different reasons, but we can't group everybody together--I'm on Reddit--are all Vegans therefore on Reddit?-- watch out for traps like thatimho the whole honey thing is silly and these people are trying too hard to be something	pics	1310057177
+sure, but I just wish we could drop the "organic label" and call "organic" food--just food (like the foods our grandparents and great grandparents ate), and the foods treated with poisons and heavy metals etc..--something different--how about "poisoned"?but seriously, food does need to be "organic" and sustainable if we humans want a future--we've already talked about the health and environmental concerns but also, with peak oil, local farms not using shipped in pesticides and fertilizers and not having to ship their produce across country will be the cheaper option as Costco's and Wall-marts go kaputz	pics	1310060014
+as long as np&gt;5 and nq&gt;5, then we can agree upon a normal distribution of your sample	pics	1310060102
+reddit	AskReddit	1310061654
+ok, cool--ask your father why he is is mono-culture farming--not good"Monoculture is the agricultural practice of producing or growing one single crop over a wide area. It is also known as a way of farming practice of growing large stands of a single species. It is widely used in modern industrial agriculture and its implementation has allowed for large harvests from minimal labor. However, monocultures can lead to the quicker spread of diseases, where a uniform crop is susceptible to a pathogen. 'Crop monoculture' is the practice of growing the same crop year after year."I'm so sorry you believe the myth that organic food is for rich people only, like my previous post note--it clearly won't be (more expensive) in the near future	pics	1310082990
+but can't someone argue "monopoly"	AskReddit	1310228779
+but can't somebody argue "monopoly" and go after Netflix (and the people they license films with) with an anti-trust (competition) lawsuit?	AskReddit	1310228918
+yeah but I'm talking about (at least in my Netflix mailing district) of not getting movies for months after the first month wait--Netflix's service is really poor and the selection to stream is essentially junk--there's just so much room for improvement	AskReddit	1310229139
+seems like they qualify as a monopoly and could be sued?	AskReddit	1310229183
+all my questions are brilliant, insightful, and contribute to the greater Reddit community!	AskReddit	1310327121
+a question that still haunts us all	AskReddit	1310331314
+you're hanging around some weird people	AskReddit	1310354845
+ok, now please provide a full translation	pics	1310402849
+Makes me proud to be American, however fictional that America may be!	pics	1310405955
+It's truths like this that drive people into the Sciences	funny	1310406024
+He'd better keep that smoke away from his greased-up pompadour! 	pics	1310406117
+He'd better keep that smoke away from his greased-up pompadour! 	pics	1310406121
+Oh, I just thought it's be because of the odd sour chalk flavor	reddit.com	1310408346
+Fuck that-get a vita-mix, why do you want to filter out all that good fiber?	reddit.com	1310408418
+Free *tiny*** slurpee	reddit.com	1310408459
+That book is so awesome, fuck the internet--books don't crash or have monthly fees	reddit.com	1310408525
+You bought your fiance a birthday cake from Wall-Mart-- Wow- can't wait to see the wedding ring!	pics	1310408767
+It's white retirees coming from a position of fear--fear of change, fear that their whole lives have been wrong, fear of the new multicultural America that's coming--ignorance and fear--we got 'em here in California too	pics	1310442381
+Reminds me of all the great charity work for the betterment of humanity that Steve Jobs does, not!	reddit.com	1310576573
+India is very awesome	pics	1310576615
+scary and sexy--cool!	pics	1310577072
+Fuck Bank of America-use your local credit union	AskReddit	1310577218
+eat a good breakfast and exercise a half hour before the test	AskReddit	1310577342
+You are mistaken. Reddit neither has a beginning nor an end.	pics	1310581701
+Then I'd just consider you a straight-up Texan	IAmA	1310668044
+I think there's an original Star Trek series episode that explores that. But you can find Empires all throughout history, maybe even right now under yer nose?	AskReddit	1310668363
+Because it's a business, not a PBS station--hence support public television!	AskReddit	1310668426
+Most likely from up their asses	RenewableEnergy	1310670250
+following your sexist, 1950's Puritan logic, then should we not allow eating in public, ban all public restaurants and bars--I don't like to have to look at people smack their lips and lick their fingers	AskReddit	1310772099
+I think it's supposed to help with that	Nootropics	1310787327
+most of them	AskReddit	1310791792
+It's the Audacity of Hope	politics	1310919562
+I like your thinking stumpy, also I've yet to have a landlord that gives a shit--I'll gladly pay to have my own space	AskReddit	1310953570
+got that right doc--to sum it up, realtors are drunken, incompetent crooks	AskReddit	1310953659
+got that right roo--DO NOT TRUST YOUR REALTOR	AskReddit	1310953778
+got that right CIV4--Work the realtors, don't let them work you	AskReddit	1310953857
+what's the rent on your apartment?	pics	1311055588
+I agree crumb, this guy is all ego--check out his twitter feed, I just wish he'd take the ego down a notch	videos	1311097430
+Would you agree that most forest jobs aren't about preservation and that you have an insanely cool job working for the land trust? Do you think there are more jobs like yours because the idea of working for the Feds and for logging companies has turned me away from forestry?	IAmA	1311097865
+each other	AskReddit	1311210935
+you can't start the meds without them getting tested first--talk to your vet, how's your mosquito situation?--the pills are a lot cheaper and safer than the brutal cure--talk to your vet	AskReddit	1311211090
+yikes!-Does your homeowners insurance cover any of that?	pics	1311227379
+Job well done	pics	1311227643
+and don't you ferget it	pics	1311227704
+pretty sure the creepy ass shit is right there in the foreground	pics	1311228768
+9?--A strong case against growth hormones in milk	pics	1311267367
+I can't understand why no-one argues for a flat tax--everybody pays the same percentage of income--no deductions-- that seems the fair solution?	politics	1311267761
+Looks like you had a good shot at "I shat on Shaq today"	pics	1311290988
+give it a try, could be delightful coffee/chocolate combo!	reddit.com	1311353394
+a fear of clowns is a healthy fear--clowns are wrong!	funny	1311353494
+ridiculously awesome!	reddit.com	1311406361
+getting "checked" is not the same as being profiled	reddit.com	1311474339
+Who?	reddit.com	1311477139
+What's with the Vulcan?	funny	1311573540
+that's what I was gonna ask--it has to be within spitting distance of pre-clovis	Anthropology	1311576063
+ok, the girl is not "hot" and the guy is an abusive jackass	videos	1311954022
+Spoken like a future bitter retiree/teabagger, workroom--"It was hard for me so everyone else needs to suffer as well , now you kids get off my lawn!!"".	reddit.com	1312430141
+likewise on your quick judgements	reddit.com	1312430496
+should I put ubuntu into vm or should I use the ubuntu "windows installer"--which option is most flexible, what are the differences?	AskReddit	1312596408
+cheese drawer?	reddit.com	1312824776
+you're paying them--so no guilt	AskReddit	1312917127
+I thought it was	reddit.com	1312917241
+I have know idea what this is about	fffffffuuuuuuuuuuuu	1312932161
+that's the guy in the pink shirts?	politics	1312949015
+you don't belong in a "college" bar-- and that's a good thing	reddit.com	1312952641
+To me the film showed the truth about how pointlessly sad the "war" in Afghanistan is--didn't we do this already in Vietnam--go on patrols just to get ambushed, blow up little kids and where they live cause we can't find the "bad guys" -- I'm not placing judgement on the soldiers at all--just the process itself--it's insane and sad	IAmA	1313253322
+I have no idea who the alleged "celebrity" is?	pics	1313285948
+pretty much the same as any other year	pics	1313288825
+the echos of a repost?	videos	1313288909
+I thought that was cancelled? 	IAmA	1313295682
+I still don't know who the "celebrity" is?	pics	1313295759
+taxes and hoas aren't fixed--they both can/will go up every year--hoas are the worst, keeps me from getting a condo	AskReddit	1313352313
+a)fuck Western music, and b)there are no "errors" in music if the sound produced was intentional	AskReddit	1313352443
+I think you meant to say "America--Fuck Yeah!"	reddit.com	1313357899
+and you are in the Southern hemisphere, right?	pics	1313358241
+aren't we missing a time factor from this calculation? Over time I bet we could eat a cheese moon	reddit.com	1313358469
+more Reddit racism born of ignorance--sad	AskReddit	1313447729
+http://www.reddit.com/r/AskReddit/comments/jjr1c/black_people_why_do_you_name_your_kids_ridiculous/	AskReddit	1313448034
+trying to get the link uphttp://www.reddit.com/r/AskReddit/comments/jjr1c/black_people_why_do_you_name_your_kids_ridiculous/	AskReddit	1313448074
+in the post the op says the names are "stupid" and "not normal"--what does that mean or imply?--to me this ethnocentric (white culture being the implied "normal") view is at the very least ignorant-- also saying that an entire group of people are "stupid" is a textbook example of racism--unacceptable	AskReddit	1313448848
+but it's more like the op is annoyed by the culture, saying it's "not normal" and "stupid" to invent names--he's coming at this not from the position of an inquisitive anthropologist, but more like a judgmental white racist	AskReddit	1313449153
+again, it's the attitude of the op using terms like "stupid" and "not normal" that make this racist	AskReddit	1313449213
+it becomes racist when you pass judgement like the op in the thread does--the names are "stupid" because they don't conform to the "rules of language"--ie. his white pre-conceptions of what names are proper	AskReddit	1313450049
+here's the first thread,http://www.reddit.com/r/AskReddit/comments/jjr1c/black_people_why_do_you_name_your_kids_ridiculous/and my response thread,http://www.reddit.com/r/AskReddit/comments/jju5s/why_is_reddit_racist_why_are_threads_like_this/	todayilearned	1313461221
+why is "it" hilarious--"I think another culture is strange and 'not normal' and what they do is 'stupid' therefore I'll laugh at them"--I'm sorry, I can get on board with this "funny ha-ha" thinly veiled racism stuff that is all too prevalent on Reddit	AskReddit	1313472304
+What is this--Racism Day on Reddit--WTF??? I don't even get this picture what is the comedy--explain?	AdviceAnimals	1313472641
+thanks-so it really is comedy for Reddit racists--yikes!	AdviceAnimals	1313473581
+sorry, I don't buy your apology	AdviceAnimals	1313479577
+there's no way that age data is correct	AskReddit	1313645389
+amen plaidpants	AskReddit	1313645481
+so it must be an issue what age demographic actually posts and votes the most--the study doesn't address that detail?	AskReddit	1313646256
+1)the first question is still valid2)so you're saying Cate Blanchett does appear in the Harry Potter films?-cool!3) it's not funny if you have to explain it4) other people had that problem so you're not gonna make me cry5)  you sure about bigfoots?6) you conveniently skipped over my most recent posts regarding Reddit's racist tendencies	AskReddit	1313648105
+because the op said the naming practice was "stupid" and "not normal" he was annoyed, put out, angry that these people do this---he appears to have since edited his original post toning it down with gloating --still saying what another culture does is "ridiculous" is at the very least intolerant	AskReddit	1313649649
+I'm gonna have to disagree with your ethnocentric "stupid" assertion--sticking with the original topic of  "ghetto" names this brief article sums up my position very well and explains better than I can how that post was offensivehttp://www.datalounge.com/cgi-bin/iowa/ajax.html?t=9542689#page:showThread,9542689	AskReddit	1313652162
+it has everything to do with "being black, their history and racism" These people lost their names--taken away, but they also lost connection to their history and culture, thrown from the plantations straight into the slums and generational poverty--they don't give a fuck about Africa that's not what they know or care about (I'm generalizing here) --so they come up with names to reflect the consumer culture that surrounds them, that's shoved down their throats-- and what? we get to sit back in our Reddit high chair and ridicule and pass judgement?-- no fucking way!	AskReddit	1313653362
+but why do they have to name them African names-- as far as they are concerned they're not from Africa and know nothing about it-- you know history, you have an education, the folks in the ghetto are lucky to get passed eighth grade-- you have to realize it's a different world, a different culture that what you are living in--take that step and we can all get somewhere togetherfollowing your logic- do I have to give my kids traditional Italian names--names that people would have trouble pronouncing and spelling and possible lead to ridicule in grade school?	AskReddit	1313685672
+good adivce, I'm collecting subreddits, it's the main page that with all the cartoons and video game references that falls short for me	AskReddit	1313685750
+so I can assume the thoughtful debate portion of this exercise is now over?	AskReddit	1313693689
+What if in order to up/down vote a karma point was deducted and maybe even require a comment first, before you're even allowed to vote?	self	1313774853
+if your mother is Native American than you are too, explore that	AskReddit	1313788723
+you could end up with condensation/moisture build up issues having the box springs in direct contact with the floor	AskReddit	1313808514
+get on medi-cal, California's medicaid--didn't the county want you to get on medi-cal? that'll pay for the lexapro and  allow you to get hooked up with a permanent doc--meanwhile try to get seen again by any doc, you need follow-ups	AskReddit	1313825056
+seems about right as far as Reddit age appropriateness 	funny	1313891442
+Mickey Mantle drank like a fish and got blowjobs underneath the bleachers--and who the fuck is Jakucha?"Where is that America"--I'm pretty sure it's up yer ass, Biff.	AskReddit	1313899448
+yes and yes	AskReddit	1313899810
+what the fuck is a straw poll anyway?	politics	1313909564
+you live in Amish country?	pics	1314025692
+they'll grow to love each other over time	pics	1314122145
+Thanks NASA, now I have to spend time figuring out why you are concerned about this film	funny	1314986559
+and the fat guy is?	gaming	1315178907
+unplug it	AskReddit	1315192120
+break into groups	AskReddit	1315371814
+but then there would never be collisions	askscience	1315695859
+that makes sense	askscience	1315703578
+this must be 10 years old, minimal active links	learnprogramming	1315944988
+ask yourself who are "they" and why do "they" need blood and what are "they" doing with it	AskReddit	1316139630
+Australian will do just fine	AskReddit	1316139681
+too clean	pics	1316158910
+KR-Comp Sci and Environ Studies 2013	UCSC	1316309963
+so can I torrent legit/legal stuff I will I run a risk of being flagged doing any kind of torrenting?	UCSC	1316330730
+thanks--so the error reads something like "x86-64 cpu not found you have i686 "so it's saying I can't do 64 bit?then I got another note saying to set my graphics to 32 bit from 16 bit in the home operating system--and it it is set to 32so maybe virtual box is the problem?or I should just download the 32 bit version and see how that goes?	linux4noobs	1316366013
+don't you mean community college?--you can get on a guaranteed transfer track to UC from community, they're all set up for that. I think there are issues with CSU classes transferring over to UC whereas all CC classes are either approved (check Assist.org) or not for UC transfer. Plus CC is a lot cheaper.	AskAcademia	1316368556
+pm me	UCSC	1316392827
+just to annoy meat-eaters	AskReddit	1316418235
