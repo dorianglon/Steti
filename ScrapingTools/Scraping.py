@@ -15,10 +15,11 @@ class ScrapeSubreddit:
     USED FOR OBTAINING DATA TO TRAIN MODEL
     """
 
-    def __init__(self, subreddit, subreddit_abbrev, search_after):
+    def __init__(self, subreddit, subreddit_abbrev, search_after, text_length):
         self.subreddit = subreddit
         self.subreddit_abbrev = subreddit_abbrev
         self.original_search_after = search_after
+        self.text_length = text_length
         self.search_after = search_after
         self.pushshift_url = 'http://api.pushshift.io/reddit'
 
@@ -31,6 +32,7 @@ class ScrapeSubreddit:
         :param size: maximum amount of objects request returns. Default is 100(max)
         :return: list of posts or comments from subreddit
         """
+
         # default parameters for API query
         if type == 'submission':
             params = {
@@ -54,23 +56,37 @@ class ScrapeSubreddit:
 
         # check the status code, if successful,, process the data
         if r.status_code == 200:
+            print(params)
             response = json.loads(r.text)
             data = response['data']
             sorted_data_by_id = sorted(data, key=lambda x: int(x['id'], 36))
             return sorted_data_by_id
 
-    def extract_reddit_posts(self, sort_type='created_utc', sort='asc', size=100):
+    def extract_reddit_posts(self, sort_type='created_utc', sort='asc', size=100, neg=True, pos=True, max_length=0):
         """
         Function scrapes the subreddit's posts and saves them in a text file.
         :param sort_type: default is asc
         :param sort: by date
         :param size: size of max return per request
+        :param neg:
+        :param pos:
+        :param max_length:
         """
+
         # specifically the start timestamp
         max_id = 0
 
-        # open a file for JSON output
-        file_name = '/Users/dorianglon/Desktop/BPG_limited/' + self.subreddit + '_posts.txt'
+        # open a file for output
+        if neg:
+            directory = '/Users/dorianglon/Desktop/Training_Sets/NegativeSets/'
+            if not os.path.isdir(directory):
+                os.mkdir(directory)
+        elif pos:
+            directory = '/Users/dorianglon/Desktop/Training_Sets/PositiveSets/'
+            if not os.path.isdir(directory):
+                os.mkdir(directory)
+
+        file_name = directory + self.subreddit + '_' + self.text_length + '_posts.txt'
         if not os.path.isfile(file_name):
             first = 'combined' + '\t' + 'subreddit\n'
             with open(file_name, 'a+') as file:
@@ -100,22 +116,42 @@ class ScrapeSubreddit:
                                 if object['selftext'] == '[removed]' or object['selftext'] == '[deleted]':
                                     continue
                                 else:
-                                    # if len(object['selftext']) > 40:
-                                    if object['title'] == 0:
-                                        text = object['selftext'].replace('\t', '')
-                                        new_text = text.replace('\n', '')
-                                        output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
-                                        with open(file_name, 'a+') as file:
-                                            file.write(output_string)
-                                            file.close()
-                                    else:
-                                        title = object['title'].replace('\t', '') + ' '
-                                        body = object['selftext'].replace('\t', '')
-                                        new_text = title.replace('\n', '') + body.replace('\n', '')
-                                        output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
-                                        with open(file_name, 'a+') as file:
-                                            file.write(output_string)
-                                            file.close()
+                                    if len(object['title']) > 0:
+                                        if self.text_length == 'min':
+                                            if len(object['selftext']) <= 30:
+                                                title = object['title'].replace('\t', '') + ' '
+                                                body = object['selftext'].replace('\t', '')
+                                                new_text = title.replace('\n', '') + body.replace('\n', '')
+                                                text = new_text.encode("ascii", "ignore")
+                                                decoded_text = text.decode()
+                                                output_string = decoded_text + '\t' + self.subreddit_abbrev + '\n'
+                                                with open(file_name, 'a+') as file:
+                                                    file.write(output_string)
+                                                    file.close()
+
+                                        elif self.text_length == 'mid':
+                                            if 70 >= len(object['selftext']) > 30:
+                                                title = object['title'].replace('\t', '') + ' '
+                                                body = object['selftext'].replace('\t', '')
+                                                new_text = title.replace('\n', '') + body.replace('\n', '')
+                                                text = new_text.encode("ascii", "ignore")
+                                                decoded_text = text.decode()
+                                                output_string = decoded_text + '\t' + self.subreddit_abbrev + '\n'
+                                                with open(file_name, 'a+') as file:
+                                                    file.write(output_string)
+                                                    file.close()
+
+                                        elif self.text_length == 'max':
+                                            if len(object['selftext']) > 70:
+                                                title = object['title'].replace('\t', '') + ' '
+                                                body = object['selftext'].replace('\t', '')
+                                                new_text = title.replace('\n', '') + body.replace('\n', '')
+                                                text = new_text.encode("ascii", "ignore")
+                                                decoded_text = text.decode()
+                                                output_string = decoded_text + '\t' + self.subreddit_abbrev + '\n'
+                                                with open(file_name, 'a+') as file:
+                                                    file.write(output_string)
+                                                    file.close()
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -128,11 +164,12 @@ class ScrapeSubreddit:
         :param sort: by date
         :param size: size of max return per request
         """
+
         # specifically the start timestamp
         max_id = 0
 
         # open a file for JSON output
-        file_name = '/Users/dorianglon/Desktop/BPG_limited/' + self.subreddit + '_comments.txt'
+        file_name = '/Users/dorianglon/Desktop/Steti_Tech/' + self.subreddit + '_comments.txt'
         if not os.path.isfile(file_name):
             first = 'combined' + '\t' + 'subreddit\n'
             with open(file_name, 'a+') as file:
@@ -549,38 +586,36 @@ class LiveRedditorAnalysisPraw:
     """
 
     def __init__(self, reddit, redditor, last_checked):
+        self.reddit = reddit
         self.redditor = redditor
         self.last_checked = last_checked
-        self.reddit = reddit
 
-    def get_latest_posts(self, redditor):
+    def get_latest_posts(self):
         """
         Function gets the author's latest posts
-        :param redditor: redditor we are scraping
         """
 
         submissions = []
         try:
-            for submission in redditor.submissions.new(limit=None):
+            for submission in self.reddit.redditor(self.redditor).submissions.new(limit=None):
                 if submission.created_utc > self.last_checked:
                     if not submission.stickied and len(submission.selftext) > 0:
                         submissions.append([submission.title, submission.selftext, submission.id
-                                            , submission.created_utc, submission.subreddit.display_name])
+                                               , submission.created_utc, submission.subreddit.display_name])
                 else:
                     break
         except Exception:
             pass
         return submissions
 
-    def get_latest_comments(self, redditor):
+    def get_latest_comments(self):
         """
         Function gets newest comments from a certain redditor
-        :param redditor: redditor we are scraping
         """
 
         comments = []
         try:
-            for comment in redditor.comments.new(limit=None):
+            for comment in self.reddit.redditor(self.redditor).comments.new(limit=None):
                 if comment.created_utc > self.last_checked:
                     if len(comment.body) > 0:
                         comments.append([comment.body, comment.created_utc, comment.subreddit.display_name])
@@ -595,15 +630,14 @@ class LiveRedditorAnalysisPraw:
         Function determines what we get from redditor
         """
 
-        redditor = self.reddit.redditor(self.redditor)
         if posts and comments:
-            posts = self.get_latest_posts(redditor)
-            comments = self.get_latest_comments(redditor)
+            posts = self.get_latest_posts()
+            comments = self.get_latest_comments()
             return posts, comments
         elif posts and not comments:
-            return self.get_latest_posts(redditor)
+            return self.get_latest_posts()
         elif comments and not posts:
-            return self.get_latest_comments(redditor)
+            return self.get_latest_comments()
 
 
 class ScrapeRedditorData:
@@ -682,68 +716,71 @@ class ScrapeRedditorData:
                     objects_not_full = False
                     # loop the returned data, ordered by date
                     for object in objects:
-                        id = int(object['id'], 36)
-                        if id > max_id:
-                            nothing_processed = False
-                            created_utc = object['created_utc']
-                            max_id = id
-                            if created_utc > self.search_after:
-                                self.search_after = created_utc
+                        try:
+                            id = int(object['id'], 36)
+                            if id > max_id:
+                                nothing_processed = False
+                                created_utc = object['created_utc']
+                                max_id = id
+                                if created_utc > self.search_after:
+                                    self.search_after = created_utc
 
-                            try:
-                                if 'selftext' not in object or 'is_self' not in object or 'stickied' not in object or \
-                                        'subreddit' not in object or 'created_utc' not in object:
-                                    text = 'no text for post found\t'
-                                    to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
-                                    # write to file
-                                    with open(file_name, 'a+') as file:
-                                        file.write(to_write)
-                                        file.write('\n')
-                                # check if the post is empty and that it is not a picture or video
-                                elif object['is_self'] and len(object['selftext']) != 0 and not object['stickied']:
-                                    if object['selftext'] == '[removed]' or object['selftext'] == '[deleted]':
+                                try:
+                                    if 'selftext' not in object or 'is_self' not in object or 'stickied' not in object or \
+                                            'subreddit' not in object or 'created_utc' not in object:
                                         text = 'no text for post found\t'
                                         to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
                                         # write to file
                                         with open(file_name, 'a+') as file:
                                             file.write(to_write)
                                             file.write('\n')
-                                    else:
-                                        if object['title'] == 0:
-                                            # take out all newline and tabs
-                                            text = object['selftext'].replace('\t', '')
-                                            new_text = text.replace('\n', '')
-                                            # concatenate post content, subreddit posted on, and date posted on
-                                            to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
-                                                object['created_utc'])
+                                    # check if the post is empty and that it is not a picture or video
+                                    elif object['is_self'] and len(object['selftext']) != 0 and not object['stickied']:
+                                        if object['selftext'] == '[removed]' or object['selftext'] == '[deleted]':
+                                            text = 'no text for post found\t'
+                                            to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
                                             # write to file
                                             with open(file_name, 'a+') as file:
                                                 file.write(to_write)
                                                 file.write('\n')
-                                                file.close()
                                         else:
-                                            title = object['title'].replace('\t', '') + ' '
-                                            body = object['selftext'].replace('\t', '')
-                                            new_text = title.replace('\n', '') + body.replace('\n', '')
-                                            to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
-                                                object['created_utc'])
+                                            if object['title'] == 0:
+                                                # take out all newline and tabs
+                                                text = object['selftext'].replace('\t', '')
+                                                new_text = text.replace('\n', '')
+                                                # concatenate post content, subreddit posted on, and date posted on
+                                                to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
+                                                    object['created_utc'])
+                                                # write to file
+                                                with open(file_name, 'a+') as file:
+                                                    file.write(to_write)
+                                                    file.write('\n')
+                                                    file.close()
+                                            else:
+                                                title = object['title'].replace('\t', '') + ' '
+                                                body = object['selftext'].replace('\t', '')
+                                                new_text = title.replace('\n', '') + body.replace('\n', '')
+                                                to_write = new_text + '\t' + object['subreddit'] + '\t' + str(
+                                                    object['created_utc'])
+                                                # write to file
+                                                with open(file_name, 'a+') as file:
+                                                    file.write(to_write)
+                                                    file.write('\n')
+                                                    file.close()
+                                    else:
+                                        try:
+                                            text = 'no text for post found\t'
+                                            to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
                                             # write to file
                                             with open(file_name, 'a+') as file:
                                                 file.write(to_write)
                                                 file.write('\n')
-                                                file.close()
-                                else:
-                                    try:
-                                        text = 'no text for post found\t'
-                                        to_write = text + object['subreddit'] + '\t' + str(object['created_utc'])
-                                        # write to file
-                                        with open(file_name, 'a+') as file:
-                                            file.write(to_write)
-                                            file.write('\n')
-                                    except Exception:
-                                        pass
-                            except Exception:
-                                pass
+                                        except Exception:
+                                            pass
+                                except Exception:
+                                    pass
+                        except Exception:
+                            pass
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -777,37 +814,40 @@ class ScrapeRedditorData:
                     comments_not_full = False
                     # loop the returned data, ordered by date
                     for comment in comments:
-                        id = int(comment['id'], 36)
-                        if id > max_id:
-                            nothing_processed = False
-                            created_utc = comment['created_utc']
-                            max_id = id
+                        try:
+                            id = int(comment['id'], 36)
+                            if id > max_id:
+                                nothing_processed = False
+                                created_utc = comment['created_utc']
+                                max_id = id
 
-                            try:
-                                if created_utc > self.original_search_after:
-                                    self.original_search_after = created_utc
-                                # check if the post is empty and that it is not a picture or video
-                                if 'body' not in comment or 'subreddit' not in comment or 'created_utc' not in \
-                                        comment:
-                                    text = 'no text for comment found\t'
-                                    to_write = text + comment['subreddit'] + '\t' + str(comment['created_utc'])
-                                    # write to file
-                                    with open(file_name, 'a+') as file:
-                                        file.write(to_write)
-                                        file.write('\n')
-                                else:
-                                    # take out all newline and tabs
-                                    text = comment['body'].replace('\t', '')
-                                    new_text = text.replace('\n', '')
-                                    # concatenate post content, subreddit posted on, and date posted on
-                                    to_write_comment = new_text + '\t' + comment['subreddit'] + '\t' + str(
-                                        comment['created_utc'])
-                                    # write to file
-                                    with open(file_name, 'a+') as file:
-                                        file.write(to_write_comment)
-                                        file.write('\n')
-                            except Exception:
-                                pass
+                                try:
+                                    if created_utc > self.original_search_after:
+                                        self.original_search_after = created_utc
+                                    # check if the post is empty and that it is not a picture or video
+                                    if 'body' not in comment or 'subreddit' not in comment or 'created_utc' not in \
+                                            comment:
+                                        text = 'no text for comment found\t'
+                                        to_write = text + comment['subreddit'] + '\t' + str(comment['created_utc'])
+                                        # write to file
+                                        with open(file_name, 'a+') as file:
+                                            file.write(to_write)
+                                            file.write('\n')
+                                    else:
+                                        # take out all newline and tabs
+                                        text = comment['body'].replace('\t', '')
+                                        new_text = text.replace('\n', '')
+                                        # concatenate post content, subreddit posted on, and date posted on
+                                        to_write_comment = new_text + '\t' + comment['subreddit'] + '\t' + str(
+                                            comment['created_utc'])
+                                        # write to file
+                                        with open(file_name, 'a+') as file:
+                                            file.write(to_write_comment)
+                                            file.write('\n')
+                                except Exception:
+                                    pass
+                        except Exception:
+                            pass
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -850,7 +890,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     reddit_creation_unix = 1119657672
 
     # reads the csv file of university subreddits
-    universities_df = pd.read_csv('/Users/dorianglon/Desktop/BPG_limited/colleges.csv', delimiter=',')
+    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/colleges.csv', delimiter=',')
     U_subreddits = universities_df['subreddit'].tolist()
     # eliminates the university we care about from list of university subreddits
     if subreddit_of_uni in U_subreddits:
@@ -896,7 +936,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     # if first post on sub was before decision time for what would now be undergrad seniors
     if first_post_on_sub < Mar_1_2017:
         grad_subs = []
-        with open('/Users/dorianglon/Desktop/BPG_limited/college_grad_subs.txt', 'r') as f:
+        with open('/Users/dorianglon/Desktop/Steti_Tech/college_grad_subs.txt', 'r') as f:
             subs = f.readlines()
             for sub in subs:
                 grad_subs.append(sub.replace('\n', ''))
@@ -916,7 +956,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     # if first post was within decision time 4 years ago
     elif first_post_on_sub > Mar_1_2017:
         college_app_subs = []
-        with open('/Users/dorianglon/Desktop/BPG_limited/uni_admissions_subs.txt', 'r') as f:
+        with open('/Users/dorianglon/Desktop/Steti_Tech/uni_admissions_subs.txt', 'r') as f:
             subs = f.readlines()
             for sub in subs:
                 college_app_subs.append(sub.replace('\n', ''))
@@ -958,7 +998,7 @@ def redditor_at_cc(redditor, subreddit_of_cc):
     reddit_creation_unix = 1119657672
 
     # reads the csv file of university subreddits
-    universities_df = pd.read_csv('/Users/dorianglon/Desktop/BPG_limited/colleges.csv', delimiter=',')
+    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/colleges.csv', delimiter=',')
     U_subreddits = universities_df['subreddit'].tolist()
     # eliminates the institution we care about from list of university subreddits
     if subreddit_of_cc in U_subreddits:

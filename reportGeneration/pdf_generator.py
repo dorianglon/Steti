@@ -11,11 +11,12 @@ class CreateDailyPDF:
     CLASS GENERATES THE DAILY PDFS FOR THE SCHOOL
     """
 
-    def __init__(self, data, institution, filename, main_directory):
+    def __init__(self, data, institution, filename, directory):
         self.data = data
         self.institution = institution
         self.filename = filename
-        self.main_directory = main_directory
+        self.directory = directory
+        self.school_directory = self.directory + self.institution
 
     def make_pdf(self):
         """
@@ -26,11 +27,11 @@ class CreateDailyPDF:
                                 rightMargin=72, leftMargin=72,
                                 topMargin=72, bottomMargin=18)
         Story = []
-        logo = self.main_directory + self.institution + '_logo.png'
+        logo = self.directory + 'Steti_Tech_Logos/' + 'logo_transparent.png'
         title_date = 'Report for ' + str(self.data['month']) + ' ' + str(self.data['day'])
         users = self.data['users']
 
-        im = Image(logo, 1.5 * inch, 1.5 * inch)
+        im = Image(logo, 2 * inch, 2 * inch)
         Story.append(im)
 
         styles = getSampleStyleSheet()
@@ -54,7 +55,7 @@ class CreateDailyPDF:
                 Story.append(Spacer(1, 36))
                 Story.append(Paragraph(ptext, styles['Heading1']))
 
-            posts = user['neg_posts']
+            posts = user['top_neg_posts']
             for post in posts:
                 title = 'Title of Post : ' + post[0]
                 ptext = '<font size="12">%s</font>' % title

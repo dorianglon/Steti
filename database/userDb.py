@@ -76,12 +76,12 @@ def create_db(conn):
 
 
 if __name__ == '__main__':
-    cornell_db_path = '/Users/dorianglon/Desktop/BPG_limited/Cornell_users.db'
-    cornell_path_all_time = '/Users/dorianglon/Desktop/BPG_limited/Cornell_all_time_redditors.txt'
-    deanza_db_path = '/Users/dorianglon/Desktop/BPG_limited/DeAnza_users.db'
-    deanza_path_all_time = '/Users/dorianglon/Desktop/BPG_limited/DeAnza_all_time_redditors.txt'
-    ucsc_db_path = '/Users/dorianglon/Desktop/BPG_limited/UCSC_users.db'
-    ucsc_all_time = '/Users/dorianglon/Desktop/BPG_limited/UCSC_all_time_redditors.txt'
+    cornell_db_path = '/Users/dorianglon/Desktop/Steti_Tech/Cornell/Cornell_users.db'
+    cornell_path_all_time = '/Users/dorianglon/Desktop/Steti_Tech/Cornell/Cornell_all_time_redditors.txt'
+    deanza_db_path = '/Users/dorianglon/Desktop/Steti_Tech/DeAnza/DeAnza_users.db'
+    deanza_path_all_time = '/Users/dorianglon/Desktop/Steti_Tech/DeAnza/DeAnza_all_time_redditors.txt'
+    ucsc_db_path = '/Users/dorianglon/Desktop/Steti_Tech/UCSC/UCSC_users.db'
+    ucsc_all_time = '/Users/dorianglon/Desktop/Steti_Tech/UCSC/UCSC_all_time_redditors.txt'
 
     cornell_conn = create_connection(cornell_db_path)
     with cornell_conn:

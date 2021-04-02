@@ -62,7 +62,7 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
         client_id="PYhBZnomUNnE9w",
         client_secret="qC3PhLNu3Uarls1MnyanVxa3cWDlTA",
         user_agent="BPGhelperv1",
-        username="bpglimitedd",
+        username="BPGlimited",
         password="bpgpassword",
     )
 
@@ -98,7 +98,7 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
         except Exception:
             pass
 
-        time.sleep(420)
+        time.sleep(1200)
 
 
 def load_model(model_path):
@@ -118,9 +118,9 @@ def make_sure_text_is_in_correct_encoding(list_of_text_objects):
 
     index = 0
     while index < len(list_of_text_objects):
-        text = list_of_text_objects[index][0].encode("ascii", "ignore")
+        text = list_of_text_objects[index][1].encode("ascii", "ignore")
         decoded_text = text.decode()
-        list_of_text_objects[index][0] = decoded_text
+        list_of_text_objects[index][1] = decoded_text
         index += 1
     return list_of_text_objects
 
@@ -201,11 +201,12 @@ def load_current_json(path):
 
 
 @ray.remote
-def analyze_redditor_posts_and_comments(user_database_file, institution, main_directory):
+def analyze_redditor_posts_and_comments(user_database_file, institution, school_directory, main_directory):
     """
     Function runs forever analyzing the contents from redditors of a certain institution
     :param user_database_file: database with redditors from this school
     :param institution: the school we are monitoring
+    :param school_directory:
     :param main_directory: directory with all BPG files
     """
 
@@ -213,13 +214,15 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, main_di
     month = datetime.now().strftime('%B')
     day = datetime.today().day
 
-    # define and make directory where we store the json files for this school
-    jsons_directory = main_directory + institution + '_jsons/'
-    os.mkdir(jsons_directory)
+    # define and make directory where we store the json files for this school if not already made
+    jsons_directory = school_directory + institution + '_jsons/'
+    if not os.path.isdir(jsons_directory):
+        os.mkdir(jsons_directory)
 
-    # define and make directory for output pdfs for this school
-    pdfs_directory = main_directory + institution + '_pdfs/'
-    os.mkdir(pdfs_directory)
+    # define and make directory for output pdfs for this school if not already made
+    pdfs_directory = school_directory + institution + '_pdfs/'
+    if not os.path.isdir(pdfs_directory):
+        os.mkdir(pdfs_directory)
 
     # define current directory for the json of this institution for this day
     current_json = jsons_directory + institution + month + str(day) + '.json'
@@ -229,16 +232,9 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, main_di
     model_path = main_directory + 'TRAINED_SUICIDE_&_DEPRESSION_NEW'
     model = load_model(model_path)
 
-    reddit = praw.Reddit(
-        client_id="PYhBZnomUNnE9w",
-        client_secret="qC3PhLNu3Uarls1MnyanVxa3cWDlTA",
-        user_agent="BPGhelperv1",
-        username="bpglimitedd",
-        password="bpgpassword",
-    )
-
     # loop forever
     while True:
+
         # check if the month and day is still the same, if not, create the daily pdf for the day
         # then change month & day & json file
         check_month = datetime.now().strftime('%B')
@@ -273,6 +269,14 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, main_di
         for redditor in curr_redditors:
             last_checked = find_user(conn, redditor)[1]
             if math.floor(time.time()) > last_checked:
+
+                reddit = praw.Reddit(
+                    client_id="PYhBZnomUNnE9w",
+                    client_secret="qC3PhLNu3Uarls1MnyanVxa3cWDlTA",
+                    user_agent="BPGhelperv1",
+                    username="BPGlimited",
+                    password="bpgpassword",
+                )
 
                 # instantiate redditor scraper object and scrape this redditor's posts and or comments
                 this_redditor = LiveRedditorAnalysisPraw(reddit, redditor, last_checked)
@@ -310,8 +314,11 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, main_di
                             # only flag the posts that are negative scores of 0.9 and higher
                             if score > .9:
                                 # list contains the post, date posted, subreddit, and score respectively
-                                neg_posts.append([posts[index][0], posts[index][1], posts[index][2], posts[index][3],
-                                                  post[index][4], str(math.floor(score * 100))])
+                                try:
+                                    neg_posts.append([posts[index][0], posts[index][1], posts[index][2], posts[index][3],
+                                                      post[index][4], str(math.floor(score * 100))])
+                                except Exception:
+                                    pass
                         index += 1
 
                     # if the redditor had negative post proceed with json functions
@@ -321,6 +328,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, main_di
                         else:
                             write_base_json(current_json, institution, month, day)
                             update_json(current_json, redditor, neg_posts)
+        time.sleep(1200)
 
 
 def monitor_school(school, university=True, college=True):
@@ -328,11 +336,14 @@ def monitor_school(school, university=True, college=True):
     Function encapsulates all previous functions and classes and monitors a school's subreddit
     """
 
-    main_directory = '/Users/dorianglon/Desktop/BPG_limited/'
-    all_time_list = main_directory + school + '_all_time_redditors.txt'
-    user_database = main_directory + school + '_users.db'
-    post_id_database = main_directory + school + '_post_ids.db'
-    last_checked_path = main_directory + school + '_last_checked.txt'
+    main_directory = '/Users/dorianglon/Desktop/Steti_Tech/'
+    school_directory = main_directory + school + '/'
+    if not os.path.isdir(school_directory):
+        os.mkdir(school_directory)
+    all_time_list = school_directory + school + '_all_time_redditors.txt'
+    user_database = school_directory + school + '_users.db'
+    post_id_database = school_directory + school + '_post_ids.db'
+    last_checked_path = school_directory + school + '_last_checked.txt'
     bots_file = main_directory + 'bots.txt'
 
     if not os.path.isfile(last_checked_path):
@@ -347,4 +358,5 @@ def monitor_school(school, university=True, college=True):
 
     ray.init()
     ray.get([build_redditor_database.remote(school, user_database, post_id_database, all_time_list, bots_file
-                                            , university, college), analyze_redditor_posts_and_comments.remote(user_database, school, main_directory)])
+                                            , university, college), analyze_redditor_posts_and_comments.remote(
+        user_database, school, school_directory, main_directory)])

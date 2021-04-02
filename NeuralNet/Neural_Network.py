@@ -546,22 +546,22 @@ def do_sentence_encodings(total_num_files, use, dir_posts, dir_for_encodings, tr
 
 
 def main():
-    main_data_file = '/Users/dorianglon/Desktop/BPG_limited/main_data.txt'
-    original_dataframe_file = '/Users/dorianglon/Desktop/BPG_limited/original_dataframe.pkl'
-    clean_dataframe_file = '/Users/dorianglon/Desktop/BPG_limited/clean_dataframe.pkl'
+    main_data_file = '/Users/dorianglon/Desktop/Steti_Tech/main_data.txt'
+    original_dataframe_file = '/Users/dorianglon/Desktop/Steti_Tech/original_dataframe.pkl'
+    clean_dataframe_file = '/Users/dorianglon/Desktop/Steti_Tech/clean_dataframe.pkl'
 
-    test_posts_dir = '/Users/dorianglon/Desktop/BPG_limited/test_posts'
-    train_posts_dir = '/Users/dorianglon/Desktop/BPG_limited/train_posts'
-    test_encodings_dir = '/Users/dorianglon/Desktop/BPG_limited/test_encodings'
-    train_encodings_dir = '/Users/dorianglon/Desktop/BPG_limited/train_encodings'
+    test_posts_dir = '/Users/dorianglon/Desktop/Steti_Tech/test_posts'
+    train_posts_dir = '/Users/dorianglon/Desktop/Steti_Tech/train_posts'
+    test_encodings_dir = '/Users/dorianglon/Desktop/Steti_Tech/test_encodings'
+    train_encodings_dir = '/Users/dorianglon/Desktop/Steti_Tech/train_encodings'
 
-    y_train_path = '/Users/dorianglon/Desktop/BPG_limited/y_train.pkl'
-    y_test_path = '/Users/dorianglon/Desktop/BPG_limited/y_test.pkl'
-    X_train_path = '/Users/dorianglon/Desktop/BPG_limited/X_train.pkl'
-    X_test_path = '/Users/dorianglon/Desktop/BPG_limited/X_test.pkl'
+    y_train_path = '/Users/dorianglon/Desktop/Steti_Tech/y_train.pkl'
+    y_test_path = '/Users/dorianglon/Desktop/Steti_Tech/y_test.pkl'
+    X_train_path = '/Users/dorianglon/Desktop/Steti_Tech/X_train.pkl'
+    X_test_path = '/Users/dorianglon/Desktop/Steti_Tech/X_test.pkl'
     
     use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
-    model_path = '/Users/dorianglon/Desktop/BPG_limited/TRAINED_SUICIDE_&_DEPRESSION_NEW'
+    model_path = '/Users/dorianglon/Desktop/Steti_Tech/TRAINED_SUICIDE_&_DEPRESSION_NEW'
 
     if not os.path.isfile(X_test_path):
         if not os.path.isfile(train_posts_dir):
