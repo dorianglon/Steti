@@ -3,8 +3,9 @@ import time
 import math
 import os
 from datetime import datetime
-from database.userDb import *
-from database.postidDB import *
+from Databases.userDb import *
+from Databases.postidDB import *
+from Databases.archivesDB import *
 import tensorflow as tf
 import tensorflow_hub as hub
 import tensorflow_text
@@ -13,15 +14,16 @@ import json
 import praw
 import ray
 from reportGeneration.pdf_generator import *
+from calendar import Calendar
 
 
 def build_initial_database(subreddit_of_U, last_checked_f, path_to_user_database, all_time_list,
                            subreddit_creation_timestamp, bots_file, university=True, college=True, first_run=True):
     """
-    Function builds the founding database of redditors for a specific school
+    Function builds the founding Databases of redditors for a specific school
     :param subreddit_of_U: subreddit of university we are monitoring
     :param last_checked_f: file containing last time we checked
-    :param path_to_user_database: path to redditor database for this school
+    :param path_to_user_database: path to redditor Databases for this school
     :param all_time_list: path to list with all posters and commenters on the school's subreddit
     :param subreddit_creation_timestamp: when the subreddit was created
     :param bots_file: file containing known bots on reddit
@@ -43,11 +45,11 @@ def build_initial_database(subreddit_of_U, last_checked_f, path_to_user_database
 def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_database, all_time_list,
                             bots_file, university=True, college=True):
     """
-    Function works with Scraping classes to build and maintain an up to date database of redditors from the university/
+    Function works with Scraping classes to build and maintain an up to date Databases of redditors from the university/
     college we are monitoring
     :param subreddit_of_U: subreddit for university/college
-    :param path_to_user_database: path to database with users
-    :param path_to_post_database: path to database with post ids from the subreddit
+    :param path_to_user_database: path to Databases with users
+    :param path_to_post_database: path to Databases with post ids from the subreddit
     :param all_time_list: path to text file which holds every redditor to ever post on the subreddit
     :param bots_file: file of reddit bots
     :param university: (True if this is a university) vice versa
@@ -66,14 +68,14 @@ def build_redditor_database(subreddit_of_U, path_to_user_database, path_to_post_
         password="bpgpassword",
     )
 
-    # check if database with post ids exists, if not create it
+    # check if Databases with post ids exists, if not create it
     if not os.path.isfile(path_to_post_database):
         conn2 = create_connection_post(path_to_post_database)
         with conn2:
             create_post_db(conn2)
 
     # loop forever, checks for new posts in the institution's subreddit and checks for new comments in old posts
-    # adds new authors from institution to database as it finds them
+    # adds new authors from institution to Databases as it finds them
     while True:
         check_for_redditors = GetRedditorsFromSub(subreddit_of_U, latest_post, path_to_user_database, all_time_list,
                                                   bots_file)
@@ -118,6 +120,9 @@ def make_sure_text_is_in_correct_encoding(list_of_text_objects):
 
     index = 0
     while index < len(list_of_text_objects):
+        title = list_of_text_objects[index][0].encode('ascii', 'ignore')
+        decoded_title = title.decode()
+        list_of_text_objects[index][0] = decoded_title
         text = list_of_text_objects[index][1].encode("ascii", "ignore")
         decoded_text = text.decode()
         list_of_text_objects[index][1] = decoded_text
@@ -200,14 +205,30 @@ def load_current_json(path):
         return json.load(f)
 
 
+def week_of_month():
+    """
+    Returns the week of the month
+    """
+
+    n = datetime.now()
+    cal = Calendar()
+    weeks = cal.monthdayscalendar(n.year, n.month)
+    for x in range(len(weeks)):
+        if n.day in weeks[x]:
+            return x + 1
+
+
 @ray.remote
-def analyze_redditor_posts_and_comments(user_database_file, institution, school_directory, main_directory):
+def analyze_redditor_posts_and_comments(user_database_file, institution, school_directory, main_directory, daily_reports
+                                        , archives_db):
     """
     Function runs forever analyzing the contents from redditors of a certain institution
-    :param user_database_file: database with redditors from this school
+    :param user_database_file: Databases with redditors from this school
     :param institution: the school we are monitoring
     :param school_directory:
     :param main_directory: directory with all BPG files
+    :param daily_reports: boolean value for if we want daily reports, if False then we do weekly
+    :param archives_db:
     """
 
     # get current month as a string and current day of the month as an int
@@ -224,8 +245,14 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
     if not os.path.isdir(pdfs_directory):
         os.mkdir(pdfs_directory)
 
-    # define current directory for the json of this institution for this day
-    current_json = jsons_directory + institution + month + str(day) + '.json'
+    # define current directory for the json of this institution for this day or week
+    if daily_reports:
+        current_json = jsons_directory + institution + month + str(day) + '.json'
+
+    if not daily_reports:
+        day_number = 1
+        week_number = week_of_month()
+        current_json = jsons_directory + institution + month + '_Week' + str(week_number) + '.json'
 
     use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
 
@@ -235,27 +262,47 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
     # loop forever
     while True:
 
+        # if we are doing weekly reports(for low volume schools)
+        if not daily_reports:
+            check_month = datetime.now().strftime('%B')
+            check_day = datetime.today().day
+            if check_day != day:
+                day_number += 1
+                if day_number == 7:
+                    curr_data = load_current_json(current_json)
+                    date_range = month + str(day) + '-' + check_month + str(check_day)
+                    out_file = pdfs_directory + institution + date_range + '.pdf'
+                    report = CreateDailyPDF(curr_data, institution, out_file, main_directory)
+                    report.make_pdf()
+                    month = check_month
+                    day = check_day
+                    week_number = week_of_month()
+                    current_json = jsons_directory + institution + month + '_Week' + str(week_number) + '.json'
+                    day_number = 1
+
+        # if we are doing daily pdfs
         # check if the month and day is still the same, if not, create the daily pdf for the day
         # then change month & day & json file
-        check_month = datetime.now().strftime('%B')
-        check_day = datetime.today().day
-        if check_month != month:
-            curr_data = load_current_json(current_json)
-            out_file = pdfs_directory + institution + month + str(day) + '.pdf'
-            report = CreateDailyPDF(curr_data, institution, out_file, main_directory)
-            report.make_pdf()
-            month = check_month
-            day = check_day
-            current_json = jsons_directory + month + str(day) + '.json'
-        if check_month == month and check_day > day:
-            curr_data = load_current_json(current_json)
-            out_file = jsons_directory + institution + month + str(day) + '.pdf'
-            report = CreateDailyPDF(curr_data, institution, out_file, main_directory)
-            report.make_pdf()
-            day = check_day
-            current_json = jsons_directory + month + str(day) + '.json'
+        elif daily_reports:
+            check_month = datetime.now().strftime('%B')
+            check_day = datetime.today().day
+            if check_month != month:
+                curr_data = load_current_json(current_json)
+                out_file = pdfs_directory + institution + month + str(day) + '.pdf'
+                report = CreateDailyPDF(curr_data, institution, out_file, main_directory)
+                report.make_pdf()
+                month = check_month
+                day = check_day
+                current_json = jsons_directory + month + str(day) + '.json'
+            if check_month == month and check_day > day:
+                curr_data = load_current_json(current_json)
+                out_file = jsons_directory + institution + month + str(day) + '.pdf'
+                report = CreateDailyPDF(curr_data, institution, out_file, main_directory)
+                report.make_pdf()
+                day = check_day
+                current_json = jsons_directory + month + str(day) + '.json'
 
-        # get list of redditors from this institution from database
+        # get list of redditors from this institution from Databases
         conn = create_connection(user_database_file)
         with conn:
             curr_redditors = []
@@ -281,7 +328,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
                 # instantiate redditor scraper object and scrape this redditor's posts and or comments
                 this_redditor = LiveRedditorAnalysisPraw(reddit, redditor, last_checked)
                 posts = this_redditor.extract_redditor_data_praw(posts=True, comments=False)
-                # update the last time we checked this redditor in the database
+                # update the last time we checked this redditor in the Databases
                 finished_running = math.floor(time.time())
                 with conn:
                     updated = False
@@ -315,14 +362,23 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
                             if score > .9:
                                 # list contains the post, date posted, subreddit, and score respectively
                                 try:
-                                    neg_posts.append([posts[index][0], posts[index][1], posts[index][2], posts[index][3],
-                                                      post[index][4], str(math.floor(score * 100))])
+                                    neg_posts.append([posts[index][0], posts[index][1], posts[index][2], posts[index][3]
+                                                    , posts[index][4], str(math.floor(score * 100))])
                                 except Exception:
                                     pass
                         index += 1
 
                     # if the redditor had negative post proceed with json functions
                     if neg_posts:
+                        check_for_archives_path = school_directory + 'archives_exists.txt'
+                        archives_conn = create_connection_archives(archives_db)
+                        if not os.path.isfile(check_for_archives_path):
+                            create_archives_db(archives_conn)
+                            with open(check_for_archives_path, 'a+') as f:
+                                f.write('exists')
+                        with archives_conn:
+                            update_author_flagged_value(archives_conn, redditor)
+
                         if os.path.isfile(current_json):
                             update_json(current_json, redditor, neg_posts)
                         else:
@@ -331,7 +387,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
         time.sleep(1200)
 
 
-def monitor_school(school, university=True, college=True):
+def monitor_school(school, university=True, college=True, daily_reports=True):
     """
     Function encapsulates all previous functions and classes and monitors a school's subreddit
     """
@@ -343,6 +399,7 @@ def monitor_school(school, university=True, college=True):
     all_time_list = school_directory + school + '_all_time_redditors.txt'
     user_database = school_directory + school + '_users.db'
     post_id_database = school_directory + school + '_post_ids.db'
+    archives_db = school_directory + school + '_archives.db'
     last_checked_path = school_directory + school + '_last_checked.txt'
     bots_file = main_directory + 'bots.txt'
 
@@ -359,4 +416,4 @@ def monitor_school(school, university=True, college=True):
     ray.init()
     ray.get([build_redditor_database.remote(school, user_database, post_id_database, all_time_list, bots_file
                                             , university, college), analyze_redditor_posts_and_comments.remote(
-        user_database, school, school_directory, main_directory)])
+        user_database, school, school_directory, main_directory, daily_reports, archives_db)])

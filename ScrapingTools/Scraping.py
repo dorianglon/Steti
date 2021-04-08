@@ -4,8 +4,8 @@ from tqdm import tqdm
 import os
 import pandas as pd
 import time
-from database.userDb import *
-from database.postidDB import *
+from Databases.userDb import *
+from Databases.postidDB import *
 import math
 
 
@@ -68,9 +68,9 @@ class ScrapeSubreddit:
         :param sort_type: default is asc
         :param sort: by date
         :param size: size of max return per request
-        :param neg:
-        :param pos:
-        :param max_length:
+        :param neg: are we collecting negative posts for training set?
+        :param pos: are we collecting positive posts for training set?
+        :param max_length: if positive then how many can we have per positive subreddit
         """
 
         # specifically the start timestamp
@@ -93,15 +93,27 @@ class ScrapeSubreddit:
                 file.write(first)
             file.close()
 
+        limit_reached = False
+
         while 1:
             nothing_processed = True
             objects_not_full = True
+            if limit_reached:
+                break
             while objects_not_full:
                 objects = self.fetch_objects(type='submission', sort_type=sort_type, sort=sort, size=size)
                 if objects is not None:
                     objects_not_full = False
                     # loop the returned data, ordered by date
                     for object in objects:
+                        if max_length > 0:
+                            with open(file_name, 'r') as _f:
+                                _lines = _f.readlines()
+                                count = 0
+                                for _line in _lines:
+                                    count += 1
+                            if count >= max_length:
+                                limit_reached = True
                         id = int(object['id'], 36)
                         if id > max_id:
                             nothing_processed = False
@@ -284,7 +296,7 @@ class GetRedditorsFromSub:
         Function extracts new authors from new comments in a post if present.
         :param reddit: praw instance to work with
         :param post_ids: list of post ids
-        :param post_conn: connection to database with post ids
+        :param post_conn: connection to Databases with post ids
         :param university: (True if university)
         :param college: (True if college)
         """
@@ -353,9 +365,9 @@ class GetRedditorsFromSub:
 
     def extract_uni_redditors_live_(self, reddit, post_id_db_file, university, college):
         """
-        Function looks for new posts in the school's subreddit and adds new authors to database
+        Function looks for new posts in the school's subreddit and adds new authors to Databases
         :param reddit: praw instance that we are using
-        :param post_id_db_file: path to post_id database
+        :param post_id_db_file: path to post_id Databases
         :param university: (True if university)
         :param college: (True if college)
         """
@@ -390,7 +402,7 @@ class GetRedditorsFromSub:
                             f.close()
                         try:
                             # check if this is a university subreddit then check if redditor from post goes to
-                            # university. If they do then add them to database
+                            # university. If they do then add them to Databases
                             if university:
                                 check = redditor_at_uni(redditor=author, subreddit_of_uni=self.subreddit)
                                 if check:
@@ -515,7 +527,8 @@ class GetRedditorsFromSub:
                                     if check:
                                         conn = create_connection(self.user_database)
                                         with conn:
-                                            update_user(conn, author, 0)
+                                            _time = math.floor(time.time()) - 86400
+                                            update_user(conn, author, _time)
                                 elif college:
                                     # check if this is a community college subreddit then check if the redditor from
                                     # post goes to college. If they do then add them to list
@@ -523,7 +536,8 @@ class GetRedditorsFromSub:
                                     if check:
                                         conn = create_connection(self.user_database)
                                         with conn:
-                                            update_user(conn, author, 0)
+                                            _time = math.floor(time.time()) - 86400
+                                            update_user(conn, author, _time)
                             except Exception:
                                 pass
                         id = int(object['id'], 36)
@@ -561,7 +575,8 @@ class GetRedditorsFromSub:
                                                     if check:
                                                         conn = create_connection(self.user_database)
                                                         with conn:
-                                                            update_user(conn, comment_author, 0)
+                                                            _time = math.floor(time.time()) - 86400
+                                                            update_user(conn, comment_author, _time)
                                                 # check if this is a community college subreddit then check if the
                                                 # redditor from comment goes to college. If they do then add them to
                                                 # list
@@ -571,7 +586,8 @@ class GetRedditorsFromSub:
                                                     if check:
                                                         conn = create_connection(self.user_database)
                                                         with conn:
-                                                            update_user(conn, comment_author, 0)
+                                                            _time = math.floor(time.time()) - 86400
+                                                            update_user(conn, comment_author, _time)
                                             except Exception:
                                                 pass
 
@@ -601,7 +617,7 @@ class LiveRedditorAnalysisPraw:
                 if submission.created_utc > self.last_checked:
                     if not submission.stickied and len(submission.selftext) > 0:
                         submissions.append([submission.title, submission.selftext, submission.id
-                                               , submission.created_utc, submission.subreddit.display_name])
+                                            , submission.created_utc, submission.subreddit.display_name])
                 else:
                     break
         except Exception:

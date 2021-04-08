@@ -3,7 +3,7 @@ import sqlite3
 
 def create_connection_post(db_file):
     """
-    Function connects to database
+    Function connects to Database
     """
 
     conn = None
@@ -16,7 +16,7 @@ def create_connection_post(db_file):
 
 def list_post_ids(conn):
     """
-    Function returns list of all post ids from database
+    Function returns list of all post ids from Database
     """
 
     cur = conn.cursor()
@@ -47,7 +47,7 @@ def find_post_id(conn, post_id):
 
 def update_post_id(conn, post_id, num_comments):
     """
-    Function updates a post id's number of comments or creates a new row if post id is not in database
+    Function updates a post id's number of comments or creates a new row if post id is not in Database
     """
 
     cur = conn.cursor()
@@ -58,9 +58,9 @@ def update_post_id(conn, post_id, num_comments):
     conn.commit()
 
 
-def clean__post_db(conn):
+def clean_post_db(conn):
     """
-    Function deletes all elements in the database
+    Function deletes all elements in the Database
     """
 
     cur = conn.cursor()
@@ -69,6 +69,6 @@ def clean__post_db(conn):
 
 def create_post_db(conn):
     """
-    Function creates database
+    Function creates Database
     """
     conn.execute('CREATE TABLE numComments (post_id TEXT PRIMARY KEY, num_comments INTEGER);')

@@ -48,11 +48,14 @@ def split_dataframe(df, chunk_size=25000):
     :return: list of dataframes
     """
 
-    chunks = list()
-    num_chunks = len(df) // chunk_size + 1
-    for i in range(num_chunks):
-        chunks.append(df[i * chunk_size:(i + 1) * chunk_size])
-    return chunks
+    if len(df) > chunk_size:
+        chunks = list()
+        num_chunks = len(df) // chunk_size + 1
+        for i in range(num_chunks):
+            chunks.append(df[i * chunk_size:(i + 1) * chunk_size])
+        return chunks
+    else:
+        return [df]
 
 
 def clean_posts(df):
@@ -63,8 +66,8 @@ def clean_posts(df):
     """
 
     dfs = split_dataframe(df)
-    for df in tqdm(dfs):
-        for index, row in df.iterrows():
+    for df in dfs:
+        for index,row in df.iterrows():
             post = row['combined']
             encoded_post = post.encode("ascii", "ignore")
             decoded_post = encoded_post.decode()
@@ -91,17 +94,17 @@ def make_initial_df(data_file, original_dataframe_file):
 
     # Perform Sentiment Analysis on Training Data and Populate Pandas DataFrame
     analyzer = SentimentIntensityAnalyzer()
-    pos_subs = ['as', 'bio', 'bg', 'bks', 'bapc', 'cc', 'cm', 'cfe', 'cmp', 'ckng', 'dogs', 'hsty', 'ah'
-        , 'keto', 'la', 'lgst', 'ml', 'math', 'nba', 'nsq', 'pf', 'pt_m', 'pd', 'pton', 'run'
-        , 'st', 'sca', 'stk', 'tchs', 'tech', 'tm', 'trvl', 'ecah']
-    neg_subs = ['sw', 'dpn', 'dpd']
-    for index, row in tqdm(df.iterrows()):
+    pos_subs = ['bio', 'bg', 'bks', '49', 'bapc', 'cc', 'cm', 'cfe', 'comp', 'ckg', 'dogs', 'kto', 'la', 'ml'
+                , 'math', 'nba', 'nsq', 'pf', 'pt', 'pton', 'run', 'st', 'sca', 'stk', 'tchs', 'tm', 'trvl'
+                , 'box', 'lol', '30sc', 'f1', 'pd', 'hw', 'nasa', 'mma', 'atc', 'as']
+    neg_sub = 'axty'
+    for index, row in df.iterrows():
         scores = analyzer.polarity_scores(row[0])
         pos = scores['pos']
         neg = scores['neg']
         row[2] = pos
         row[3] = neg
-        if row.subreddit in neg_subs:
+        if row.subreddit == neg_sub:
             row.label = 0
         elif row.subreddit in pos_subs:
             row.label = 1
@@ -121,21 +124,23 @@ def eliminate_noise(original_dataframe_file, clean_dataframe_file):
 
     # split dataframe into smaller ones because runtime is exponentially shorter
     dataframes = split_dataframe(original_df)
-    directory = 'clean_dataframes'
+    directory = 'drive/MyDrive/clean_dataframes'
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
 
-    pos_subs = ['as', 'bio', 'bg', 'bks', 'bapc', 'cc', 'cm', 'cfe', 'cmp', 'ckng', 'dogs', 'hsty', 'ah'
-        , 'keto', 'la', 'lgst', 'ml', 'math', 'nba', 'nsq', 'pf', 'pt_m', 'pd', 'pton', 'run'
-        , 'st', 'sca', 'stk', 'tchs', 'tech', 'tm', 'trvl', 'ecah']
-    neg_subs = ['sw', 'dpn', 'dpd']
+    pos_subs = ['bio', 'bg', 'bks', '49', 'bapc', 'cc', 'cm', 'cfe', 'comp', 'ckg', 'dogs', 'kto', 'la', 'ml'
+        , 'math', 'nba', 'nsq', 'pf', 'pt', 'pton', 'run', 'st', 'sca', 'stk', 'tchs', 'tm', 'trvl'
+        , 'box', 'lol', '30sc', 'f1', 'pd', 'hw', 'nasa', 'mma', 'atc', 'as']
+    neg_sub = 'axty'
 
     # Eliminates false positives and false negatives
     count = 1
     for df in dataframes:
         file_name = directory + '/clean_dataframe_' + str(count) + '.pkl'
-        for index, row in tqdm(df.iterrows()):
+        for index, row in df.iterrows():
             if row.neg > 0.1 and row.subreddit in pos_subs:
                 df.drop(index, inplace=True)
-            elif row.pos > 0.1 and row.subreddit in neg_subs:
+            elif row.pos > 0.1 and row.subreddit == neg_sub:
                 df.drop(index, inplace=True)
             else:
                 pass
@@ -148,7 +153,9 @@ def eliminate_noise(original_dataframe_file, clean_dataframe_file):
         full_path = directory + '/' + file
         df = read_dataframe(full_path)
         frames.append(df)
+        os.remove(full_path)
     final_df = pd.concat(frames)
+    os.rmdir(directory)
 
     # randomly choose pos and neg posts from dataframe and evenly split the two
     # then combine and save the dataframe
@@ -196,6 +203,8 @@ def divide_and_conquer(directory, data, training=False, testing=False):
     :param testing: boolean value to signal we are splitting testing set
     """
 
+    os.mkdir(directory)
+
     file_name = ''
     if training:
         file_name = 'X_train_posts'
@@ -216,11 +225,11 @@ def pickle_datasets(df, y_train_path, y_test_path, split_train_dir, split_test_d
     """
     Function splits into testing and training set. Then it splits the training and testing dataframes
     and saves the training and testing label encodings
-    :param split_test_dir: directory to dump split test posts
-    :param split_train_dir: directory to dump split training posts
     :param df: dataframe
     :param y_train_path: path to save one hot encodings for training batch
     :param y_test_path: path to save one hot encodings for testing batch
+    :param split_test_dir: directory to dump split test posts
+    :param split_train_dir: directory to dump split training posts
     """
 
     from sklearn.preprocessing import OneHotEncoder
@@ -261,11 +270,12 @@ def one_by_one_encoding(use, directory_saved, directory_to_save, index, file_sav
     :param file_to_save: path in which to save encodings
     :return:
     """
+
     file_path = directory_saved + '/' + file_saved
     df = read_dataframe(file_path)
 
     encodings = []
-    for post in tqdm(df):
+    for post in df:
         emb = use(post)
         post_emb = tf.reshape(emb, [-1]).numpy()
         encodings.append(post_emb)
@@ -303,6 +313,7 @@ def concat_embeddings(directory_with_embeddings, amount_of_embeddings, path_to_s
     :param amount_of_embeddings: how many total small files there are of encoded sentences for either training or testing set
     :param path_to_save: path to pickle concatenated numpy array of encodings
     """
+
     count = 2
     embeddings = load_first_np_array(directory_with_embeddings)
     while count <= amount_of_embeddings:
@@ -313,7 +324,7 @@ def concat_embeddings(directory_with_embeddings, amount_of_embeddings, path_to_s
                 file = open(path, 'rb')
                 new_array = pickle.load(file)
                 file.close()
-                np.concatenate([embeddings, new_array])
+                embeddings = np.concatenate([embeddings, new_array])
                 count += 1
                 break
 
@@ -386,7 +397,6 @@ def train_and_save_model(y_train, y_test, X_train, X_test, model_path):
     )
     model.add(keras.layers.Dense(2, activation='softmax'))
 
-    #
     model.compile(
         loss='categorical_crossentropy',
         optimizer=keras.optimizers.Adam(0.001),
@@ -396,9 +406,9 @@ def train_and_save_model(y_train, y_test, X_train, X_test, model_path):
     # train the model
     history = model.fit(
         X_train, y_train,
-        epochs=6,
-        batch_size=8,
-        validation_split=0.1,
+        epochs=3,
+        batch_size=2,
+        validation_split=0.2,
         verbose=1,
         shuffle=True
     )
@@ -429,68 +439,9 @@ def load_model(model_path):
     :param model_path: path where model is saved
     :return:
     """
+
     from tensorflow import keras
     return keras.models.load_model(model_path)
-
-
-def cc_or_sw(y_pred):
-    if np.argmax(y_pred) == 1:
-        print('Casual Conversation. Score : ', np.amax(y_pred))
-    else:
-        print('Suicidal or depressed. Score : ', np.amax(y_pred))
-
-
-def run_model(model, use):
-    """
-    Function tests model on user given posts
-    :param model: model to use
-    :param use: sentence encoder
-    """
-
-    test_posts = ["I only have a few people who care about me. "
-                  "I know they would be devastated if I left this life, "
-                  "and I feel like they are all I have that helps me to hold "
-                  "on for just a little longer. If I lost them, either literally or "
-                  "if they lost my trust, respect, etc, I wouldn't even hesitate to "
-                  "end it all.I'm writing this at 1AM, days away from my 23rd birthday, "
-                  "and I feel like I'm ready to end my life.I want to go, but I can't. "
-                  "My loved ones won't let me go, and I can't let go of them. I feel stuck and I don't know what to "
-                  "do. I wish there was an easy way out of this."
-        , "I want to sit inside a hole, One that's dark and deep. Not for death, not for stay, Hell not "
-          "even to think. Inside the hole I'll cry and scream Every God forsaken obscenity. I want to sit "
-          "to be alone But don't want to be by myself, I want my emotions understood And not shoved up on a "
-          "shelf. When things go bad and depression creeps I want to sit inside a hole, the one inside of "
-          "me."
-        , "Hi guys just wanted to put things in perspective for you all since some of "
-          "you seem to be quite nervous with the recent week of stock movement. "
-          "I've summarised a list all stock market crashes since 1950. There has been 7 stock market "
-          "''crashes since 1950, averaging one every 10 years. The stock market crashes ranges from "
-          "inflation (10%+), to oil price rises (4x) due to war, dot com bubble, housing market collapse, "
-          "covid-19 etc."
-        , "So I found out about hack this site and sites like it where you do ctf. It really caught my eye "
-          "as a beginner programmer. I know a little about ethical hacking but not alot so i want to get "
-          "into the field. Im at a point where my interests change rapidly. Is hacking something i have to "
-          "be invested in for a long time or is it something i can try out and see if i like it?"
-        , 'Goodbye everyone, its been a long ride.'
-        , 'pretty stressed out for the test tomorrow. Its been a long time since I have taken an in class '
-            'exam. Studied hard though so everything should be fine. Does anyone know how difficult '
-            ' this professors tests are?'
-        , 'God I am so stressed right now, just had five classes and my chem professor is crazy. Literally like 70 '
-          'percent of the class is failing. RIP']
-
-    X_test = []
-    for r in tqdm(test_posts):
-        emb = use(r)
-        post_emb = tf.reshape(emb, [-1]).numpy()
-        X_test.append(post_emb)
-    X_test = np.array(X_test)
-
-    i = 0
-    while i < len(test_posts):
-        print(test_posts[i])
-        y_pred = model.predict(X_test[i:i+1])
-        cc_or_sw(y_pred)
-        i += 1
 
 
 def make_dataframe(main_data_file, original_dataframe_file, clean_dataframe_file):
@@ -505,10 +456,13 @@ def make_dataframe(main_data_file, original_dataframe_file, clean_dataframe_file
     if not os.path.isfile(original_dataframe_file) and not os.path.isfile(clean_dataframe_file):
         make_initial_df(main_data_file, original_dataframe_file)
         df = eliminate_noise(original_dataframe_file, clean_dataframe_file)
+
     elif os.path.isfile(original_dataframe_file) and not os.path.isfile(clean_dataframe_file):
         df = eliminate_noise(original_dataframe_file, clean_dataframe_file)
+
     elif os.path.isfile(original_dataframe_file) and os.path.isfile(clean_dataframe_file):
         df = read_dataframe(clean_dataframe_file)
+
     return df
 
 
@@ -523,6 +477,9 @@ def do_sentence_encodings(total_num_files, use, dir_posts, dir_for_encodings, tr
     :param testing: boolean value if we are operating on testing set
     """
 
+    if not os.path.isdir(dir_for_encodings):
+        os.mkdir(dir_for_encodings)
+
     if training:
         curr_count = 1
         while curr_count <= total_num_files:
@@ -530,9 +487,8 @@ def do_sentence_encodings(total_num_files, use, dir_posts, dir_for_encodings, tr
                 saved_file = 'X_train_posts_' + str(curr_count) + '.pkl'
                 one_by_one_encoding(use, dir_posts, dir_for_encodings, curr_count, saved_file, 'X_train_encodings')
                 curr_count += 1
-            except Exception as e:
-                print('Error occurred at : ' + str(curr_count))
-                break
+            except Exception:
+                pass
     if testing:
         curr_count = 1
         while curr_count <= total_num_files:
@@ -540,45 +496,56 @@ def do_sentence_encodings(total_num_files, use, dir_posts, dir_for_encodings, tr
                 saved_file = 'X_test_posts_' + str(curr_count) + '.pkl'
                 one_by_one_encoding(use, dir_posts, dir_for_encodings, curr_count, saved_file, 'X_test_encodings')
                 curr_count += 1
-            except Exception as e:
-                print('Error occurred at : ' + str(curr_count))
-                break
+            except Exception:
+                pass
+
+
+def get_file_amount(directory):
+    """
+    Function counts number of files in some folder
+    """
+
+    count = 0
+    for file in os.listdir(directory):
+        count += 1
+
+    return count
 
 
 def main():
-    main_data_file = '/Users/dorianglon/Desktop/Steti_Tech/main_data.txt'
-    original_dataframe_file = '/Users/dorianglon/Desktop/Steti_Tech/original_dataframe.pkl'
-    clean_dataframe_file = '/Users/dorianglon/Desktop/Steti_Tech/clean_dataframe.pkl'
+    main_data_file = 'drive/MyDrive/Steti_Tech/Anxiety_mid_final.txt'
+    original_dataframe_file = 'drive/MyDrive/Steti_Tech/original_dataframe.pkl'
+    clean_dataframe_file = 'drive/MyDrive/Steti_Tech/clean_dataframe.pkl'
 
-    test_posts_dir = '/Users/dorianglon/Desktop/Steti_Tech/test_posts'
-    train_posts_dir = '/Users/dorianglon/Desktop/Steti_Tech/train_posts'
-    test_encodings_dir = '/Users/dorianglon/Desktop/Steti_Tech/test_encodings'
-    train_encodings_dir = '/Users/dorianglon/Desktop/Steti_Tech/train_encodings'
+    test_posts_dir = 'drive/MyDrive/Steti_Tech/test_posts'
+    train_posts_dir = 'drive/MyDrive/Steti_Tech/train_posts'
+    test_encodings_dir = 'drive/MyDrive/Steti_Tech/test_encodings'
+    train_encodings_dir = 'drive/MyDrive/Steti_Tech/train_encodings'
 
-    y_train_path = '/Users/dorianglon/Desktop/Steti_Tech/y_train.pkl'
-    y_test_path = '/Users/dorianglon/Desktop/Steti_Tech/y_test.pkl'
-    X_train_path = '/Users/dorianglon/Desktop/Steti_Tech/X_train.pkl'
-    X_test_path = '/Users/dorianglon/Desktop/Steti_Tech/X_test.pkl'
-    
+    y_train_path = 'drive/MyDrive/Steti_Tech/y_train.pkl'
+    y_test_path = 'drive/MyDrive/Steti_Tech/y_test.pkl'
+    X_train_path = 'drive/MyDrive/Steti_Tech/X_train.pkl'
+    X_test_path = 'drive/MyDrive/Steti_Tech/X_test.pkl'
+
     use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
-    model_path = '/Users/dorianglon/Desktop/Steti_Tech/TRAINED_SUICIDE_&_DEPRESSION_NEW'
+    model_path = 'drive/MyDrive/Steti_Tech/Anxiety_Predictor_for_MidLength_Posts'
 
     if not os.path.isfile(X_test_path):
-        if not os.path.isfile(train_posts_dir):
+        if not os.path.isdir(train_posts_dir):
             df = make_dataframe(main_data_file, original_dataframe_file, clean_dataframe_file)
             pickle_datasets(df, y_train_path, y_test_path, train_posts_dir, test_posts_dir)
-        do_sentence_encodings(113, use, train_posts_dir, train_encodings_dir, training=True)
-        do_sentence_encodings(13, use, test_posts_dir, test_encodings_dir, testing=True)
-        concat_embeddings(test_encodings_dir, 13, X_test_path)
-        concat_embeddings(train_encodings_dir, 113, X_train_path)
+
+        do_sentence_encodings(get_file_amount(train_posts_dir), use, train_posts_dir, train_encodings_dir,
+                              training=True)
+        do_sentence_encodings(get_file_amount(test_posts_dir), use, test_posts_dir, test_encodings_dir, testing=True)
+        concat_embeddings(test_encodings_dir, get_file_amount(test_posts_dir), X_test_path)
+        concat_embeddings(train_encodings_dir, get_file_amount(train_posts_dir), X_train_path)
 
     if not os.path.isdir(model_path):
         y_train, y_test, X_train, X_test = load_pickled_datasets(X_train_path, X_test_path, y_train_path, y_test_path)
         model = train_and_save_model(y_train, y_test, X_train, X_test, model_path)
-        run_model(model, use)
     else:
         model = load_model(model_path)
-        run_model(model, use)
 
 
 if __name__ == '__main__':
