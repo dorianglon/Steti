@@ -67,7 +67,7 @@ def clean_posts(df):
 
     dfs = split_dataframe(df)
     for df in dfs:
-        for index,row in df.iterrows():
+        for index, row in df.iterrows():
             post = row['combined']
             encoded_post = post.encode("ascii", "ignore")
             decoded_post = encoded_post.decode()

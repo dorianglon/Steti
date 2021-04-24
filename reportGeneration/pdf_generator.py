@@ -4,6 +4,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from datetime import datetime
+from Databases.archivesDB import *
 
 
 class CreateDailyPDF:
@@ -11,11 +12,12 @@ class CreateDailyPDF:
     CLASS GENERATES THE DAILY PDFS FOR THE SCHOOL
     """
 
-    def __init__(self, data, institution, filename, directory):
+    def __init__(self, data, institution, filename, directory, archives_db):
         self.data = data
         self.institution = institution
         self.filename = filename
         self.directory = directory
+        self.archives_db = archives_db
         self.school_directory = self.directory + self.institution
 
     def make_pdf(self):
@@ -28,7 +30,7 @@ class CreateDailyPDF:
                                 topMargin=72, bottomMargin=18)
         Story = []
         logo = self.directory + 'Steti_Tech_Logos/' + 'logo_transparent.png'
-        title_date = 'Report for ' + str(self.data['month']) + ' ' + str(self.data['day'])
+        title_date = self.institution + ' ' + str(self.data['date'])
         users = self.data['users']
 
         im = Image(logo, 2 * inch, 2 * inch)
@@ -44,16 +46,43 @@ class CreateDailyPDF:
         # loop through the users and write down the data. title, text, date, subreddit, negativity score
         count = 1
         for user in users:
+
+            archives_conn = create_connection_archives(self.archives_db)
+            with archives_conn:
+                prev_flagged = get_num_flagged(archives_conn, user['username'])[1]
+                # update_author_flagged_value(archives_conn, user['username'])
+
             if count == 1:
-                username = user['username']
-                ptext = '<font size="12">%s</font>' % username
-                Story.append(Spacer(1, 12))
-                Story.append(Paragraph(ptext, styles['Heading1']))
+                if prev_flagged > 1:
+                    username = 'User : ' + user['username']
+                    flagged = 'Amount of times previously flagged : ' + str(prev_flagged)
+                    ptext = '<font size="12">%s</font>' % username
+                    ftext = '<font size="12">%s</font>' % flagged
+                    Story.append(Spacer(1, 12))
+                    Story.append(Paragraph(ptext, styles['Heading1']))
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ftext, styles['Heading1']))
+                else:
+                    username = 'User : ' + user['username']
+                    ptext = '<font size="12">%s</font>' % username
+                    Story.append(Spacer(1, 12))
+                    Story.append(Paragraph(ptext, styles['Heading1']))
+
             else:
-                username = user['username']
-                ptext = '<font size="12">%s</font>' % username
-                Story.append(Spacer(1, 36))
-                Story.append(Paragraph(ptext, styles['Heading1']))
+                if prev_flagged > 1:
+                    username = 'User : ' + user['username']
+                    flagged = 'Amount of times previously flagged : ' + str(prev_flagged)
+                    ptext = '<font size="12">%s</font>' % username
+                    ftext = '<font size="12">%s</font>' % flagged
+                    Story.append(Spacer(1, 12))
+                    Story.append(Paragraph(ptext, styles['Heading1']))
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ftext, styles['Heading1']))
+                else:
+                    username = 'User : ' + user['username']
+                    ptext = '<font size="12">%s</font>' % username
+                    Story.append(Spacer(1, 36))
+                    Story.append(Paragraph(ptext, styles['Heading1']))
 
             posts = user['top_neg_posts']
             for post in posts:
@@ -83,7 +112,7 @@ class CreateDailyPDF:
                 Story.append(Spacer(1, 6))
                 Story.append(Paragraph(ptext, styles['Normal']))
 
-                severity = 'Probability of depression : ' + str(post[5])
+                severity = 'Confidence level that user is showing mental health issues : ' + str(post[5]) + '%'
                 ptext = '<font size="12">%s</font>' % severity
                 Story.append(Spacer(1, 6))
                 Story.append(Paragraph(ptext, styles['Normal']))

@@ -11,15 +11,14 @@ import math
 
 class ScrapeSubreddit:
     """
-    CLASS USED TO DOWNLOAD POSTS AND OR COMMENTS FROM A SPECIFIC SUBREDDIT.
-    USED FOR OBTAINING DATA TO TRAIN MODEL
+    CLASS USED TO DOWNLOAD POSTS AND OR COMMENTS FROM A SPECIFIC SUBREDDIT
+    UST USED FOR OBTAINING DATA TO TRAIN MODEL
     """
 
-    def __init__(self, subreddit, subreddit_abbrev, search_after, text_length):
+    def __init__(self, subreddit, subreddit_abbrev, search_after):
         self.subreddit = subreddit
         self.subreddit_abbrev = subreddit_abbrev
         self.original_search_after = search_after
-        self.text_length = text_length
         self.search_after = search_after
         self.pushshift_url = 'http://api.pushshift.io/reddit'
 
@@ -29,7 +28,7 @@ class ScrapeSubreddit:
         :param type: either reddit submissions or comments, (type=submission || type=comments)
         :param sort_type: Default sorts by date
         :param sort: Default is asc
-        :param size: maximum amount of objects request returns. Default is 100(max)
+        :param size: maximum amount of objects request returns. Default is 1000(max)
         :return: list of posts or comments from subreddit
         """
 
@@ -52,7 +51,7 @@ class ScrapeSubreddit:
             }
 
         # perform an API request
-        r = requests.get(self.pushshift_url + '/' + type + '/search/', params=params, timeout=30)
+        r = requests.get(self.pushshift_url + '/' + type + '/search/', params=params, timeout=120)
 
         # check the status code, if successful,, process the data
         if r.status_code == 200:
@@ -62,58 +61,34 @@ class ScrapeSubreddit:
             sorted_data_by_id = sorted(data, key=lambda x: int(x['id'], 36))
             return sorted_data_by_id
 
-    def extract_reddit_posts(self, sort_type='created_utc', sort='asc', size=100, neg=True, pos=True, max_length=0):
+    def extract_reddit_posts(self, sort_type='created_utc', sort='asc', size=100):
         """
         Function scrapes the subreddit's posts and saves them in a text file.
         :param sort_type: default is asc
         :param sort: by date
         :param size: size of max return per request
-        :param neg: are we collecting negative posts for training set?
-        :param pos: are we collecting positive posts for training set?
-        :param max_length: if positive then how many can we have per positive subreddit
         """
 
         # specifically the start timestamp
         max_id = 0
 
-        # open a file for output
-        if neg:
-            directory = '/Users/dorianglon/Desktop/Training_Sets/NegativeSets/'
-            if not os.path.isdir(directory):
-                os.mkdir(directory)
-        elif pos:
-            directory = '/Users/dorianglon/Desktop/Training_Sets/PositiveSets/'
-            if not os.path.isdir(directory):
-                os.mkdir(directory)
-
-        file_name = directory + self.subreddit + '_' + self.text_length + '_posts.txt'
+        # open a file for JSON output
+        file_name = '/Users/dorianglon/Desktop/Steti_Tech/Data/' + self.subreddit + '_posts.txt'
         if not os.path.isfile(file_name):
             first = 'combined' + '\t' + 'subreddit\n'
             with open(file_name, 'a+') as file:
                 file.write(first)
             file.close()
 
-        limit_reached = False
-
         while 1:
             nothing_processed = True
             objects_not_full = True
-            if limit_reached:
-                break
             while objects_not_full:
                 objects = self.fetch_objects(type='submission', sort_type=sort_type, sort=sort, size=size)
                 if objects is not None:
                     objects_not_full = False
                     # loop the returned data, ordered by date
                     for object in objects:
-                        if max_length > 0:
-                            with open(file_name, 'r') as _f:
-                                _lines = _f.readlines()
-                                count = 0
-                                for _line in _lines:
-                                    count += 1
-                            if count >= max_length:
-                                limit_reached = True
                         id = int(object['id'], 36)
                         if id > max_id:
                             nothing_processed = False
@@ -128,42 +103,22 @@ class ScrapeSubreddit:
                                 if object['selftext'] == '[removed]' or object['selftext'] == '[deleted]':
                                     continue
                                 else:
-                                    if len(object['title']) > 0:
-                                        if self.text_length == 'min':
-                                            if len(object['selftext']) <= 30:
-                                                title = object['title'].replace('\t', '') + ' '
-                                                body = object['selftext'].replace('\t', '')
-                                                new_text = title.replace('\n', '') + body.replace('\n', '')
-                                                text = new_text.encode("ascii", "ignore")
-                                                decoded_text = text.decode()
-                                                output_string = decoded_text + '\t' + self.subreddit_abbrev + '\n'
-                                                with open(file_name, 'a+') as file:
-                                                    file.write(output_string)
-                                                    file.close()
-
-                                        elif self.text_length == 'mid':
-                                            if 70 >= len(object['selftext']) > 30:
-                                                title = object['title'].replace('\t', '') + ' '
-                                                body = object['selftext'].replace('\t', '')
-                                                new_text = title.replace('\n', '') + body.replace('\n', '')
-                                                text = new_text.encode("ascii", "ignore")
-                                                decoded_text = text.decode()
-                                                output_string = decoded_text + '\t' + self.subreddit_abbrev + '\n'
-                                                with open(file_name, 'a+') as file:
-                                                    file.write(output_string)
-                                                    file.close()
-
-                                        elif self.text_length == 'max':
-                                            if len(object['selftext']) > 70:
-                                                title = object['title'].replace('\t', '') + ' '
-                                                body = object['selftext'].replace('\t', '')
-                                                new_text = title.replace('\n', '') + body.replace('\n', '')
-                                                text = new_text.encode("ascii", "ignore")
-                                                decoded_text = text.decode()
-                                                output_string = decoded_text + '\t' + self.subreddit_abbrev + '\n'
-                                                with open(file_name, 'a+') as file:
-                                                    file.write(output_string)
-                                                    file.close()
+                                    # if len(object['selftext']) > 40:
+                                    if object['title'] == 0:
+                                        text = object['selftext'].replace('\t', '')
+                                        new_text = text.replace('\n', '')
+                                        output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
+                                        with open(file_name, 'a+') as file:
+                                            file.write(output_string)
+                                            file.close()
+                                    else:
+                                        title = object['title'].replace('\t', '') + ' '
+                                        body = object['selftext'].replace('\t', '')
+                                        new_text = title.replace('\n', '') + body.replace('\n', '')
+                                        output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
+                                        with open(file_name, 'a+') as file:
+                                            file.write(output_string)
+                                            file.close()
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -181,7 +136,7 @@ class ScrapeSubreddit:
         max_id = 0
 
         # open a file for JSON output
-        file_name = '/Users/dorianglon/Desktop/Steti_Tech/' + self.subreddit + '_comments.txt'
+        file_name = '/Users/dorianglon/Desktop/Steti_Tech/Data/' + self.subreddit + '_comments.txt'
         if not os.path.isfile(file_name):
             first = 'combined' + '\t' + 'subreddit\n'
             with open(file_name, 'a+') as file:
@@ -209,16 +164,15 @@ class ScrapeSubreddit:
                                 continue
                             # check if the post is empty and that it is not a picture or video
                             elif len(object['body']) != 0:
-                                if object['body'] == '[removed]':
+                                if object['body'] == '[removed]' or object['body'] == '[deleted]':
                                     continue
                                 else:
-                                    if len(object['body']) > 40:
-                                        body = object['body'].replace('\t', '')
-                                        new_text = body.replace('\n', '')
-                                        output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
-                                        with open(file_name, 'a+') as file:
-                                            file.write(output_string)
-                                            file.close()
+                                    body = object['body'].replace('\t', '')
+                                    new_text = body.replace('\n', '')
+                                    output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
+                                    with open(file_name, 'a+') as file:
+                                        file.write(output_string)
+                                        file.close()
 
                     # exit if nothing happened
                     if nothing_processed: return
@@ -257,8 +211,6 @@ class GetRedditorsFromSub:
             'after': self.search_after
         }
 
-        print(params)
-
         if os.path.isfile(last_checked_f):
             os.remove(last_checked_f)
 
@@ -270,6 +222,7 @@ class GetRedditorsFromSub:
 
         # check the status code, if successful,, process the data
         if r.status_code == 200:
+            print(params)
             response = json.loads(r.text)
             data = response['data']
             sorted_data_by_id = sorted(data, key=lambda x: int(x['id'], 36))
@@ -634,7 +587,7 @@ class LiveRedditorAnalysisPraw:
             for comment in self.reddit.redditor(self.redditor).comments.new(limit=None):
                 if comment.created_utc > self.last_checked:
                     if len(comment.body) > 0:
-                        comments.append([comment.body, comment.created_utc, comment.subreddit.display_name])
+                        comments.append([comment.body, comment.id, comment.created_utc, comment.subreddit.display_name])
                 else:
                     break
         except Exception:
@@ -906,7 +859,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     reddit_creation_unix = 1119657672
 
     # reads the csv file of university subreddits
-    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/colleges.csv', delimiter=',')
+    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/colleges.csv', delimiter=',')
     U_subreddits = universities_df['subreddit'].tolist()
     # eliminates the university we care about from list of university subreddits
     if subreddit_of_uni in U_subreddits:
@@ -952,7 +905,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     # if first post on sub was before decision time for what would now be undergrad seniors
     if first_post_on_sub < Mar_1_2017:
         grad_subs = []
-        with open('/Users/dorianglon/Desktop/Steti_Tech/college_grad_subs.txt', 'r') as f:
+        with open('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/college_grad_subs.txt', 'r') as f:
             subs = f.readlines()
             for sub in subs:
                 grad_subs.append(sub.replace('\n', ''))
@@ -972,7 +925,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     # if first post was within decision time 4 years ago
     elif first_post_on_sub > Mar_1_2017:
         college_app_subs = []
-        with open('/Users/dorianglon/Desktop/Steti_Tech/uni_admissions_subs.txt', 'r') as f:
+        with open('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/uni_admissions_subs.txt', 'r') as f:
             subs = f.readlines()
             for sub in subs:
                 college_app_subs.append(sub.replace('\n', ''))
@@ -1014,7 +967,7 @@ def redditor_at_cc(redditor, subreddit_of_cc):
     reddit_creation_unix = 1119657672
 
     # reads the csv file of university subreddits
-    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/colleges.csv', delimiter=',')
+    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/colleges.csv', delimiter=',')
     U_subreddits = universities_df['subreddit'].tolist()
     # eliminates the institution we care about from list of university subreddits
     if subreddit_of_cc in U_subreddits:

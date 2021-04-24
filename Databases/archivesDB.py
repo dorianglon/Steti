@@ -45,6 +45,21 @@ def find_author(conn, author):
     return res
 
 
+def get_num_flagged(conn, author):
+    """
+    Function gets the amount of time author is flagged
+    """
+
+    cur = conn.cursor()
+    _author = find_author(conn, author)
+    if _author:
+        cur.execute('SELECT * FROM archives WHERE author=?', (author,))
+        res = cur.fetchone()
+        return res
+    else:
+        return 0
+
+
 def update_author_report_value(conn, author, reported):
     """
     Function updates existing author's reported status

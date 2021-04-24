@@ -25,7 +25,7 @@ def get_bots(driver, url, destination):
 
 
 def main():
-    destination = '/Users/dorianglon/Desktop/Steti_Tech/bots.txt'
+    destination = '/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/bots.txt'
     url = 'https://botrank.pastimes.eu/?sort=rank&page='
     driver = webdriver.Safari()
     get_bots(driver, url, destination)
