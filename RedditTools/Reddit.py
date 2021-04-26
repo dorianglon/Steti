@@ -867,8 +867,11 @@ def redditor_at_uni(redditor, subreddit_of_uni):
 
     # extract all of the redditor's comments and posts
     file_name = redditor + '.txt'
-    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
-    redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
+    try:
+        redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
+        redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
+    except Exception:
+        pass
     author_df = pd.read_csv(file_name, delimiter='\t')
     os.remove(file_name)
     # creates a dataframe of the subreddits visited by redditor and the dates active
@@ -975,8 +978,11 @@ def redditor_at_cc(redditor, subreddit_of_cc):
 
     # extract all of the redditor's comments and posts
     file_name = redditor + '.txt'
-    redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
-    redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
+    try:
+        redditor_scraper = ScrapeRedditorData(redditor, reddit_creation_unix)
+        redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
+    except Exception:
+        pass
     author_df = pd.read_csv(file_name, delimiter='\t')
     os.remove(file_name)
     # creates a dataframe of the subreddits visited by redditor and the dates active

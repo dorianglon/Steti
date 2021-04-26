@@ -84,39 +84,79 @@ class CreateDailyPDF:
                     Story.append(Spacer(1, 36))
                     Story.append(Paragraph(ptext, styles['Heading1']))
 
-            posts = user['top_neg_posts']
-            for post in posts:
-                title = 'Title of Post : ' + post[0]
-                ptext = '<font size="12">%s</font>' % title
-                Story.append(Spacer(1, 6))
-                Story.append(Paragraph(ptext, styles['Normal']))
+            texts = user['top_neg_posts_and_comments']
+            for text in texts:
+                type = text[0]
+                if type == 'Post':
+                    type_ = 'Type : ' + type
+                    ptext = '<font size="12">%s</font>' % type_
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
 
-                text = 'Post : ' + post[1]
-                ptext = '<font size="12">%s</font>' % text
-                Story.append(Spacer(1, 6))
-                Story.append(Paragraph(ptext, styles['Normal']))
+                    title = 'Title of Post : ' + text[1]
+                    ptext = '<font size="12">%s</font>' % title
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
 
-                text = 'Post id : ' + str(post[2])
-                ptext = '<font size="12">%s</font>' % text
-                Story.append(Spacer(1, 6))
-                Story.append(Paragraph(ptext, styles['Normal']))
+                    text = 'Post : ' + text[2]
+                    ptext = '<font size="12">%s</font>' % text
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
 
-                readable_date = datetime.utcfromtimestamp(post[3]).strftime('%Y-%m-%d %H:%M')
-                date = 'Date posted : ' + readable_date
-                ptext = '<font size="12">%s</font>' % date
-                Story.append(Spacer(1, 6))
-                Story.append(Paragraph(ptext, styles['Normal']))
+                    text = 'Post id : ' + str(text[3])
+                    ptext = '<font size="12">%s</font>' % text
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
 
-                subreddit = 'Subreddit posted on : ' + post[4]
-                ptext = '<font size="12">%s</font>' % subreddit
-                Story.append(Spacer(1, 6))
-                Story.append(Paragraph(ptext, styles['Normal']))
+                    readable_date = datetime.utcfromtimestamp(text[4]).strftime('%Y-%m-%d %H:%M')
+                    date = 'Date posted : ' + readable_date
+                    ptext = '<font size="12">%s</font>' % date
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
 
-                severity = 'Confidence level that user is showing mental health issues : ' + str(post[5]) + '%'
-                ptext = '<font size="12">%s</font>' % severity
-                Story.append(Spacer(1, 6))
-                Story.append(Paragraph(ptext, styles['Normal']))
-                Story.append(Spacer(1, 12))
+                    subreddit = 'Subreddit posted on : ' + text[5]
+                    ptext = '<font size="12">%s</font>' % subreddit
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+
+                    severity = 'Confidence level that user is showing mental health issues : ' + str(text[6]) + '%'
+                    ptext = '<font size="12">%s</font>' % severity
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+                    Story.append(Spacer(1, 12))
+
+                elif type == 'Comment':
+                    type_ = 'Type : ' + type
+                    ptext = '<font size="12">%s</font>' % type_
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+
+                    text = 'Comment : ' + text[1]
+                    ptext = '<font size="12">%s</font>' % text
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+
+                    text = 'Comment id : ' + str(text[2])
+                    ptext = '<font size="12">%s</font>' % text
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+
+                    readable_date = datetime.utcfromtimestamp(text[3]).strftime('%Y-%m-%d %H:%M')
+                    date = 'Date commented : ' + readable_date
+                    ptext = '<font size="12">%s</font>' % date
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+
+                    subreddit = 'Subreddit commented on : ' + text[4]
+                    ptext = '<font size="12">%s</font>' % subreddit
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+
+                    severity = 'Confidence level that user is showing mental health issues : ' + str(text[5]) + '%'
+                    ptext = '<font size="12">%s</font>' % severity
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+                    Story.append(Spacer(1, 12))
 
             count += 1
 
