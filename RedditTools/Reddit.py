@@ -569,8 +569,9 @@ class LiveRedditorAnalysisPraw:
             for submission in self.reddit.redditor(self.redditor).submissions.new(limit=None):
                 if submission.created_utc > self.last_checked:
                     if not submission.stickied and len(submission.selftext) > 0:
-                        submissions.append([submission.title, submission.selftext, submission.id
-                                            , submission.created_utc, submission.subreddit.display_name])
+                        if submission.selftext != '[removed]':
+                            submissions.append([submission.title, submission.selftext, submission.id
+                                                , submission.created_utc, submission.subreddit.display_name])
                 else:
                     break
         except Exception:
@@ -587,7 +588,8 @@ class LiveRedditorAnalysisPraw:
             for comment in self.reddit.redditor(self.redditor).comments.new(limit=None):
                 if comment.created_utc > self.last_checked:
                     if len(comment.body) > 0:
-                        comments.append([comment.body, comment.id, comment.created_utc, comment.subreddit.display_name])
+                        if comment.body != '[removed]':
+                            comments.append([comment.body, comment.id, comment.created_utc, comment.subreddit.display_name])
                 else:
                     break
         except Exception:
