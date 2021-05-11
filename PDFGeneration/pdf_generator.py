@@ -12,12 +12,13 @@ class CreateDailyPDF:
     CLASS GENERATES THE DAILY PDFS FOR THE SCHOOL
     """
 
-    def __init__(self, data, institution, filename, directory, archives_db):
+    def __init__(self, data, institution, filename, directory, archives_db, num_users_flagged):
         self.data = data
         self.institution = institution
         self.filename = filename
         self.directory = directory
         self.archives_db = archives_db
+        self.num_users_flagged = num_users_flagged
         self.school_directory = self.directory + self.institution
 
     def make_pdf(self):
@@ -47,10 +48,17 @@ class CreateDailyPDF:
         count = 1
         for user in users:
 
-            archives_conn = create_connection_archives(self.archives_db)
-            with archives_conn:
-                prev_flagged = get_num_flagged(archives_conn, user['username'])[1]
-                # update_author_flagged_value(archives_conn, user['username'])
+            # if there are more users flagged in this new batch on same day we have to update the total amount of times
+            # they were flagged
+            if count > self.num_users_flagged:
+                archives_conn = create_connection_archives(self.archives_db)
+                with archives_conn:
+                    prev_flagged = get_num_flagged(archives_conn, user['username'])[1]
+                    update_author_flagged_value(archives_conn, user['username'])
+            else:
+                archives_conn = create_connection_archives(self.archives_db)
+                with archives_conn:
+                    prev_flagged = get_num_flagged(archives_conn, user['username'])[1]
 
             if count == 1:
                 if prev_flagged > 1:
@@ -98,13 +106,13 @@ class CreateDailyPDF:
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
-                    text = 'Post : ' + text[2]
-                    ptext = '<font size="12">%s</font>' % text
+                    post = 'Post : ' + text[2]
+                    ptext = '<font size="12">%s</font>' % post
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
-                    text = 'Post id : ' + str(text[3])
-                    ptext = '<font size="12">%s</font>' % text
+                    id = 'Post id : ' + str(text[3])
+                    ptext = '<font size="12">%s</font>' % id
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
@@ -131,13 +139,13 @@ class CreateDailyPDF:
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
-                    text = 'Comment : ' + text[1]
-                    ptext = '<font size="12">%s</font>' % text
+                    comment = 'Comment : ' + text[1]
+                    ptext = '<font size="12">%s</font>' % comment
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
-                    text = 'Comment id : ' + str(text[2])
-                    ptext = '<font size="12">%s</font>' % text
+                    id = 'Comment id : ' + str(text[2])
+                    ptext = '<font size="12">%s</font>' % id
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
@@ -161,3 +169,6 @@ class CreateDailyPDF:
             count += 1
 
         doc.build(Story)
+
+        # returns how many users were in this batch
+        return count

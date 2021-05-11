@@ -314,7 +314,6 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
 
                 # if the redditor had negative post proceed with json functions
                 if neg_post:
-                    print(neg_post)
                     check_for_archives_path = school_directory + 'archives_exists.txt'
                     archives_conn = create_connection_archives(archives_db)
                     if not os.path.isfile(check_for_archives_path):
@@ -379,7 +378,6 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
 
                 # if the redditor had negative post proceed with json functions
                 if neg_comments:
-                    print(neg_comments)
                     check_for_archives_path = school_directory + 'archives_exists.txt'
                     archives_conn = create_connection_archives(archives_db)
                     if not os.path.isfile(check_for_archives_path):
@@ -432,7 +430,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
     ray.shutdown()
 
 
-def monitor_school(school, university=True, college=True, daily_reports=True):
+def monitor_school(school, university=True, college=True):
     """
     Function encapsulates all previous functions and classes and monitors a school's subreddit
     """
@@ -463,16 +461,12 @@ def monitor_school(school, university=True, college=True, daily_reports=True):
     month = datetime.now().strftime('%B')
     day = datetime.today().day
 
+    # how many flagged users are in a specific batch each time the system passes the json to pdf maker
+    num_users_flagged = 0
+
     while True:
 
-        if daily_reports:
-            date = month + ' ' + str(day)
-        else:
-            seven_days_from_now = math.floor(time.time()) + 604800
-            dt_object = datetime.fromtimestamp(seven_days_from_now)
-            fut_month = dt_object.strftime('%B')
-            fut_day = dt_object.day
-            date = month + ' ' + str(day) + ' - ' + fut_month + ' ' + str(fut_day)
+        date = month + ' ' + str(day)
 
         # define and make directory where we store the json files for this school if not already made
         jsons_directory = school_directory + school + '_jsons/'
@@ -484,55 +478,28 @@ def monitor_school(school, university=True, college=True, daily_reports=True):
         if not os.path.isdir(pdfs_directory):
             os.mkdir(pdfs_directory)
 
-        # define current directory for the json of this institution for this day or week
-        if daily_reports:
-            current_json = jsons_directory + school + month + str(day) + '.json'
+        # define current directory for the json of this institution for this day
+        current_json = jsons_directory + school + month + str(day) + '.json'
+        out_file = pdfs_directory + school + month + str(day) + '.pdf'
 
-        if not daily_reports:
-            day_number = 1
-            week_number = week_of_month()
-            current_json = jsons_directory + school + month + '_Week' + str(week_number) + '.json'
-
-        # if we are doing weekly reports(for low volume schools)
-        if not daily_reports:
-            check_month = datetime.now().strftime('%B')
-            check_day = datetime.today().day
-            if check_day != day:
-                day_number += 1
-                if day_number == 7:
-                    curr_data = load_current_json(current_json)
-                    date_range = month + str(day) + '-' + check_month + str(check_day)
-                    out_file = pdfs_directory + school + date_range + '.pdf'
-                    report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db)
-                    report.make_pdf()
-                    month = check_month
-                    day = check_day
-                    week_number = week_of_month()
-                    current_json = jsons_directory + school + month + '_Week' + str(week_number) + '.json'
-                    day_number = 1
-
-        # if we are doing daily pdfs
         # check if the month and day is still the same, if not, create the daily pdf for the day
         # then change month & day & json file
-        elif daily_reports:
-            check_month = datetime.now().strftime('%B')
-            check_day = datetime.today().day
-            if check_month != month:
-                curr_data = load_current_json(current_json)
-                out_file = pdfs_directory + school + month + str(day) + '.pdf'
-                report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db)
-                report.make_pdf()
-                month = check_month
-                day = check_day
-                current_json = jsons_directory + month + str(day) + '.json'
-            if check_month == month and check_day > day:
-                curr_data = load_current_json(current_json)
-                out_file = jsons_directory + school + month + str(day) + '.pdf'
-                report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db)
-                report.make_pdf()
-                day = check_day
-                current_json = jsons_directory + month + str(day) + '.json'
+        # also set num_users_flagged to 0 because it is a new day
+        check_month = datetime.now().strftime('%B')
+        check_day = datetime.today().day
+        if check_month != month:
+            month = check_month
+            day = check_day
+            current_json = jsons_directory + month + str(day) + '.json'
+            num_users_flagged = 0
+        if check_month == month and check_day > day:
+            day = check_day
+            current_json = jsons_directory + month + str(day) + '.json'
+            num_users_flagged = 0
 
         analyze_redditor_posts_and_comments(user_database, school, school_directory, main_directory
                                             , archives_db, relevant_files_dir, current_json, date)
+        curr_data = load_current_json(current_json)
+        report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db, num_users_flagged)
+        num_users_flagged = report.make_pdf()
         build_redditor_database(school, user_database, post_id_database, all_time_list, bots_file, university, college)
