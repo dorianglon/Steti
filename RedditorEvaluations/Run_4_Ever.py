@@ -302,12 +302,12 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
                     if np.argmax(prediction) == 0:
                         score = np.amax(prediction)
                         # only flag the posts that are negative scores of 0.9 and higher
-                        if score > .92:
+                        if score > .96:
                             # list contains the post, date posted, subreddit, and score respectively
                             try:
                                 neg_post.append(
                                     ['Post', posts[index][0], posts[index][1], posts[index][2], posts[index][3]
-                                        , posts[index][4], str(math.floor(score * 100))])
+                                        , posts[index][4], posts[index][5], str(math.floor(score * 100))])
                             except Exception:
                                 pass
                     index += 1
@@ -366,11 +366,11 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
                     if np.argmax(prediction) == 0:
                         score = np.amax(prediction)
                         # only flag the posts that are negative scores of 0.9 and higher
-                        if score > .92:
+                        if score > .96:
                             # list contains the post, date posted, subreddit, and score respectively
                             try:
                                 neg_comments.append(['Comment', comments_with_key[index][0], comments_with_key[index][1]
-                                                        , comments_with_key[index][2], comments_with_key[index][3],
+                                                    , comments_with_key[index][2], comments_with_key[index][3],
                                                      str(math.floor(score * 100))])
                             except Exception:
                                 pass
@@ -499,7 +499,8 @@ def monitor_school(school, university=True, college=True):
 
         analyze_redditor_posts_and_comments(user_database, school, school_directory, main_directory
                                             , archives_db, relevant_files_dir, current_json, date)
-        curr_data = load_current_json(current_json)
-        report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db, num_users_flagged)
-        num_users_flagged = report.make_pdf()
+        if os.path.isfile(current_json):
+            curr_data = load_current_json(current_json)
+            report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db, num_users_flagged)
+            num_users_flagged = report.make_pdf()
         build_redditor_database(school, user_database, post_id_database, all_time_list, bots_file, university, college)

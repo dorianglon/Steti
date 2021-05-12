@@ -127,7 +127,12 @@ class CreateDailyPDF:
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
-                    severity = 'Confidence level that user is showing mental health issues : ' + str(text[6]) + '%'
+                    link = 'Link to post : ' + text[6]
+                    ptext = '<font size="12">%s</font>' % link
+                    Story.append(Spacer(1, 6))
+                    Story.append(Paragraph(ptext, styles['Normal']))
+
+                    severity = 'Confidence level that user is showing mental health issues : ' + str(text[7]) + '%'
                     ptext = '<font size="12">%s</font>' % severity
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
@@ -160,7 +165,7 @@ class CreateDailyPDF:
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))
 
-                    severity = 'Confidence level that user is showing mental health issues : ' + str(text[5]) + '%'
+                    severity = 'Confidence level that user is showing signs of distress : ' + str(text[5]) + '%'
                     ptext = '<font size="12">%s</font>' % severity
                     Story.append(Spacer(1, 6))
                     Story.append(Paragraph(ptext, styles['Normal']))

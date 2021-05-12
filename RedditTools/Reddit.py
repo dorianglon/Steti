@@ -571,7 +571,8 @@ class LiveRedditorAnalysisPraw:
                     if not submission.stickied and len(submission.selftext) > 0:
                         if submission.selftext != '[removed]':
                             submissions.append([submission.title, submission.selftext, submission.id
-                                                , submission.created_utc, submission.subreddit.display_name])
+                                                , submission.created_utc, submission.subreddit.display_name
+                                                , submission.full_link])
                 else:
                     break
         except Exception:
