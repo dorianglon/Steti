@@ -20,7 +20,7 @@ class ReportSuicidalRedditor:
 
     def report_redditor(self):
         submission = self.reddit.submission(id=self.post_id)
-        submission.report('Suicidal Ideation')
+        submission.report('Worried about their mental health, please send them resources.')
         archives_conn = create_connection_archives(self.archives_db)
         with archives_conn:
             update_author_report_value(archives_conn, submission.author, 1)

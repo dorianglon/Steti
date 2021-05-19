@@ -16,6 +16,7 @@ import ray
 from PDFGeneration.pdf_generator import *
 from calendar import Calendar
 import pandas as pd
+from Notifications.notifications_by_sms import *
 
 
 def build_initial_database(subreddit_of_U, last_checked_f, path_to_user_database, all_time_list,
@@ -226,6 +227,7 @@ def week_of_month():
 
 
 def split_redditors(curr_redditors, reddit_accounts_df):
+
     final = []
     length = len(reddit_accounts_df.index)
     intervals = math.floor(len(curr_redditors) / length)
@@ -240,9 +242,29 @@ def split_redditors(curr_redditors, reddit_accounts_df):
     return final
 
 
+def eliminate_duplicate_comments(comments):
+
+    i = 0
+    cleaned_comments = []
+    for comment in comments:
+        if i == 0:
+            cleaned_comments.append(comment)
+        else:
+            id = comment[1]
+            already_in = False
+            for new_comment in cleaned_comments:
+                if id == new_comment[1]:
+                    already_in = True
+            if not already_in:
+                cleaned_comments.append(comment)
+        i += 1
+
+    return cleaned_comments
+
+
 @ray.remote
 def analyze_redditors(redditors, user_database_file, school_directory, current_json
-                      , main_directory, archives_db, relevant_files_dir
+                      , main_directory, archives_db, new_ids_file
                       , institution, date, accounts_db, i):
     conn = create_connection(user_database_file)
     use = hub.load('https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3')
@@ -266,7 +288,7 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
 
             # instantiate redditor scraper object and scrape this redditor's posts and or comments
             this_redditor = LiveRedditorAnalysisPraw(reddit, redditor, last_checked)
-            posts, comments = this_redditor.extract_redditor_data_praw(posts=True, comments=True)
+            posts = this_redditor.extract_redditor_data_praw(posts=True, comments=False)
             # update the last time we checked this redditor in the Databases
             finished_running = math.floor(time.time())
             with conn:
@@ -302,7 +324,7 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
                     if np.argmax(prediction) == 0:
                         score = np.amax(prediction)
                         # only flag the posts that are negative scores of 0.9 and higher
-                        if score > .96:
+                        if score >= .97:
                             # list contains the post, date posted, subreddit, and score respectively
                             try:
                                 neg_post.append(
@@ -312,8 +334,21 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
                                 pass
                     index += 1
 
-                # if the redditor had negative post proceed with json functions
+                # if the redditor had negative post proceed with json functions and add new posts to new_ids file
+                # so that we can mark them as new in the pdf
                 if neg_post:
+                    added = False
+                    while not added:
+                        try:
+                            with open(new_ids_file, 'a+') as f:
+                                for post in neg_post:
+                                    f.write(post[3] + '\n')
+                                f.close()
+                            added = True
+                        except Exception:
+                            print('Trying to add new ids to new_ids file.')
+                            time.sleep(2)
+
                     check_for_archives_path = school_directory + 'archives_exists.txt'
                     archives_conn = create_connection_archives(archives_db)
                     if not os.path.isfile(check_for_archives_path):
@@ -330,72 +365,73 @@ def analyze_redditors(redditors, user_database_file, school_directory, current_j
                         update_json(current_json, redditor, neg_post)
 
             # if list of comments from this redditor is not empty then proceed with analyzing them
-            if comments:
-                comments = make_sure_text_is_in_correct_encoding_comments(comments)
-                key_phrases_file = relevant_files_dir + 'key_phrases.txt'
-
-                phrases = []
-                with open(key_phrases_file, 'r') as f:
-                    lines = f.readlines()
-                    for line in lines:
-                        line = line.replace('\n', '')
-                        phrases.append(line)
-
-                comments_with_key = []
-                for comment in comments:
-                    for phrase in phrases:
-                        if phrase in comment[0]:
-                            comments_with_key.append(comment)
-
-                # encode the comments
-                comment_embeddings = []
-                for comment in comments_with_key:
-                    try:
-                        emb = use(comment[0])
-                        post_emb = tf.reshape(emb, [-1]).numpy()
-                        comment_embeddings.append(post_emb)
-                    except Exception:
-                        pass
-                comment_embeddings = np.array(comment_embeddings)
-
-                # make a prediction for each post
-                neg_comments = []
-                index = 0
-                while index < len(comment_embeddings):
-                    prediction = model_for_comments.predict(comment_embeddings[index:index + 1])
-                    if np.argmax(prediction) == 0:
-                        score = np.amax(prediction)
-                        # only flag the posts that are negative scores of 0.9 and higher
-                        if score > .96:
-                            # list contains the post, date posted, subreddit, and score respectively
-                            try:
-                                neg_comments.append(['Comment', comments_with_key[index][0], comments_with_key[index][1]
-                                                    , comments_with_key[index][2], comments_with_key[index][3],
-                                                     str(math.floor(score * 100))])
-                            except Exception:
-                                pass
-                    index += 1
-
-                # if the redditor had negative post proceed with json functions
-                if neg_comments:
-                    check_for_archives_path = school_directory + 'archives_exists.txt'
-                    archives_conn = create_connection_archives(archives_db)
-                    if not os.path.isfile(check_for_archives_path):
-                        create_archives_db(archives_conn)
-                        with open(check_for_archives_path, 'a+') as f:
-                            f.write('exists')
-                    with archives_conn:
-                        update_author_flagged_value(archives_conn, redditor)
-
-                    if os.path.isfile(current_json):
-                        update_json(current_json, redditor, neg_comments)
-                    else:
-                        write_base_json(current_json, institution, date)
-                        update_json(current_json, redditor, neg_comments)
+            # if comments:
+            #     comments = make_sure_text_is_in_correct_encoding_comments(comments)
+            #     key_phrases_file = relevant_files_dir + 'key_phrases.txt'
+            #
+            #     phrases = []
+            #     with open(key_phrases_file, 'r') as f:
+            #         lines = f.readlines()
+            #         for line in lines:
+            #             line = line.replace('\n', '')
+            #             phrases.append(line)
+            #
+            #     comments_with_key = []
+            #     for comment in comments:
+            #         for phrase in phrases:
+            #             if phrase in comment[0]:
+            #                 comments_with_key.append(comment)
+            #                 break
+            #
+            #     # encode the comments
+            #     comment_embeddings = []
+            #     for comment in comments_with_key:
+            #         try:
+            #             emb = use(comment[0])
+            #             post_emb = tf.reshape(emb, [-1]).numpy()
+            #             comment_embeddings.append(post_emb)
+            #         except Exception:
+            #             pass
+            #     comment_embeddings = np.array(comment_embeddings)
+            #
+            #     # make a prediction for each post
+            #     neg_comments = []
+            #     index = 0
+            #     while index < len(comment_embeddings):
+            #         prediction = model_for_comments.predict(comment_embeddings[index:index + 1])
+            #         if np.argmax(prediction) == 0:
+            #             score = np.amax(prediction)
+            #             # only flag the posts that are negative scores of 0.9 and higher
+            #             if score > .96:
+            #                 # list contains the post, date posted, subreddit, and score respectively
+            #                 try:
+            #                     neg_comments.append(['Comment', comments_with_key[index][0], comments_with_key[index][1]
+            #                                         , comments_with_key[index][2], comments_with_key[index][3],
+            #                                          str(math.floor(score * 100))])
+            #                 except Exception:
+            #                     pass
+            #         index += 1
+            #
+            #     # if the redditor had negative comments proceed with json functions
+            #     if neg_comments:
+            #         check_for_archives_path = school_directory + 'archives_exists.txt'
+            #         archives_conn = create_connection_archives(archives_db)
+            #         if not os.path.isfile(check_for_archives_path):
+            #             create_archives_db(archives_conn)
+            #             with open(check_for_archives_path, 'a+') as f:
+            #                 f.write('exists')
+            #         with archives_conn:
+            #             update_author_flagged_value(archives_conn, redditor)
+            #
+            #         if os.path.isfile(current_json):
+            #             update_json(current_json, redditor, neg_comments)
+            #         else:
+            #             write_base_json(current_json, institution, date)
+            #             update_json(current_json, redditor, neg_comments)
 
 
 def analyze_redditor_posts_and_comments(user_database_file, institution, school_directory, main_directory
-                                        , archives_db, relevant_files_dir, current_json, date):
+                                        , archives_db, relevant_files_dir, current_json, date, new_ids_file):
     """
     Function runs forever analyzing the contents from redditors of a certain institution
     :param user_database_file: Databases with redditors from this school
@@ -405,7 +441,8 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
     :param archives_db:
     :param relevant_files_dir:
     :param current_json:
-    :param date
+    :param date:
+    :param new_ids_file:
     """
 
     # get list of redditors from this institution from user Database
@@ -424,7 +461,7 @@ def analyze_redditor_posts_and_comments(user_database_file, institution, school_
     length = len(redditors)
     ray.init()
     function_calls = [analyze_redditors.remote(redditors[i], user_database_file, school_directory
-                                               , current_json, main_directory, archives_db, relevant_files_dir
+                                               , current_json, main_directory, archives_db, new_ids_file
                                                , institution, date, accounts_df, i) for i in range(length)]
     ray.get(function_calls)
     ray.shutdown()
@@ -437,6 +474,7 @@ def monitor_school(school, university=True, college=True):
 
     main_directory = '/Users/dorianglon/Desktop/Steti_Tech/'
     relevant_files_dir = main_directory + 'Relevant_Files/'
+    new_ids_file = relevant_files_dir + 'new_ids.txt'
     school_directory = main_directory + 'Universities&Colleges/' + school + '/'
     if not os.path.isdir(school_directory):
         os.mkdir(school_directory)
@@ -446,6 +484,13 @@ def monitor_school(school, university=True, college=True):
     archives_db = school_directory + school + '_archives.db'
     last_checked_path = school_directory + school + '_last_checked.txt'
     bots_file = relevant_files_dir + 'bots.txt'
+    admin_phone_numbers = relevant_files_dir + 'Admins.txt'
+
+    admins = []
+    with open(admin_phone_numbers, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            admins.append(line.replace('\n', ''))
 
     if not os.path.isfile(last_checked_path):
         start = get_subreddit_creation_date(school)
@@ -498,9 +543,14 @@ def monitor_school(school, university=True, college=True):
             num_users_flagged = 0
 
         analyze_redditor_posts_and_comments(user_database, school, school_directory, main_directory
-                                            , archives_db, relevant_files_dir, current_json, date)
+                                            , archives_db, relevant_files_dir, current_json, date, new_ids_file)
         if os.path.isfile(current_json):
             curr_data = load_current_json(current_json)
-            report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db, num_users_flagged)
+            report = CreateDailyPDF(curr_data, school, out_file, main_directory, archives_db, num_users_flagged
+                                    , new_ids_file)
             num_users_flagged = report.make_pdf()
+            if os.path.isfile(new_ids_file):
+                os.remove(new_ids_file)
+                admin_notification = NotificationSMS()
+                admin_notification.send_admin_ms(admins)
         build_redditor_database(school, user_database, post_id_database, all_time_list, bots_file, university, college)

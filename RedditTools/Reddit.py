@@ -572,7 +572,7 @@ class LiveRedditorAnalysisPraw:
                         if submission.selftext != '[removed]':
                             submissions.append([submission.title, submission.selftext, submission.id
                                                 , submission.created_utc, submission.subreddit.display_name
-                                                , submission.full_link])
+                                                , submission.url])
                 else:
                     break
         except Exception:
@@ -590,7 +590,8 @@ class LiveRedditorAnalysisPraw:
                 if comment.created_utc > self.last_checked:
                     if len(comment.body) > 0:
                         if comment.body != '[removed]':
-                            comments.append([comment.body, comment.id, comment.created_utc, comment.subreddit.display_name])
+                            comments.append([comment.body, comment.id, comment.created_utc
+                                            , comment.subreddit.display_name])
                 else:
                     break
         except Exception:

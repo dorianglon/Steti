@@ -17,3 +17,4 @@ Jinja2==2.11.2
 praw
 reportlab==3.5.66
 ray==1.2.0
+twilio~=6.58.0

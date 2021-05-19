@@ -73,3 +73,11 @@ def create_db(conn):
     """
 
     conn.execute('CREATE TABLE userUpdated (username TEXT PRIMARY KEY, updated INTEGER);')
+
+
+if __name__ == '__main__':
+    conn = create_connection('/Users/dorianglon/Desktop/Steti_Tech/Universities&Colleges/Cornell/Cornell_users.db')
+    with conn:
+        users = list_users(conn)
+        for user in users:
+            update_user(conn, user, 1620692515)
