@@ -1,6 +1,11 @@
 import sqlite3
 
 
+"""
+Database to store the active redditors from a school
+"""
+
+
 def create_connection(db_file):
     """
     Function connects to Database
@@ -67,17 +72,17 @@ def clean_db(conn):
     cur.execute('DELETE FROM userUpdated')
 
 
+def remove_redditor(conn, username):
+    """
+    Function removes a certain redditor from the table
+    """
+    cur = conn.cursor()
+    cur.execute('DELETE FROM userUpdated WHERE username=?', (username,))
+
+
 def create_db(conn):
     """
     Function creates new redditor Database
     """
 
     conn.execute('CREATE TABLE userUpdated (username TEXT PRIMARY KEY, updated INTEGER);')
-
-
-if __name__ == '__main__':
-    conn = create_connection('/Users/dorianglon/Desktop/Steti_Tech/Universities&Colleges/Cornell/Cornell_users.db')
-    with conn:
-        users = list_users(conn)
-        for user in users:
-            update_user(conn, user, 1620692515)

@@ -1,6 +1,11 @@
 import sqlite3
 
 
+"""
+This database will be used to relay the flagged posts to front end when we have dashboard.
+"""
+
+
 def create_connection_flagged_post(db_file):
     """
     Function connects to Database

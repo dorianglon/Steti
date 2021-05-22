@@ -7,12 +7,13 @@ import time
 from Databases.userDb import *
 from Databases.postidDB import *
 import math
+from Shared_Resources.resources import *
 
 
 class ScrapeSubreddit:
     """
     CLASS USED TO DOWNLOAD POSTS AND OR COMMENTS FROM A SPECIFIC SUBREDDIT
-    UST USED FOR OBTAINING DATA TO TRAIN MODEL
+    JUST USED FOR OBTAINING DATA TO TRAIN MODEL
     """
 
     def __init__(self, subreddit, subreddit_abbrev, search_after):
@@ -20,7 +21,7 @@ class ScrapeSubreddit:
         self.subreddit_abbrev = subreddit_abbrev
         self.original_search_after = search_after
         self.search_after = search_after
-        self.pushshift_url = 'http://api.pushshift.io/reddit'
+        self.pushshift_url = PUSHSHIFT
 
     def fetch_objects(self, type, sort_type, sort, size):
         """
@@ -28,7 +29,7 @@ class ScrapeSubreddit:
         :param type: either reddit submissions or comments, (type=submission || type=comments)
         :param sort_type: Default sorts by date
         :param sort: Default is asc
-        :param size: maximum amount of objects request returns. Default is 1000(max)
+        :param size: maximum amount of objects request returns. Default is 100(max)
         :return: list of posts or comments from subreddit
         """
 
@@ -69,16 +70,14 @@ class ScrapeSubreddit:
         :param size: size of max return per request
         """
 
-        # specifically the start timestamp
         max_id = 0
 
-        # open a file for JSON output
+        # open a file for output
         file_name = '/Users/dorianglon/Desktop/Steti_Tech/Data/' + self.subreddit + '_posts.txt'
         if not os.path.isfile(file_name):
-            first = 'combined' + '\t' + 'subreddit\n'
             with open(file_name, 'a+') as file:
-                file.write(first)
-            file.close()
+                file.write('combined' + '\t' + 'subreddit\n')
+                file.close()
 
         while 1:
             nothing_processed = True
@@ -107,17 +106,15 @@ class ScrapeSubreddit:
                                     if object['title'] == 0:
                                         text = object['selftext'].replace('\t', '')
                                         new_text = text.replace('\n', '')
-                                        output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
                                         with open(file_name, 'a+') as file:
-                                            file.write(output_string)
+                                            file.write(new_text + '\t' + self.subreddit_abbrev + '\n')
                                             file.close()
                                     else:
                                         title = object['title'].replace('\t', '') + ' '
                                         body = object['selftext'].replace('\t', '')
                                         new_text = title.replace('\n', '') + body.replace('\n', '')
-                                        output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
                                         with open(file_name, 'a+') as file:
-                                            file.write(output_string)
+                                            file.write(new_text + '\t' + self.subreddit_abbrev + '\n')
                                             file.close()
 
                     # exit if nothing happened
@@ -132,16 +129,14 @@ class ScrapeSubreddit:
         :param size: size of max return per request
         """
 
-        # specifically the start timestamp
         max_id = 0
 
-        # open a file for JSON output
+        # open a file for output
         file_name = '/Users/dorianglon/Desktop/Steti_Tech/Data/' + self.subreddit + '_comments.txt'
         if not os.path.isfile(file_name):
-            first = 'combined' + '\t' + 'subreddit\n'
             with open(file_name, 'a+') as file:
-                file.write(first)
-            file.close()
+                file.write('combined' + '\t' + 'subreddit\n')
+                file.close()
         # while loop for recursive function
         while 1:
 
@@ -169,9 +164,8 @@ class ScrapeSubreddit:
                                 else:
                                     body = object['body'].replace('\t', '')
                                     new_text = body.replace('\n', '')
-                                    output_string = new_text + '\t' + self.subreddit_abbrev + '\n'
                                     with open(file_name, 'a+') as file:
-                                        file.write(output_string)
+                                        file.write(new_text + '\t' + self.subreddit_abbrev + '\n')
                                         file.close()
 
                     # exit if nothing happened
@@ -181,24 +175,29 @@ class ScrapeSubreddit:
 
 class GetRedditorsFromSub:
     """
-    CLASS USED TO COMPILE A DATABASE OF REDDITORS, OR INTERACT WITH IT, FROM A SPECIFIC UNIVERSITY/COLLEGE/CITY
+    CLASS USED TO COMPILE A DATABASE OF REDDITORS, OR INTERACT WITH IT, FROM A SPECIFIC UNIVERSITY/COLLEGE
     """
 
-    def __init__(self, subreddit, search_after, user_database, all_time_list, bots_file):
+    def __init__(self, subreddit, search_after, user_database, all_time_list):
+        """
+        Provide instance with the school's sub, a starting unix timestamp, database file to store redditors,
+        text file to store every redditor program comes across, and a file with names of reddit bots so we skip over
+        them.
+        """
         self.subreddit = subreddit
         self.search_after = search_after
         self.user_database = user_database
         self.all_time_list = all_time_list
-        self.bots_file = bots_file
-        self.pushshift_url = 'http://api.pushshift.io/reddit'
+        self.bots_file = BOTS
+        self.pushshift_url = PUSHSHIFT
 
     def fetch_posts(self, sort_type, sort, size, last_checked_f):
         """
         Function grabs submissions from a subreddit
         :param sort_type: Default sorts by date
         :param sort: Default is asc
-        :param size: maximum amount of posts requests returns. Default is 1000(max)
-        :param last_checked_f:
+        :param size: maximum amount of posts per request. Default is 100(max)
+        :param last_checked_f: file where value for last time checked is stored
         :return: list of posts from subreddit
         """
 
@@ -244,12 +243,12 @@ class GetRedditorsFromSub:
             data = response['data']
             return data
 
-    def extract_redditors_from_post_ids(self, reddit, post_ids, post_conn, university, college):
+    def extract_redditors_from_post_ids(self, reddit, post_ids, post_id_conn, university, college):
         """
         Function extracts new authors from new comments in a post if present.
         :param reddit: praw instance to work with
         :param post_ids: list of post ids
-        :param post_conn: connection to Databases with post ids
+        :param post_id_conn: connection to Database with post ids
         :param university: (True if university)
         :param college: (True if college)
         """
@@ -273,11 +272,11 @@ class GetRedditorsFromSub:
         for id in post_ids:
             submission = reddit.submission(id=id)
             num_comments = submission.num_comments
-            with post_conn:
-                old_num_comments = find_post_id(conn, id)[1]
+            with post_id_conn:
+                old_num_comments = find_post_id(post_id_conn, id)[1]
                 # if there are more comments now compared to last time we checked then check the comments' authors
-                if num_comments > old_num_comments:
-                    update_post_id(post_conn, id, num_comments)
+                if num_comments >= old_num_comments:
+                    # update_post_id(post_id_conn, id, num_comments)
                     try:
                         submission.comments.replace_more(limit=None)
                         for comment in submission.comments.list():
@@ -287,8 +286,7 @@ class GetRedditorsFromSub:
                                         and comment_author not in bots:
                                     redditors.append(comment_author)
                                     with open(self.all_time_list, 'a+') as f:
-                                        line = comment_author + '\n'
-                                        f.write(line)
+                                        f.write(comment_author + '\n')
                                         f.close()
                                     try:
                                         # check if this is a university subreddit then check if redditor from comment
@@ -297,30 +295,31 @@ class GetRedditorsFromSub:
                                             check = redditor_at_uni(redditor=comment_author,
                                                                     subreddit_of_uni=self.subreddit)
                                             if check:
-                                                conn = create_connection(self.user_database)
-                                                with conn:
-                                                    check = math.floor(time.time()) - 604800
-                                                    update_user(conn, comment_author, check)
-                                        # check if this is a community college subreddit then check if the redditor from
-                                        # comment goes to college. If they do then add them to list
+                                                user_db_conn = create_connection(self.user_database)
+                                                with user_db_conn:
+                                                    check = math.floor(time.time())
+                                                    update_user(user_db_conn, comment_author, check)
+                                        # instead if this is a community college subreddit then check if the redditor
+                                        # from comment goes to college. If they do then add them to list
                                         elif college:
                                             check = redditor_at_cc(redditor=comment_author,
                                                                    subreddit_of_cc=self.subreddit)
                                             if check:
-                                                conn = create_connection(self.user_database)
-                                                with conn:
-                                                    check = math.floor(time.time()) - 604800
-                                                    update_user(conn, comment_author, check)
-                                    except Exception:
-                                        pass
+                                                user_db_conn = create_connection(self.user_database)
+                                                with user_db_conn:
+                                                    check = math.floor(time.time())
+                                                    update_user(user_db_conn, comment_author, check)
+                                    except Exception as e:
+                                        print(e)
                     except Exception:
+                        # pass because most likely a connection issue, doesn't affect big picture.
                         pass
 
-    def extract_uni_redditors_live_(self, reddit, post_id_db_file, university, college):
+    def extract_uni_redditors_live_(self, reddit, post_id_conn, university, college):
         """
-        Function looks for new posts in the school's subreddit and adds new authors to Databases
+        Function looks for new posts in the school's subreddit and adds new authors to Database
         :param reddit: praw instance that we are using
-        :param post_id_db_file: path to post_id Databases
+        :param post_id_conn: path to post_id Database
         :param university: (True if university)
         :param college: (True if college)
         """
@@ -359,27 +358,26 @@ class GetRedditorsFromSub:
                             if university:
                                 check = redditor_at_uni(redditor=author, subreddit_of_uni=self.subreddit)
                                 if check:
-                                    conn = create_connection(self.user_database)
-                                    with conn:
-                                        check = math.floor(time.time()) - 604800
-                                        update_user(conn, author, check)
-                            # check if this is a community college subreddit then check if the redditor from post
+                                    user_db_conn = create_connection(self.user_database)
+                                    with user_db_conn:
+                                        check = math.floor(time.time())
+                                        update_user(user_db_conn, author, check)
+                            # instead if this is a community college subreddit then check if the redditor from post
                             # goes to college. If they do then add them to list
                             elif college:
                                 check = redditor_at_cc(redditor=author, subreddit_of_cc=self.subreddit)
                                 if check:
-                                    conn = create_connection(self.user_database)
-                                    with conn:
-                                        check = math.floor(time.time()) - 604800
-                                        update_user(conn, author, check)
+                                    user_db_conn = create_connection(self.user_database)
+                                    with user_db_conn:
+                                        check = math.floor(time.time())
+                                        update_user(user_db_conn, author, check)
                         except Exception:
                             pass
                     try:
                         submission.comments.replace_more(limit=None)
                         comments = submission.comments.list()
-                        post_id_conn = create_connection_post(post_id_db_file)
                         with post_id_conn:
-                            update_user(post_id_conn, submission.id, len(comments))
+                            update_post_id(post_id_conn, submission.id, len(comments))
                         for comment in comments:
                             if comment.author is not None:
                                 comment_author = comment.author.name
@@ -390,29 +388,26 @@ class GetRedditorsFromSub:
                                         line = comment_author + '\n'
                                         f.write(line)
                                         f.close()
-                                    try:
-                                        # check if this is a university subreddit then check if redditor from comment
-                                        # goes to university. If they do then add them to list
-                                        if university:
-                                            check = redditor_at_uni(redditor=comment_author,
-                                                                    subreddit_of_uni=self.subreddit)
-                                            if check:
-                                                conn = create_connection(self.user_database)
-                                                with conn:
-                                                    check = math.floor(time.time()) - 604800
-                                                    update_user(conn, comment_author, check)
-                                        # check if this is a community college subreddit then check if the redditor from
-                                        # comment goes to college. If they do then add them to list
-                                        elif college:
-                                            check = redditor_at_cc(redditor=comment_author,
-                                                                   subreddit_of_cc=self.subreddit)
-                                            if check:
-                                                conn = create_connection(self.user_database)
-                                                with conn:
-                                                    check = math.floor(time.time()) - 604800
-                                                    update_user(conn, comment_author, check)
-                                    except Exception:
-                                        pass
+                                    # check if this is a university subreddit then check if redditor from comment
+                                    # goes to university. If they do then add them to list
+                                    if university:
+                                        check = redditor_at_uni(redditor=comment_author,
+                                                                subreddit_of_uni=self.subreddit)
+                                        if check:
+                                            user_db_conn = create_connection(self.user_database)
+                                            with user_db_conn:
+                                                check = math.floor(time.time())
+                                                update_user(user_db_conn, comment_author, check)
+                                    # check if this is a community college subreddit then check if the redditor from
+                                    # comment goes to college. If they do then add them to list
+                                    elif college:
+                                        check = redditor_at_cc(redditor=comment_author,
+                                                               subreddit_of_cc=self.subreddit)
+                                        if check:
+                                            user_db_conn = create_connection(self.user_database)
+                                            with user_db_conn:
+                                                check = math.floor(time.time())
+                                                update_user(user_db_conn, comment_author, check)
                     except Exception:
                         pass
             else:
@@ -480,16 +475,16 @@ class GetRedditorsFromSub:
                                     if check:
                                         conn = create_connection(self.user_database)
                                         with conn:
-                                            _time = math.floor(time.time()) - 86400
+                                            _time = math.floor(time.time())
                                             update_user(conn, author, _time)
                                 elif college:
-                                    # check if this is a community college subreddit then check if the redditor from
+                                    # instead if this is a community college subreddit then check if the redditor from
                                     # post goes to college. If they do then add them to list
                                     check = redditor_at_cc(redditor=author, subreddit_of_cc=self.subreddit)
                                     if check:
                                         conn = create_connection(self.user_database)
                                         with conn:
-                                            _time = math.floor(time.time()) - 86400
+                                            _time = math.floor(time.time())
                                             update_user(conn, author, _time)
                             except Exception:
                                 pass
@@ -510,7 +505,7 @@ class GetRedditorsFromSub:
                                     comments_not_full = False
 
                                     # loop through comments
-                                    for comment in tqdm(comments):
+                                    for comment in comments:
                                         comment_author = comment['author']
                                         if comment_author not in redditors and comment_author != '[deleted]' \
                                                 and comment_author not in bots:
@@ -528,9 +523,9 @@ class GetRedditorsFromSub:
                                                     if check:
                                                         conn = create_connection(self.user_database)
                                                         with conn:
-                                                            _time = math.floor(time.time()) - 86400
+                                                            _time = math.floor(time.time())
                                                             update_user(conn, comment_author, _time)
-                                                # check if this is a community college subreddit then check if the
+                                                # instead if this is a community college subreddit then check if the
                                                 # redditor from comment goes to college. If they do then add them to
                                                 # list
                                                 elif college:
@@ -539,7 +534,7 @@ class GetRedditorsFromSub:
                                                     if check:
                                                         conn = create_connection(self.user_database)
                                                         with conn:
-                                                            _time = math.floor(time.time()) - 86400
+                                                            _time = math.floor(time.time())
                                                             update_user(conn, comment_author, _time)
                                             except Exception:
                                                 pass
@@ -571,7 +566,7 @@ class LiveRedditorAnalysisPraw:
                     if not submission.stickied and len(submission.selftext) > 0:
                         if submission.selftext != '[removed]':
                             submissions.append([submission.title, submission.selftext, submission.id
-                                                , submission.created_utc, submission.subreddit.display_name
+                                                , submission.created_utc - 14400, submission.subreddit.display_name
                                                 , submission.url])
                 else:
                     break
@@ -590,7 +585,7 @@ class LiveRedditorAnalysisPraw:
                 if comment.created_utc > self.last_checked:
                     if len(comment.body) > 0:
                         if comment.body != '[removed]':
-                            comments.append([comment.body, comment.id, comment.created_utc
+                            comments.append([comment.body, comment.id, comment.created_utc - 14400
                                             , comment.subreddit.display_name])
                 else:
                     break
@@ -616,14 +611,14 @@ class LiveRedditorAnalysisPraw:
 class ScrapeRedditorData:
     """
     CLASS USED TO SCRAPE A SPECIFIC REDDITOR'S POSTS, COMMENTS. USED IN DETERMINING IF A REDDITOR ATTENDS A CERTAIN
-    UNIVERSITY
+    UNIVERSITY OR COLLEGE
     """
 
     def __init__(self, redditor, search_after):
         self.redditor = redditor
         self.search_after = search_after
         self.original_search_after = search_after
-        self.pushshift_url = 'http://api.pushshift.io/reddit'
+        self.pushshift_url = PUSHSHIFT
 
     def fetch_objects(self, type, sort_type='created_utc', sort='asc', size=100):
         """
@@ -854,7 +849,7 @@ def get_max_val_dict(dictionary):
 
 def redditor_at_uni(redditor, subreddit_of_uni):
     """
-    Function makes sure that redditor goes to the university in question
+    Function makes a prediction regarding whether a redditor currently attends the university in question
     :param redditor: redditor to check
     :param subreddit_of_uni: subreddit of institution
     """
@@ -863,7 +858,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     reddit_creation_unix = 1119657672
 
     # reads the csv file of university subreddits
-    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/colleges.csv', delimiter=',')
+    universities_df = pd.read_csv(UNIVERSITYSUBS, delimiter=',')
     U_subreddits = universities_df['subreddit'].tolist()
     # eliminates the university we care about from list of university subreddits
     if subreddit_of_uni in U_subreddits:
@@ -876,6 +871,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
         redditor_scraper.extract_redditor_data(file_name=file_name, posts=True, comments=True)
     except Exception:
         pass
+
     author_df = pd.read_csv(file_name, delimiter='\t')
     os.remove(file_name)
     # creates a dataframe of the subreddits visited by redditor and the dates active
@@ -912,7 +908,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     # if first post on sub was before decision time for what would now be undergrad seniors
     if first_post_on_sub < Mar_1_2017:
         grad_subs = []
-        with open('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/college_grad_subs.txt', 'r') as f:
+        with open(GRADUATESUBS, 'r') as f:
             subs = f.readlines()
             for sub in subs:
                 grad_subs.append(sub.replace('\n', ''))
@@ -932,7 +928,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
     # if first post was within decision time 4 years ago
     elif first_post_on_sub > Mar_1_2017:
         college_app_subs = []
-        with open('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/uni_admissions_subs.txt', 'r') as f:
+        with open(ADMISSIONSUBS, 'r') as f:
             subs = f.readlines()
             for sub in subs:
                 college_app_subs.append(sub.replace('\n', ''))
@@ -966,7 +962,7 @@ def redditor_at_uni(redditor, subreddit_of_uni):
 
 def redditor_at_cc(redditor, subreddit_of_cc):
     """
-    Function makes sure that redditor goes to the community college in question
+    Function makes a prediction regarding whether a redditor currently attends the college in question
     :param redditor: redditor to check
     :param subreddit_of_cc: subreddit of community college
     """
@@ -974,7 +970,7 @@ def redditor_at_cc(redditor, subreddit_of_cc):
     reddit_creation_unix = 1119657672
 
     # reads the csv file of university subreddits
-    universities_df = pd.read_csv('/Users/dorianglon/Desktop/Steti_Tech/Relevant_Files/colleges.csv', delimiter=',')
+    universities_df = pd.read_csv(UNIVERSITYSUBS, delimiter=',')
     U_subreddits = universities_df['subreddit'].tolist()
     # eliminates the institution we care about from list of university subreddits
     if subreddit_of_cc in U_subreddits:

@@ -12,7 +12,7 @@ class NotificationSMS:
     def send_client_sms(self, clients):
         for number in clients:
             self.client.messages.create(
-                body='New Notification from Steti Technologies.\nhttps://www.stetitech.com',
+                body='New Notification from Steti Technologies.\nA new post has been flagged.',
                 from_=self.send_from,
                 to=number
             )

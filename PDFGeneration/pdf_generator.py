@@ -6,6 +6,7 @@ from reportlab.lib.units import inch
 from datetime import datetime
 from Databases.archivesDB import *
 import os
+from Shared_Resources.resources import *
 
 
 class CreateDailyPDF:
@@ -13,11 +14,11 @@ class CreateDailyPDF:
     CLASS GENERATES THE DAILY PDFS FOR THE SCHOOL
     """
 
-    def __init__(self, data, institution, filename, directory, archives_db, num_users_flagged, new_ids_file):
+    def __init__(self, data, institution, filename, archives_db, num_users_flagged, new_ids_file):
         self.data = data
         self.institution = institution
         self.filename = filename
-        self.directory = directory
+        self.directory = MAIN
         self.archives_db = archives_db
         self.num_users_flagged = num_users_flagged
         self.new_ids_file = new_ids_file
@@ -46,12 +47,11 @@ class CreateDailyPDF:
         Story.append(Spacer(1, 24))
         Story.append(Paragraph(ptext, styles['Title']))
 
-        if os.path.isfile(self.new_ids_file):
-            new_ids = []
-            with open(self.new_ids_file, 'r') as f:
-                lines = f.readlines()
-                for line in lines:
-                    new_ids.append(line.replace('\n', ''))
+        new_ids = []
+        with open(self.new_ids_file, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                new_ids.append(line.replace('\n', ''))
 
         # loop through the users and write down the data. title, text, date, subreddit, negativity score
         count = 1
@@ -64,7 +64,7 @@ class CreateDailyPDF:
                 with archives_conn:
                     prev_flagged = get_num_flagged(archives_conn, user['username'])[1]
                     # update_author_flagged_value(archives_conn, user['username'])
-            else:
+            elif count <= self.num_users_flagged:
                 archives_conn = create_connection_archives(self.archives_db)
                 with archives_conn:
                     prev_flagged = get_num_flagged(archives_conn, user['username'])[1]
@@ -85,7 +85,7 @@ class CreateDailyPDF:
                     Story.append(Spacer(1, 12))
                     Story.append(Paragraph(ptext, styles['Heading1']))
 
-            else:
+            elif count != 1:
                 if prev_flagged > 1:
                     username = 'User : ' + user['username']
                     flagged = 'Amount of times previously flagged : ' + str(prev_flagged)
@@ -108,7 +108,6 @@ class CreateDailyPDF:
                     if new_ids:
                         check_id = text[3]
                         if check_id in new_ids:
-                            new_data = True
                             ptext = '<font size="13" color="red">%s</font>' % 'NEW'
                             Story.append(Spacer(1, 6))
                             Story.append(Paragraph(ptext, styles['Heading1']))

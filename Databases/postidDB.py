@@ -1,6 +1,12 @@
 import sqlite3
 
 
+"""
+This database contains post ids so that we can go back and check if new authors have commented to pre-existing posts
+on the school subreddit in order to better build our database of redditors from a school
+"""
+
+
 def create_connection_post(db_file):
     """
     Function connects to Database

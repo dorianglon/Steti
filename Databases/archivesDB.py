@@ -1,6 +1,12 @@
 import sqlite3
 
 
+"""
+This database is used to look at who has been previously flagged from a school we are working with to provide them with that
+data
+"""
+
+
 def create_connection_archives(db_file):
     """
     Function connects to Database
@@ -57,7 +63,7 @@ def get_num_flagged(conn, author):
         res = cur.fetchone()
         return res
     else:
-        return 0
+        return [0, 0]
 
 
 def update_author_report_value(conn, author, reported):
